@@ -2,7 +2,7 @@ import os
 from typing_extensions import Annotated
 from IPython import get_ipython
 
-default_path = "coding/"
+default_path = "./"
 
 
 class IPythonUtils:

@@ -36,7 +36,7 @@ class DeployedCapitalAnalyzer(bt.Analyzer):
 
 
 class BackTraderUtils:
-
+    @staticmethod
     def back_test(
         ticker_symbol: Annotated[
             str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"
@@ -95,11 +95,10 @@ class BackTraderUtils:
 
         strategy_params = json.loads(strategy_params) if strategy_params else {}
         cerebro.addstrategy(strategy_class, **strategy_params)
-
+        dataname_yf = yf.download(ticker_symbol, start_date, end_date, auto_adjust=True)
+        dataname_yf.columns = [col[0] if isinstance(col, tuple) else col for col in dataname_yf.columns.values]
         # Create a data feed
-        data = bt.feeds.PandasData(
-            dataname=yf.download(ticker_symbol, start_date, end_date, auto_adjust=True)
-        )
+        data = bt.feeds.PandasData(dataname=dataname_yf)
         cerebro.adddata(data)  # Add the data feed
         # Set our desired cash start
         cerebro.broker.setcash(cash)

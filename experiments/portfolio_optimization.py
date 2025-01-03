@@ -9,16 +9,16 @@ from investment_group import group_config
 
 llm_config = {
     "config_list": autogen.config_list_from_json(
-        "../OAI_CONFIG_LIST",
+        "./OAI_CONFIG_LIST",
         filter_dict={
-            "model": ["gpt-4-0125-preview"],
+            "model": ["azure-gpt"],
         },
     ),
     "cache_seed": 42,
     "temperature": 0,
 }
 
-register_keys_from_json("../config_api_keys")
+register_keys_from_json("./config_api_keys")
 
 # group_config = json.load(open("investment_group.json"))
 
