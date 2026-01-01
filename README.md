@@ -15,8 +15,6 @@
 ![](https://img.shields.io/github/issues-pr-closed-raw/AI4Finance-Foundation/finrobot?label=Closed+PRs)
 
 
-
-
 <div align="center">
 <img align="center" src=figs/logo_white_background.jpg width="40%"/>
 </div>
@@ -31,7 +29,24 @@
 
 
 ![Visitors](https://api.visitorbadge.io/api/VisitorHit?user=AI4Finance-Foundation&repo=FinRobot&countColor=%23B17A)
-[![](https://dcbadge.limes.pink/api/server/trsr8SXpW5)](https://discord.gg/trsr8SXpW5)
+[![](https://dcbadge.limes.pink/api/server/trsr8SXpW5?cb=1)](https://discord.gg/trsr8SXpW5)
+
+## FinRobot Pro — An AI Powered Equity Research Platform: https://finrobot.ai/
+
+<div align="center">
+<img align="center" src="https://github.com/user-attachments/assets/de3b9f9c-50aa-49f0-82c6-3d2b938f4670" width="90%"/>
+</div>
+
+## What is FinRobot Pro?
+
+[FinRobot Pro](https://finrobot.ai/ ) is an AI-powered equity research platform that automates professional stock analysis using Large Language Models (LLMs) and AI Agents.
+
+**Key Features:**
+
+- **Automated Report Generation** – Generate professional equity research reports instantly
+- **Financial Analysis** – Deep dive into income statements, balance sheets, and cash flows
+- **Valuation Analysis** – P/E ratio, EV/EBITDA multiples, and peer comparison
+- **Risk Assessment** – Comprehensive investment risk evaluation
 
 
 ## FinRobot Ecosystem
