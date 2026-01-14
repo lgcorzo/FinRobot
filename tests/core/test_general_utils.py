@@ -5,7 +5,8 @@ import pytest
 import json
 import pandas as pd
 from datetime import datetime
-from finrobot.utils import save_output, get_current_date, register_keys_from_json, get_next_weekday
+from finrobot.utils import get_current_date, get_next_weekday
+from finrobot.io.files import save_output, register_keys_from_json
 
 
 def test_save_output(tmp_path):

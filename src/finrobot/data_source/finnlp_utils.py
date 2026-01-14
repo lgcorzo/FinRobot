@@ -14,7 +14,7 @@ from finnlp.data_sources.social_media.stocktwits_streaming import Stocktwits_Str
 from finnlp.data_sources.news.sina_finance_date_range import Sina_Finance_Date_Range
 from finnlp.data_sources.news.finnhub_date_range import Finnhub_Date_Range
 
-from ..utils import save_output, SavePathType
+from ..io.files import save_output, SavePathType
 
 
 US_Proxy = {
@@ -31,9 +31,9 @@ CN_Proxy = {
 
 def streaming_download(streaming, config, tag, keyword, rounds, selected_columns, save_path):
     downloader = streaming(config)
-    if hasattr(downloader, 'download_streaming_search'):
+    if hasattr(downloader, "download_streaming_search"):
         downloader.download_streaming_search(keyword, rounds)
-    elif hasattr(downloader, 'download_streaming_stock'):
+    elif hasattr(downloader, "download_streaming_stock"):
         downloader.download_streaming_stock(keyword, rounds)
     else:
         downloader.download_streaming_all(rounds)
@@ -45,11 +45,11 @@ def streaming_download(streaming, config, tag, keyword, rounds, selected_columns
 
 def date_range_download(date_range, config, tag, start_date, end_date, stock, selected_columns, save_path):
     downloader = date_range(config)
-    if hasattr(downloader, 'download_date_range_stock'):
+    if hasattr(downloader, "download_date_range_stock"):
         downloader.download_date_range_stock(start_date, end_date, stock)
     else:
         downloader.download_date_range_all(start_date, end_date)
-    if hasattr(downloader, 'gather_content'):
+    if hasattr(downloader, "gather_content"):
         downloader.gather_content()
     # print(downloader.dataframe.columns)
     selected_news = downloader.dataframe[selected_columns]
@@ -58,37 +58,44 @@ def date_range_download(date_range, config, tag, start_date, end_date, stock, se
 
 
 class FinNLPUtils:
-
     """
     Streaming News Download
     """
 
     def cnbc_news_download(
-            keyword: Annotated[str, "Keyword to search in news stream"],
-            rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
-            selected_columns: Annotated[list[str], "List of column names of news to return, should be chosen from 'description', 'cn:lastPubDate', 'dateModified', 'cn:dateline', 'cn:branding', 'section', 'cn:type', 'author', 'cn:source', 'cn:subtype', 'duration', 'summary', 'expires', 'cn:sectionSubType', 'cn:contentClassification', 'pubdateunix', 'url', 'datePublished', 'cn:promoImage', 'cn:title', 'cn:keyword', 'cn:liveURL', 'brand', 'hint', 'hint_detail'. Default to ['author', 'datePublished', 'description' ,'section', 'cn:title', 'summary']"] = ["author", "datePublished", "description" ,"section", "cn:title", "summary"],
-            save_path: SavePathType = None
-        ) -> DataFrame:
+        keyword: Annotated[str, "Keyword to search in news stream"],
+        rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
+        selected_columns: Annotated[
+            list[str],
+            "List of column names of news to return, should be chosen from 'description', 'cn:lastPubDate', 'dateModified', 'cn:dateline', 'cn:branding', 'section', 'cn:type', 'author', 'cn:source', 'cn:subtype', 'duration', 'summary', 'expires', 'cn:sectionSubType', 'cn:contentClassification', 'pubdateunix', 'url', 'datePublished', 'cn:promoImage', 'cn:title', 'cn:keyword', 'cn:liveURL', 'brand', 'hint', 'hint_detail'. Default to ['author', 'datePublished', 'description' ,'section', 'cn:title', 'summary']",
+        ] = ["author", "datePublished", "description", "section", "cn:title", "summary"],
+        save_path: SavePathType = None,
+    ) -> DataFrame:
         return streaming_download(CNBC_Streaming, {}, "CNBC News", keyword, rounds, selected_columns, save_path)
 
-
     def yicai_news_download(
-            keyword: Annotated[str, "Keyword to search in news stream"],
-            rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
-            selected_columns: Annotated[list[str], "List of column names of news to return, should be chosen from 'author','channelid','creationDate','desc','id','previewImage','source','tags','title','topics','typeo','url','weight'. Default to ['author', 'creationDate', 'desc' ,'source', 'title']"] = ["author", "creationDate", "desc" ,"source", "title"],
-            save_path: SavePathType = None
-        ) -> DataFrame:
+        keyword: Annotated[str, "Keyword to search in news stream"],
+        rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
+        selected_columns: Annotated[
+            list[str],
+            "List of column names of news to return, should be chosen from 'author','channelid','creationDate','desc','id','previewImage','source','tags','title','topics','typeo','url','weight'. Default to ['author', 'creationDate', 'desc' ,'source', 'title']",
+        ] = ["author", "creationDate", "desc", "source", "title"],
+        save_path: SavePathType = None,
+    ) -> DataFrame:
         return streaming_download(Yicai_Streaming, {}, "Yicai News", keyword, rounds, selected_columns, save_path)
 
-
     def investor_place_news_download(
-            keyword: Annotated[str, "Keyword to search in news stream"],
-            rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
-            selected_columns: Annotated[list[str], "List of column names of news to return, should be chosen from 'title', 'time', 'author', 'summary'. Default to ['title', 'time', 'author', 'summary']"] = ['title', 'time', 'author', 'summary'],
-            save_path: SavePathType = None
-        ) -> DataFrame:
-        return streaming_download(InvestorPlace_Streaming, {}, "Investor Place News", keyword, rounds, selected_columns, save_path)
-
+        keyword: Annotated[str, "Keyword to search in news stream"],
+        rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
+        selected_columns: Annotated[
+            list[str],
+            "List of column names of news to return, should be chosen from 'title', 'time', 'author', 'summary'. Default to ['title', 'time', 'author', 'summary']",
+        ] = ["title", "time", "author", "summary"],
+        save_path: SavePathType = None,
+    ) -> DataFrame:
+        return streaming_download(
+            InvestorPlace_Streaming, {}, "Investor Place News", keyword, rounds, selected_columns, save_path
+        )
 
     # def eastmoney_news_download(
     #     stock: Annotated[str, "stock code, e.g. 600519"],
@@ -99,15 +106,16 @@ class FinNLPUtils:
     # ) -> str:
     #     return streaming_download(Eastmoney_Streaming, "Eastmoney", stock, pages, selected_columns, save_path)
 
-
     """
     Date Range News Download
     """
 
     def sina_finance_news_download(
-            start_date: Annotated[str, "Start date of the news to retrieve, YYYY-mm-dd"],
-            end_date: Annotated[str, "End date of the news to retrieve, YYYY-mm-dd"],
-            selected_columns: Annotated[list[str], """
+        start_date: Annotated[str, "Start date of the news to retrieve, YYYY-mm-dd"],
+        end_date: Annotated[str, "End date of the news to retrieve, YYYY-mm-dd"],
+        selected_columns: Annotated[
+            list[str],
+            """
                 List of column names of news to return, should be chosen from 
                 'mediaid', 'productid', 'summary', 'ctime', 'url', 'author', 'stitle',
                 'authoruid', 'wapsummary', 'images', 'level', 'keywords', 'mlids',
@@ -117,30 +125,45 @@ class FinNLPUtils:
                 'icons', 'mtime', 'media_name', 'title', 'docid', 'urls', 'templateid', 
                 'lids', 'wapurls', 'ext', 'comment_reply', 'comment_show', 'comment_total', 'praise',
                 'dispraise', 'important', 'content'. Default to ['title', 'author', 'content']
-                """
-            ] = ['title', 'author', 'content'],
-            save_path: SavePathType = None
-        ) -> DataFrame:
-        return date_range_download(Sina_Finance_Date_Range, {}, "Sina Finance News", start_date, end_date, None, selected_columns, save_path)
-
+                """,
+        ] = ["title", "author", "content"],
+        save_path: SavePathType = None,
+    ) -> DataFrame:
+        return date_range_download(
+            Sina_Finance_Date_Range, {}, "Sina Finance News", start_date, end_date, None, selected_columns, save_path
+        )
 
     def finnhub_news_download(
-            start_date: Annotated[str, "Start date of the news to retrieve, YYYY-mm-dd"],
-            end_date: Annotated[str, "End date of the news to retrieve, YYYY-mm-dd"],
-            stock: Annotated[str, "Stock symbol, e.g. AAPL"],
-            selected_columns: Annotated[list[str], "List of column names of news to return, should be chosen from 'category', 'datetime', 'headline', 'id', 'image', 'related', 'source', 'summary', 'url', 'content'. Default to ['headline', 'datetime', 'source', 'summary']"] = ['headline', 'datetime', 'source', 'summary'],
-            save_path: SavePathType = None
-        ) -> DataFrame:
-        return date_range_download(Finnhub_Date_Range, {"token": os.environ['FINNHUB_API_KEY']}, "Finnhub News", start_date, end_date, stock, selected_columns, save_path)
-
+        start_date: Annotated[str, "Start date of the news to retrieve, YYYY-mm-dd"],
+        end_date: Annotated[str, "End date of the news to retrieve, YYYY-mm-dd"],
+        stock: Annotated[str, "Stock symbol, e.g. AAPL"],
+        selected_columns: Annotated[
+            list[str],
+            "List of column names of news to return, should be chosen from 'category', 'datetime', 'headline', 'id', 'image', 'related', 'source', 'summary', 'url', 'content'. Default to ['headline', 'datetime', 'source', 'summary']",
+        ] = ["headline", "datetime", "source", "summary"],
+        save_path: SavePathType = None,
+    ) -> DataFrame:
+        return date_range_download(
+            Finnhub_Date_Range,
+            {"token": os.environ["FINNHUB_API_KEY"]},
+            "Finnhub News",
+            start_date,
+            end_date,
+            stock,
+            selected_columns,
+            save_path,
+        )
 
     """
     Social Media
     """
+
     def xueqiu_social_media_download(
-            stock: Annotated[str, "Stock symbol, e.g. 'AAPL'"],
-            rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
-            selected_columns: Annotated[list[str], """
+        stock: Annotated[str, "Stock symbol, e.g. 'AAPL'"],
+        rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
+        selected_columns: Annotated[
+            list[str],
+            """
                 List of column names of news to return, should be chosen from blocked', 
                 'blocking', 'canEdit', 'commentId', 'controversial',
                 'created_at', 'description', 'donate_count', 'donate_snowcoin',
@@ -153,31 +176,37 @@ class FinNLPUtils:
                 'title', 'trackJson', 'truncated', 'truncated_by', 'type', 'user',
                 'user_id', 'view_count', 'firstImg', 'pic_sizes', 'edited_at'. 
                 Default to ['created_at', 'description', 'title', 'text', 'target', 'source']
-            """] = ['created_at', 'description', 'title', 'text', 'target', 'source'],
-            save_path: SavePathType = None
-        ) -> DataFrame:
-        return streaming_download(Xueqiu_Streaming, {}, "Xueqiu Social Media", stock, rounds, selected_columns, save_path)
-
+            """,
+        ] = ["created_at", "description", "title", "text", "target", "source"],
+        save_path: SavePathType = None,
+    ) -> DataFrame:
+        return streaming_download(
+            Xueqiu_Streaming, {}, "Xueqiu Social Media", stock, rounds, selected_columns, save_path
+        )
 
     def stocktwits_social_media_download(
-            stock: Annotated[str, "Stock symbol, e.g. 'AAPL'"],
-            rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
-            selected_columns: Annotated[list[str], """
+        stock: Annotated[str, "Stock symbol, e.g. 'AAPL'"],
+        rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
+        selected_columns: Annotated[
+            list[str],
+            """
                 List of column names of news to return, should be chosen from 'id', 
                 'body', 'created_at', 'user', 'source', 'symbols', 'prices',
                 'mentioned_users', 'entities', 'liked_by_self', 'reshared_by_self',
                 'conversation', 'links', 'likes', 'reshare_message', 'structurable',
                 'reshares'. Default to ['created_at', 'body']
-            """] = ['created_at', 'body'],
-            save_path: SavePathType = None
-        ) -> DataFrame:
-        return streaming_download(Stocktwits_Streaming, {}, "Stocktwits Social Media", stock, rounds, selected_columns, save_path)
-
+            """,
+        ] = ["created_at", "body"],
+        save_path: SavePathType = None,
+    ) -> DataFrame:
+        return streaming_download(
+            Stocktwits_Streaming, {}, "Stocktwits Social Media", stock, rounds, selected_columns, save_path
+        )
 
     # def reddit_social_media_download(
     #     pages: Annotated[int, "Number of pages to retrieve. Default to 1"] = 1,
     #     selected_columns: Annotated[list[str], """
-    #         List of column names of news to return, should be chosen from 'id', 
+    #         List of column names of news to return, should be chosen from 'id',
     #         'body', 'created_at', 'user', 'source', 'symbols', 'prices',
     #         'mentioned_users', 'entities', 'liked_by_self', 'reshared_by_self',
     #         'conversation', 'links', 'likes', 'reshare_message', 'structurable',
@@ -188,7 +217,6 @@ class FinNLPUtils:
     # ) -> DataFrame:
     #     return streaming_download(Reddit_Streaming, {}, "Reddit Social Media", None, pages, selected_columns, save_path)
 
-
     """
     Company Announcements
     (Not working well)
@@ -196,7 +224,6 @@ class FinNLPUtils:
 
     # from finnlp.data_sources.company_announcement.sec import SEC_Announcement
     # from finnlp.data_sources.company_announcement.juchao import Juchao_Announcement
-
 
     # def sec_announcement_download(
     #     start_date: Annotated[str, "Start date of the news to retrieve, YYYY-mm-dd"],
@@ -207,7 +234,6 @@ class FinNLPUtils:
     #     save_path: Annotated[str, "If specified (recommended if the amount of news is large), the downloaded news will be saved to save_path. Default to None"] = None,
     # ) -> DataFrame:
     #     return date_range_download(SEC_Announcement, {}, "SEC Announcements", start_date, end_date, stock, selected_columns, save_path)
-
 
     # def juchao_announcement_download(
     #     start_date: Annotated[str, "Start date of the news to retrieve, YYYY-mm-dd"],
@@ -221,7 +247,6 @@ class FinNLPUtils:
 
 
 if __name__ == "__main__":
-
     print(FinNLPUtils.yicai_news_download("茅台", save_path="yicai_maotai.csv"))
     # print(cnbc_news_download("tesla", save_path="cnbc_tesla.csv"))
     # investor_place_news_download("tesla", save_path="invpl_tesla.csv")

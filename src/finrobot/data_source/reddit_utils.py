@@ -4,16 +4,15 @@ import pandas as pd
 from typing import Annotated, List
 from functools import wraps
 from datetime import datetime, timezone
-from ..utils import decorate_all_methods, save_output, SavePathType
+from ..utils import decorate_all_methods
+from ..io.files import save_output, SavePathType
 
 
 def init_reddit_client(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         global reddit_client
-        if not all(
-            [os.environ.get("REDDIT_CLIENT_ID"), os.environ.get("REDDIT_CLIENT_SECRET")]
-        ):
+        if not all([os.environ.get("REDDIT_CLIENT_ID"), os.environ.get("REDDIT_CLIENT_SECRET")]):
             print("Please set the environment variables for Reddit API credentials.")
             return None
         else:
@@ -30,16 +29,11 @@ def init_reddit_client(func):
 
 @decorate_all_methods(init_reddit_client)
 class RedditUtils:
-
     def get_reddit_posts(
-        query: Annotated[
-            str, "Search query, e.g. 'AAPL OR Apple Inc OR #AAPL OR (Apple AND stock)'"
-        ],
+        query: Annotated[str, "Search query, e.g. 'AAPL OR Apple Inc OR #AAPL OR (Apple AND stock)'"],
         start_date: Annotated[str, "Start date in yyyy-mm-dd format"],
         end_date: Annotated[str, "End date in yyyy-mm-dd format"],
-        limit: Annotated[
-            int, "Maximum number of posts to fetch, default to 1000"
-        ] = 1000,
+        limit: Annotated[int, "Maximum number of posts to fetch, default to 1000"] = 1000,
         selected_columns: Annotated[
             List[str],
             "Columns to contain in the result, should be chosen from 'created_utc', 'id', 'title', 'selftext', 'score', 'num_comments', 'url', default to ['created_utc', 'title', 'score', 'num_comments']",
@@ -52,16 +46,8 @@ class RedditUtils:
 
         post_data = []
 
-        start_timestamp = int(
-            datetime.strptime(start_date, "%Y-%m-%d")
-            .replace(tzinfo=timezone.utc)
-            .timestamp()
-        )
-        end_timestamp = int(
-            datetime.strptime(end_date, "%Y-%m-%d")
-            .replace(tzinfo=timezone.utc)
-            .timestamp()
-        )
+        start_timestamp = int(datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc).timestamp())
+        end_timestamp = int(datetime.strptime(end_date, "%Y-%m-%d").replace(tzinfo=timezone.utc).timestamp())
 
         for subreddit_name in ["wallstreetbets", "stocks", "investing"]:
             print("Searching in subreddit:", subreddit_name)
@@ -72,9 +58,7 @@ class RedditUtils:
                 if start_timestamp <= post.created_utc <= end_timestamp:
                     post_data.append(
                         [
-                            datetime.fromtimestamp(
-                                post.created_utc, tz=timezone.utc
-                            ).strftime("%Y-%m-%d %H:%M:%S"),
+                            datetime.fromtimestamp(post.created_utc, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
                             post.id,
                             post.title,
                             post.selftext,
@@ -105,14 +89,11 @@ class RedditUtils:
 
 # Example usage
 if __name__ == "__main__":
-
-    from finrobot.utils import register_keys_from_json
+    from finrobot.io.files import register_keys_from_json
 
     register_keys_from_json("../../config_api_keys")
 
     # df = RedditUtils.get_reddit_posts(query="AAPL OR Apple Inc OR #AAPL OR (Apple AND stock)", start_date="2023-05-01", end_date="2023-06-01", limit=1000)
-    df = RedditUtils.get_reddit_posts(
-        query="NVDA", start_date="2023-05-01", end_date="2023-06-01", limit=1000
-    )
+    df = RedditUtils.get_reddit_posts(query="NVDA", start_date="2023-05-01", end_date="2023-06-01", limit=1000)
     print(df.head())
     df.to_csv("reddit_posts.csv", index=False)

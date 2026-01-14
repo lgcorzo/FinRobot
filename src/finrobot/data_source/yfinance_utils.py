@@ -3,7 +3,8 @@ from typing import Annotated, Callable, Any, Optional
 from pandas import DataFrame
 from functools import wraps
 
-from ..utils import save_output, SavePathType, decorate_all_methods
+from ..utils import decorate_all_methods
+from ..io.files import save_output, SavePathType
 
 
 def init_ticker(func: Callable) -> Callable:
@@ -19,15 +20,10 @@ def init_ticker(func: Callable) -> Callable:
 
 @decorate_all_methods(init_ticker)
 class YFinanceUtils:
-
     def get_stock_data(
         symbol: Annotated[str, "ticker symbol"],
-        start_date: Annotated[
-            str, "start date for retrieving stock price data, YYYY-mm-dd"
-        ],
-        end_date: Annotated[
-            str, "end date for retrieving stock price data, YYYY-mm-dd"
-        ],
+        start_date: Annotated[str, "start date for retrieving stock price data, YYYY-mm-dd"],
+        end_date: Annotated[str, "end date for retrieving stock price data, YYYY-mm-dd"],
         save_path: SavePathType = None,
     ) -> DataFrame:
         """retrieve stock price data for designated ticker symbol"""

@@ -3,7 +3,8 @@ import requests
 from sec_api import ExtractorApi, QueryApi, RenderApi
 from functools import wraps
 from typing import Annotated
-from ..utils import SavePathType, decorate_all_methods
+from ..utils import decorate_all_methods
+from ..io.files import SavePathType
 from ..data_source import FMPUtils
 
 
@@ -30,15 +31,10 @@ def init_sec_api(func):
 
 @decorate_all_methods(init_sec_api)
 class SECUtils:
-
     def get_10k_metadata(
         ticker: Annotated[str, "ticker symbol"],
-        start_date: Annotated[
-            str, "start date of the 10-k file search range, in yyyy-mm-dd format"
-        ],
-        end_date: Annotated[
-            str, "end date of the 10-k file search range, in yyyy-mm-dd format"
-        ],
+        start_date: Annotated[str, "start date of the 10-k file search range, in yyyy-mm-dd format"],
+        end_date: Annotated[str, "end date of the 10-k file search range, in yyyy-mm-dd format"],
     ):
         """
         Search for 10-k filings within a given time period, and return the meta data of the latest one
@@ -56,15 +52,9 @@ class SECUtils:
 
     def download_10k_filing(
         ticker: Annotated[str, "ticker symbol"],
-        start_date: Annotated[
-            str, "start date of the 10-k file search range, in yyyy-mm-dd format"
-        ],
-        end_date: Annotated[
-            str, "end date of the 10-k file search range, in yyyy-mm-dd format"
-        ],
-        save_folder: Annotated[
-            str, "name of the folder to store the downloaded filing"
-        ],
+        start_date: Annotated[str, "start date of the 10-k file search range, in yyyy-mm-dd format"],
+        end_date: Annotated[str, "end date of the 10-k file search range, in yyyy-mm-dd format"],
+        save_folder: Annotated[str, "name of the folder to store the downloaded filing"],
     ) -> str:
         """Download the latest 10-K filing as htm for a given ticker within a given time period."""
         metadata = SECUtils.get_10k_metadata(ticker, start_date, end_date)
@@ -91,15 +81,9 @@ class SECUtils:
 
     def download_10k_pdf(
         ticker: Annotated[str, "ticker symbol"],
-        start_date: Annotated[
-            str, "start date of the 10-k file search range, in yyyy-mm-dd format"
-        ],
-        end_date: Annotated[
-            str, "end date of the 10-k file search range, in yyyy-mm-dd format"
-        ],
-        save_folder: Annotated[
-            str, "name of the folder to store the downloaded pdf filing"
-        ],
+        start_date: Annotated[str, "start date of the 10-k file search range, in yyyy-mm-dd format"],
+        end_date: Annotated[str, "end date of the 10-k file search range, in yyyy-mm-dd format"],
+        save_folder: Annotated[str, "name of the folder to store the downloaded pdf filing"],
     ) -> str:
         """Download the latest 10-K filing as pdf for a given ticker within a given time period."""
         metadata = SECUtils.get_10k_metadata(ticker, start_date, end_date)
@@ -111,12 +95,7 @@ class SECUtils:
                 date = metadata["filedAt"][:10]
                 print(filing_url.split("/")[-1])
                 file_name = (
-                    date
-                    + "_"
-                    + metadata["formType"].replace("/A", "")
-                    + "_"
-                    + filing_url.split("/")[-1]
-                    + ".pdf"
+                    date + "_" + metadata["formType"].replace("/A", "") + "_" + filing_url.split("/")[-1] + ".pdf"
                 )
 
                 if not os.path.isdir(save_folder):
@@ -180,9 +159,7 @@ class SECUtils:
             else:
                 return report_address  # debug info
 
-        cache_path = os.path.join(
-            CACHE_PATH, f"sec_utils/{ticker_symbol}_{fyear}_{section}.txt"
-        )
+        cache_path = os.path.join(CACHE_PATH, f"sec_utils/{ticker_symbol}_{fyear}_{section}.txt")
         if os.path.exists(cache_path):
             with open(cache_path, "r") as f:
                 section_text = f.read()

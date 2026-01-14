@@ -7,7 +7,8 @@ from typing import Annotated
 from collections import defaultdict
 from functools import wraps
 from datetime import datetime
-from ..utils import decorate_all_methods, save_output, SavePathType
+from ..utils import decorate_all_methods
+from ..io.files import save_output, SavePathType
 
 
 def init_finnhub_client(func):
@@ -15,9 +16,7 @@ def init_finnhub_client(func):
     def wrapper(*args, **kwargs):
         global finnhub_client
         if os.environ.get("FINNHUB_API_KEY") is None:
-            print(
-                "Please set the environment variable FINNHUB_API_KEY to use the Finnhub API."
-            )
+            print("Please set the environment variable FINNHUB_API_KEY to use the Finnhub API.")
             return None
         else:
             finnhub_client = finnhub.Client(api_key=os.environ["FINNHUB_API_KEY"])
@@ -30,7 +29,6 @@ def init_finnhub_client(func):
 
 @decorate_all_methods(init_finnhub_client)
 class FinnHubUtils:
-
     def get_company_profile(symbol: Annotated[str, "ticker symbol"]) -> str:
         """
         get a company's profile information
@@ -61,9 +59,7 @@ class FinnHubUtils:
             str,
             "end date of the search period for the company's basic financials, yyyy-mm-dd",
         ],
-        max_news_num: Annotated[
-            int, "maximum number of news to return, default to 10"
-        ] = 10,
+        max_news_num: Annotated[int, "maximum number of news to return, default to 10"] = 10,
         save_path: SavePathType = None,
     ) -> pd.DataFrame:
         """
@@ -109,7 +105,6 @@ class FinnHubUtils:
         ] = None,
         save_path: SavePathType = None,
     ) -> pd.DataFrame:
-
         if freq not in ["annual", "quarterly"]:
             return f"Invalid reporting frequency {freq}. Please specify either 'annual' or 'quarterly'."
 
@@ -158,8 +153,7 @@ class FinnHubUtils:
 
 
 if __name__ == "__main__":
-
-    from finrobot.utils import register_keys_from_json
+    from finrobot.io.files import register_keys_from_json
 
     register_keys_from_json("../../config_api_keys")
     # print(FinnHubUtils.get_company_profile("AAPL"))

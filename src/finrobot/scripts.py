@@ -16,18 +16,9 @@ def main(argv: list[str] | None = None) -> int:
     settings = FinRobotSettings()
 
     if args.task == "analyze" and args.company:
-        print(f"Starting analysis for {args.company} with settings: {settings.openai_model}")
-        from finrobot.agents.workflow import SingleAssistant
+        from finrobot.jobs.analysis import FinancialAnalysisJob
 
-        # This is a sample usage config.
-        # In a real scenario, we might load this from a registry or config file.
-        agent_config = {
-            "name": "Financial_Analyst",
-            "description": f"Analyzes financial data for {args.company}",
-            "profile": "You are an expert financial analyst. Analyze the stock based on provided tools.",
-        }
-
-        assistant = SingleAssistant(agent_config)
-        assistant.chat(f"Analyze the stock performance of {args.company}")
+        job = FinancialAnalysisJob(args.company, settings.openai_model)
+        job.run()
 
     return 0
