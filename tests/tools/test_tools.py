@@ -2,7 +2,7 @@
 
 import pytest
 import pandas as pd
-from finrobot.toolkits import stringify_output, get_toolkits, get_toolkits_from_cls
+from finrobot.tools import stringify_output, get_toolkits, get_toolkits_from_cls
 
 
 class MockClass:
