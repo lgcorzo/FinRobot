@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "finrobot"
+version = "0.1.0"
+description = "Financial Analyst Agent similar to FinRobot but using Microsoft Agent Framework"
+authors = ["Your Name <you@example.com>"]
+packages = [{ include = "finrobot", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+loguru = "^0.7.2"
+pandas = "^2.2.2"
+pydantic = "^2.7.4"
+pydantic-settings = "^2.3.4"
+# agent-framework-core = { git = "https://github.com/microsoft/agent-framework.git", subdirectory = "python/packages/core" }
+# Using the exact dependency from llmops
+agent-framework-core = { git = "https://github.com/microsoft/agent-framework.git", subdirectory = "python/packages/core" }
+litellm = "^1.60.8"
+pytest-asyncio = "^0.25.3"
+autogenstudio = "^0.4.1.11"
+# FinRobot specific dependencies
+yfinance = "*"
+finnhub-python = "*"
+mplfinance = "*"
+# backtrader = "*" # Optional
+# sec_api = "*" # Optional
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
