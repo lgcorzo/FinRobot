@@ -1,10 +1,10 @@
 """FMP Filings Adapter - SEC report data from Financial Modeling Prep."""
 
 import os
-import requests
-from typing import Annotated
 from functools import wraps
+from typing import Annotated
 
+import requests
 from finrobot.infrastructure.utils import decorate_all_methods
 
 
