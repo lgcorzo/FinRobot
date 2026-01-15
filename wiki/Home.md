@@ -5,6 +5,8 @@ Welcome to the FinRobot wiki. This project is an AI Agent Platform for Financial
 ## Architecture
 
 - [**System Architecture (DDD)**](Architecture.md): Overview of the layers, domains, and project structure.
+- [**Software Requirements Specification (SRS)**](SRS.md): Functional and non-functional requirements with UML diagrams.
+- [**System Architecture Review (SAR)**](SAR.md): Component diagrams, interaction flows, and deployment architecture.
 
 ## Documentation Stories
 
