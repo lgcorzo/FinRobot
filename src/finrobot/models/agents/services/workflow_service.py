@@ -8,9 +8,9 @@ from agent_framework import ChatAgent, ChatMessage
 from agent_framework.openai import OpenAIChatClient
 from finrobot.tools import get_toolkits
 
-from .agent_library import library
-from .prompts import leader_system_message, role_system_message
-from .utils import *
+from ..agent_library import library
+from ..prompts import leader_system_message, role_system_message
+from ..utils import *
 
 
 class FinRobot(ChatAgent):

@@ -66,8 +66,18 @@ class TestJob:
     @patch("finrobot.infrastructure.services.mlflow_service.MlflowService.stop")
     @patch("finrobot.infrastructure.services.alert_service.AlertsService.stop")
     @patch("finrobot.infrastructure.services.logger_service.LoggerService.stop")
+    @patch("finrobot.infrastructure.services.mlflow_service.MlflowService.start")
+    @patch("finrobot.infrastructure.services.alert_service.AlertsService.start")
     @patch("finrobot.infrastructure.services.logger_service.LoggerService.start")
-    def test_job_context_manager_exit(self, mock_logger_start, mock_logger_stop, mock_alerts_stop, mock_mlflow_stop):
+    def test_job_context_manager_exit(
+        self,
+        mock_logger_start,
+        mock_alerts_start,
+        mock_mlflow_start,
+        mock_logger_stop,
+        mock_alerts_stop,
+        mock_mlflow_stop,
+    ):
         """Test that __exit__ stops services."""
         job = ConcreteJob()
         job.__enter__()  # Need to start first for logger to work

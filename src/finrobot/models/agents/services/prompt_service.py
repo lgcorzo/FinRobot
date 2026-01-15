@@ -38,3 +38,5 @@ order_template = dedent(
     If the task cannot be done currently or need assistance from other members, report the reasons or requirements to group leader ended with TERMINATE. 
 """
 )
+ORDER_INSTRUCTION = role_system_message
+ORDER_TEMPLATE = order_template

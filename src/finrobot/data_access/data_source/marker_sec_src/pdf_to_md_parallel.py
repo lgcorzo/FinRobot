@@ -112,7 +112,7 @@ def run_marker_mp(
     files_to_convert = files[start_idx:end_idx]
 
     # Limit files converted if needed
-    if max:
+    if max_files:
         files_to_convert = files_to_convert[:max_files]
 
     metadata = {}
