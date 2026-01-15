@@ -42,6 +42,9 @@ opentelemetry-exporter-otlp = ">=1.30.0"
 html2text = "^2025.4.15"
 langdetect = "^1.0.9"
 praw = "^7.8.1"
+ipython = ">=8.0.0,<9.0.0"
+ratelimit = "^2.2.1"
+pdfkit = "^1.0.0"
 
 [tool.poetry.group.checks.dependencies]
 bandit = "^1.7.9"
