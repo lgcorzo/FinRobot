@@ -402,3 +402,6 @@ year={2024}
 ## cuenta de reddit:
 
 https://www.reddit.com/prefs/apps
+
+
+rm -rf .venv && poetry lock && poetry install --with checks

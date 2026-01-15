@@ -17,5 +17,5 @@ jobs:
           df -h
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: poetry install --with checks,gpu
+      - run: poetry install --with checks
       - run: poetry run invoke checks
