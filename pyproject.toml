@@ -39,6 +39,12 @@ praw = "^7.8.1"
 backtrader = "^1.9.78.123"
 reportlab = "^4.4.9"
 chromadb = "^1.4.1"
+markitdown = "^0.1.4"
+langchain = "^1.2.4"
+sentence-transformers = "^5.2.0"
+langdetect = "^1.0.9"
+html2text = "^2025.4.15"
+tushare = "^1.4.24"
 
 [tool.poetry.group.checks.dependencies]
 bandit = "^1.7.9"
