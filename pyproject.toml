@@ -36,6 +36,9 @@ opentelemetry-exporter-otlp-proto-http = ">=1.30.0"
 opentelemetry-exporter-otlp = ">=1.30.0"
 sec-api = "^1.0.32"
 praw = "^7.8.1"
+backtrader = "^1.9.78.123"
+reportlab = "^4.4.9"
+chromadb = "^1.4.1"
 
 [tool.poetry.group.checks.dependencies]
 bandit = "^1.7.9"
