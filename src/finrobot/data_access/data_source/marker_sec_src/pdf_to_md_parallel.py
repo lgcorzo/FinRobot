@@ -4,24 +4,24 @@ os.environ["IN_STREAMLIT"] = "true"  # Avoid multiprocessing inside surya
 os.environ["PDFTEXT_CPU_WORKERS"] = "1"  # Avoid multiprocessing inside pdftext
 SAVE_DIR = "output/SEC_EDGAR_FILINGS_MD"
 
-import pypdfium2  # Needs to be at the top to avoid warnings
-from typing import Optional
-import torch.multiprocessing as mp
-from tqdm import tqdm
-import math
-
-from marker.convert import convert_single_pdf
-from marker.output import markdown_exists, save_markdown
-from marker.pdf.utils import find_filetype
-from marker.pdf.extract_text import get_length_of_text
-from marker.models import load_all_models
-from marker.settings import settings
-from marker.logger import configure_logging
-import traceback
 import json
+import math
+import traceback
+from typing import Optional
+
+import torch.multiprocessing as mp
+from marker.convert import convert_single_pdf
+from marker.logger import configure_logging
+from marker.models import load_all_models
+from marker.output import markdown_exists, save_markdown
+from marker.pdf.extract_text import get_length_of_text
+from marker.pdf.utils import find_filetype
+from marker.settings import settings
+from tqdm import tqdm
 
 configure_logging()
 SAVE_DIR = "output/SEC_EDGAR_FILINGS_MD"
+
 
 def worker_init(shared_model):
     global model_refs
@@ -39,7 +39,7 @@ def process_single_pdf(args):
     fname = os.path.basename(filepath)
     if markdown_exists(out_folder, fname):
         return
-    if not filepath.endswith("pdf"): 
+    if not filepath.endswith("pdf"):
         return
     try:
         # Skip trying to convert files that don't have a lot of embedded text
@@ -53,10 +53,8 @@ def process_single_pdf(args):
             length = get_length_of_text(filepath)
             if length < min_length:
                 return
-        
-        full_text, images, out_metadata = convert_single_pdf(
-            filepath, model_refs, metadata=metadata
-        )
+
+        full_text, images, out_metadata = convert_single_pdf(filepath, model_refs, metadata=metadata)
         if len(full_text.strip()) > 0:
             save_markdown(out_folder, fname, full_text, images, out_metadata)
         else:
@@ -132,9 +130,7 @@ def run_marker_mp(
         settings.VRAM_PER_TASK = vram_per_task
 
     if settings.CUDA:
-        tasks_per_gpu = (
-            settings.INFERENCE_RAM // settings.VRAM_PER_TASK if settings.CUDA else 0
-        )
+        tasks_per_gpu = settings.INFERENCE_RAM // settings.VRAM_PER_TASK if settings.CUDA else 0
         total_processes = int(min(tasks_per_gpu, total_processes))
     else:
         total_processes = int(total_processes)
@@ -156,14 +152,9 @@ def run_marker_mp(
     print(
         f"Converting {len(files_to_convert)} pdfs in chunk {chunk_idx + 1}/{num_chunks} with {total_processes} processes, and storing in {out_folder}"
     )
-    task_args = [
-        (f, out_folder, metadata.get(os.path.basename(f)), min_length)
-        for f in files_to_convert
-    ]
+    task_args = [(f, out_folder, metadata.get(os.path.basename(f)), min_length) for f in files_to_convert]
 
-    with mp.Pool(
-        processes=total_processes, initializer=worker_init, initargs=(model_lst,)
-    ) as pool:
+    with mp.Pool(processes=total_processes, initializer=worker_init, initargs=(model_lst,)) as pool:
         list(
             tqdm(
                 pool.imap(process_single_pdf, task_args),

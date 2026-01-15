@@ -3,9 +3,10 @@
 import json
 import os
 import re
-import requests
-from typing import List, Optional, Tuple, Union
 import sys
+from typing import List, Optional, Tuple, Union
+
+import requests
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -14,18 +15,17 @@ else:
 
 import webbrowser
 
+from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
+    VALID_FILING_TYPES,
+)
 from ratelimit import limits, sleep_and_retry
-
-from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import VALID_FILING_TYPES
 
 SEC_ARCHIVE_URL: Final[str] = "https://www.sec.gov/Archives/edgar/data"
 SEC_SEARCH_URL: Final[str] = "http://www.sec.gov/cgi-bin/browse-edgar"
 SEC_SUBMISSIONS_URL = "https://data.sec.gov/submissions"
 
 
-def get_filing(
-    accession_number: Union[str, int], cik: Union[str, int], company: str, email: str
-) -> str:
+def get_filing(accession_number: Union[str, int], cik: Union[str, int], company: str, email: str) -> str:
     """Fetches the specified filing from the SEC EDGAR Archives. Conforms to the rate
     limits specified on the SEC website.
     ref: https://www.sec.gov/os/accessing-edgar-data"""
@@ -36,9 +36,7 @@ def get_filing(
 
 @sleep_and_retry
 @limits(calls=10, period=1)
-def _get_filing(
-    session: requests.Session, cik: Union[str, int], accession_number: Union[str, int]
-) -> str:
+def _get_filing(session: requests.Session, cik: Union[str, int], accession_number: Union[str, int]) -> str:
     """Wrapped so filings can be retrieved with an existing session."""
     url = archive_url(cik, accession_number)
     # headers = {
@@ -95,9 +93,7 @@ def get_forms_by_cik(session: requests.Session, cik: Union[str, int]) -> dict:
     response.raise_for_status()
     content = json.loads(response.content)
     recent_forms = content["filings"]["recent"]
-    form_types = {
-        k: v for k, v in zip(recent_forms["accessionNumber"], recent_forms["form"])
-    }
+    form_types = {k: v for k, v in zip(recent_forms["accessionNumber"], recent_forms["form"])}
     return form_types
 
 
@@ -137,9 +133,7 @@ def get_recent_cik_and_acc_by_ticker(
     """
     session = _get_session(company, email)
     cik = get_cik_by_ticker(session, ticker)
-    acc_num, retrieved_form_type = _get_recent_acc_num_by_cik(
-        session, cik, _form_types(form_type)
-    )
+    acc_num, retrieved_form_type = _get_recent_acc_num_by_cik(session, cik, _form_types(form_type))
     return cik, acc_num, retrieved_form_type
 
 
@@ -185,9 +179,7 @@ def get_form_by_cik(
     E.g., if form_type is "10-Q", the retrived form could be a 10-Q or 10-Q/A.
     """
     session = _get_session(company, email)
-    acc_num, _ = _get_recent_acc_num_by_cik(
-        session, cik, _form_types(form_type, allow_amended_filing)
-    )
+    acc_num, _ = _get_recent_acc_num_by_cik(session, cik, _form_types(form_type, allow_amended_filing))
     text = _get_filing(session, cik, acc_num)
     return text
 
@@ -196,9 +188,7 @@ def open_form(cik, acc_num):
     """For a given cik and accession number, opens the index page in default browser for the
     associated SEC form"""
     acc_num = _drop_dashes(acc_num)
-    webbrowser.open_new_tab(
-        f"{SEC_ARCHIVE_URL}/{cik}/{acc_num}/{_add_dashes(acc_num)}-index.html"
-    )
+    webbrowser.open_new_tab(f"{SEC_ARCHIVE_URL}/{cik}/{acc_num}/{_add_dashes(acc_num)}-index.html")
 
 
 def open_form_by_ticker(
@@ -212,9 +202,7 @@ def open_form_by_ticker(
     given form_type."""
     session = _get_session(company, email)
     cik = get_cik_by_ticker(session, ticker)
-    acc_num, _ = _get_recent_acc_num_by_cik(
-        session, cik, _form_types(form_type, allow_amended_filing)
-    )
+    acc_num, _ = _get_recent_acc_num_by_cik(session, cik, _form_types(form_type, allow_amended_filing))
     open_form(cik, acc_num)
 
 

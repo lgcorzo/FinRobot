@@ -1,41 +1,26 @@
-from typing import List
-import asyncio
-import aiohttp
-from collections import defaultdict
-from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sections import (
-    section_string_to_enum,
-    validate_section_names,
-    SECSection,
-)
-from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
-    SECDocument,
-    REPORT_TYPES,
-    VALID_FILING_TYPES,
-)
-
-from finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch import (
-    get_form_by_ticker,
-    open_form_by_ticker,
-    get_filing,
-)
-import concurrent.futures
-import time
-from datetime import date
-from enum import Enum
+import os
 import re
 import signal
+from datetime import date
+from enum import Enum
+from typing import List, Optional
+
 import requests
-from typing import Union, Optional
-from ratelimit import limits, sleep_and_retry
-import os
-from unstructured.staging.base import convert_to_isd
+from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
+    REPORT_TYPES,
+    VALID_FILING_TYPES,
+    SECDocument,
+)
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sections import (
     ALL_SECTIONS,
     SECTIONS_10K,
     SECTIONS_10Q,
     SECTIONS_S1,
+    section_string_to_enum,
+    validate_section_names,
 )
-import json
+from ratelimit import limits, sleep_and_retry
+from unstructured.staging.base import convert_to_isd
 
 DATE_FORMAT_TOKENS = "%Y-%m-%d"
 DEFAULT_BEFORE_DATE = date.today().strftime(DATE_FORMAT_TOKENS)
@@ -112,9 +97,9 @@ class SECExtractor:
         """
         details = filing_details.split("/")[-1]
         if self.filing_type == "10-K":
-            matches = re.findall("20\d{2}", details)
+            matches = re.findall(r"20\d{2}", details)
         elif self.filing_type == "10-Q":
-            matches = re.findall("20\d{4}", details)
+            matches = re.findall(r"20\d{4}", details)
 
         if matches:
             return matches[-1]  # Return the first match
@@ -193,9 +178,7 @@ class SECExtractor:
             else:
                 m_section = [enum.name for enum in SECTIONS_S1]
         for section in m_section:
-            results[section] = sec_document.get_section_narrative(
-                section_string_to_enum[section]
-            )
+            results[section] = sec_document.get_section_narrative(section_string_to_enum[section])
 
         for i, section_regex in enumerate(m_section_regex):
             regex_num = get_regex_enum(section_regex)
@@ -203,8 +186,7 @@ class SECExtractor:
                 section_elements = sec_document.get_section_narrative(regex_num)
                 results[f"REGEX_{i}"] = section_elements
         return {
-            section: convert_to_isd(section_narrative)
-            for section, section_narrative in results.items()
+            section: convert_to_isd(section_narrative) for section, section_narrative in results.items()
         }, sec_document.filing_type
 
     @sleep_and_retry
@@ -221,9 +203,7 @@ class SECExtractor:
         response.raise_for_status()
         return response.text
 
-    def _get_session(
-        self, company: Optional[str] = None, email: Optional[str] = None
-    ) -> requests.Session:
+    def _get_session(self, company: Optional[str] = None, email: Optional[str] = None) -> requests.Session:
         """Creates a requests sessions with the appropriate headers set. If these headers are not
         set, SEC will reject your request.
         ref: https://www.sec.gov/os/accessing-edgar-data"""

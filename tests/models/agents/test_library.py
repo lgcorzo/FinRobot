@@ -1,6 +1,5 @@
 """Tests for agent library configuration."""
 
-import pytest
 from finrobot.models.agents.agent_library import library
 
 

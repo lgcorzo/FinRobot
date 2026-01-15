@@ -1,5 +1,8 @@
-from finrobot.data_access.data_source.earnings_calls_src.earningsData import get_earnings_transcript
 import re
+
+from finrobot.data_access.data_source.earnings_calls_src.earningsData import (
+    get_earnings_transcript,
+)
 from langchain.schema import Document
 from tenacity import RetryError
 
@@ -59,7 +62,7 @@ def get_earnings_all_docs(ticker: str, year: int):
         earnings_call_quarter_vals.append("Q1")
         earnings_docs.extend(docs)
     except RetryError:
-        print(f"Don't have the data for Q1")
+        print("Don't have the data for Q1")
         speakers_list_1 = []
 
     print("Earnings Call Q2")
@@ -68,7 +71,7 @@ def get_earnings_all_docs(ticker: str, year: int):
         earnings_call_quarter_vals.append("Q2")
         earnings_docs.extend(docs)
     except RetryError:
-        print(f"Don't have the data for Q2")
+        print("Don't have the data for Q2")
         speakers_list_2 = []
     print("Earnings Call Q3")
     try:
@@ -76,7 +79,7 @@ def get_earnings_all_docs(ticker: str, year: int):
         earnings_call_quarter_vals.append("Q3")
         earnings_docs.extend(docs)
     except RetryError:
-        print(f"Don't have the data for Q3")
+        print("Don't have the data for Q3")
         speakers_list_3 = []
     print("Earnings Call Q4")
     try:
@@ -84,7 +87,7 @@ def get_earnings_all_docs(ticker: str, year: int):
         earnings_call_quarter_vals.append("Q4")
         earnings_docs.extend(docs)
     except RetryError:
-        print(f"Don't have the data for Q4")
+        print("Don't have the data for Q4")
         speakers_list_4 = []
     return (
         earnings_docs,

@@ -1,7 +1,8 @@
 """Integration tests for agent workflow."""
 
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import MagicMock, patch
 from finrobot.models.agents.workflow import SingleAssistant
 from finrobot.settings import FinRobotSettings
 

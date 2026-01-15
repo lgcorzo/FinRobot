@@ -1,8 +1,7 @@
 """Tests for toolkits."""
 
-import pytest
 import pandas as pd
-from finrobot.tools import stringify_output, get_toolkits, get_toolkits_from_cls
+from finrobot.tools import get_toolkits, get_toolkits_from_cls, stringify_output
 
 
 class MockClass:

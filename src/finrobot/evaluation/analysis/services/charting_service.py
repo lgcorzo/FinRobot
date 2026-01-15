@@ -1,31 +1,21 @@
 import os
+from datetime import datetime, timedelta
+from typing import Annotated, List, Tuple
+
 import mplfinance as mpf
 import pandas as pd
-
-from matplotlib import pyplot as plt
-from typing import Annotated, List, Tuple
-from pandas import DateOffset
-from datetime import datetime, timedelta
-
 from finrobot.data_access.data_source.yfinance_utils import YFinanceUtils
+from matplotlib import pyplot as plt
+from pandas import DateOffset
 
 
 class MplFinanceUtils:
-
     def plot_stock_price_chart(
-        ticker_symbol: Annotated[
-            str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"
-        ],
-        start_date: Annotated[
-            str, "Start date of the historical data in 'YYYY-MM-DD' format"
-        ],
-        end_date: Annotated[
-            str, "End date of the historical data in 'YYYY-MM-DD' format"
-        ],
+        ticker_symbol: Annotated[str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"],
+        start_date: Annotated[str, "Start date of the historical data in 'YYYY-MM-DD' format"],
+        end_date: Annotated[str, "End date of the historical data in 'YYYY-MM-DD' format"],
         save_path: Annotated[str, "File path where the plot should be saved"],
-        verbose: Annotated[
-            str, "Whether to print stock data to console. Default to False."
-        ] = False,
+        verbose: Annotated[str, "Whether to print stock data to console. Default to False."] = False,
         type: Annotated[
             str,
             "Type of the plot, should be one of 'candle','ohlc','line','renko','pnf','hollow_and_filled'. Default to 'candle'",
@@ -38,9 +28,7 @@ class MplFinanceUtils:
             int | List[int] | Tuple[int, ...] | None,
             "Moving average window(s) to plot on the chart. Default to None.",
         ] = None,
-        show_nontrading: Annotated[
-            bool, "Whether to show non-trading days on the chart. Default to False."
-        ] = False,
+        show_nontrading: Annotated[bool, "Whether to show non-trading days on the chart. Default to False."] = False,
     ) -> str:
         """
         Plot a stock price chart using mplfinance for the specified stock and time period,
@@ -72,11 +60,8 @@ class MplFinanceUtils:
 
 
 class ReportChartUtils:
-
     def get_share_performance(
-        ticker_symbol: Annotated[
-            str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"
-        ],
+        ticker_symbol: Annotated[str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"],
         filing_date: Annotated[str | datetime, "filing date in 'YYYY-MM-DD' format"],
         save_path: Annotated[str, "File path where the plot should be saved"],
     ) -> str:
@@ -96,9 +81,7 @@ class ReportChartUtils:
         info = YFinanceUtils.get_stock_info(ticker_symbol)
 
         # 计算变化率
-        company_change = (
-            (target_close - target_close.iloc[0]) / target_close.iloc[0] * 100
-        )
+        company_change = (target_close - target_close.iloc[0]) / target_close.iloc[0] * 100
         sp500_change = (sp500_close - sp500_close.iloc[0]) / sp500_close.iloc[0] * 100
 
         # 计算额外的日期点
@@ -116,9 +99,7 @@ class ReportChartUtils:
             label=f'{info["shortName"]} Change %',
             color="blue",
         )
-        plt.plot(
-            sp500_change.index, sp500_change, label="S&P 500 Change %", color="red"
-        )
+        plt.plot(sp500_change.index, sp500_change, label="S&P 500 Change %", color="red")
 
         # 设置标题和标签
         plt.title(f'{info["shortName"]} vs S&P 500 - Change % Over the Past Year')
@@ -140,19 +121,13 @@ class ReportChartUtils:
         plt.grid(True)
         plt.tight_layout()
         # plt.show()
-        plot_path = (
-            f"{save_path}/stock_performance.png"
-            if os.path.isdir(save_path)
-            else save_path
-        )
+        plot_path = f"{save_path}/stock_performance.png" if os.path.isdir(save_path) else save_path
         plt.savefig(plot_path)
         plt.close()
         return f"last year stock performance chart saved to <img {plot_path}>"
 
     def get_pe_eps_performance(
-        ticker_symbol: Annotated[
-            str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"
-        ],
+        ticker_symbol: Annotated[str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"],
         filing_date: Annotated[str | datetime, "filing date in 'YYYY-MM-DD' format"],
         years: Annotated[int, "number of years to search from, default to 4"] = 4,
         save_path: Annotated[str, "File path where the plot should be saved"] = None,
@@ -219,9 +194,7 @@ class ReportChartUtils:
 
         plt.tight_layout()
         # plt.show()
-        plot_path = (
-            f"{save_path}/pe_performance.png" if os.path.isdir(save_path) else save_path
-        )
+        plot_path = f"{save_path}/pe_performance.png" if os.path.isdir(save_path) else save_path
         plt.savefig(plot_path)
         plt.close()
         return f"pe performance chart saved to <img {plot_path}>"

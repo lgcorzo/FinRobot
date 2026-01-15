@@ -1,15 +1,12 @@
 """YFinance Adapter - Market Data Repository Implementation."""
 
-import yfinance as yf
-from typing import Annotated, Callable, Any, Optional
-from pandas import DataFrame
 from functools import wraps
-from datetime import datetime
+from typing import Annotated, Any, Callable, Optional
 
+import yfinance as yf
+from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
-from finrobot.infrastructure.io.files import save_output, SavePathType
-from .entities import MarketData, CompanyInfo, FinancialStatement
-from .repositories import MarketDataRepository
+from pandas import DataFrame
 
 
 def init_ticker(func: Callable) -> Callable:

@@ -19,35 +19,34 @@ import importlib.util
 
 # Domain exports (preferred)
 from .domains import (
+    CompanyInfo,
+    FilingsRepository,
+    FinancialStatement,
+    FinnHubMarketAdapter,
+    FinnHubNewsAdapter,
+    FMPFilingsAdapter,
     # Market Data
     MarketData,
-    CompanyInfo,
-    FinancialStatement,
     MarketDataRepository,
-    YFinanceAdapter,
-    FinnHubMarketAdapter,
-    # Filings
-    SECFiling,
-    FilingsRepository,
-    SECAdapter,
-    FMPFilingsAdapter,
     # News
     NewsArticle,
     NewsRepository,
-    FinnHubNewsAdapter,
+    RedditAdapter,
+    SECAdapter,
+    # Filings
+    SECFiling,
     # Social
     SocialPost,
     SocialRepository,
-    RedditAdapter,
+    YFinanceAdapter,
 )
 
 # Backward compatibility aliases (deprecated)
 from .finnhub_utils import FinnHubUtils
-from .yfinance_utils import YFinanceUtils
 from .fmp_utils import FMPUtils
-from .sec_utils import SECUtils
 from .reddit_utils import RedditUtils
-
+from .sec_utils import SECUtils
+from .yfinance_utils import YFinanceUtils
 
 __all__ = [
     # New DDD exports

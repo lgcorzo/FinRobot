@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import pydantic as pdt
-import pydantic_settings as pdts
 from typing import Optional
 
-from finrobot.infrastructure.io.osvariables import Env
+import pydantic as pdt
+import pydantic_settings as pdts
+
 from finrobot.application import jobs
+from finrobot.infrastructure.io.osvariables import Env
 
 # %% SETTINGS
 

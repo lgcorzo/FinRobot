@@ -1,7 +1,7 @@
 from typing import Annotated
 
-class TextUtils:
 
+class TextUtils:
     def check_text_length(
         text: Annotated[str, "text to check"],
         min_length: Annotated[int, "minimum length of the text, default to 0"] = 0,

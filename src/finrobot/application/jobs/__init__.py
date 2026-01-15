@@ -1,7 +1,7 @@
 """Application Jobs."""
 
-from .base import Job
 from .analysis import FinancialAnalysisJob
+from .base import Job
 
 # %% TYPES
 

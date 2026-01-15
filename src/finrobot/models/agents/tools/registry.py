@@ -1,8 +1,8 @@
+from functools import wraps
+from typing import Callable, List
+
 from finrobot.data_access.data_source import *
 from finrobot.functional.coding import CodingUtils
-
-from typing import List, Callable
-from functools import wraps
 from pandas import DataFrame
 
 

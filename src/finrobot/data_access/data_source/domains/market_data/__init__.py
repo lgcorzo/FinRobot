@@ -1,9 +1,9 @@
 """Market Data Domain - Stock prices, company info, financial statements."""
 
-from .entities import MarketData, CompanyInfo, FinancialStatement
+from .entities import CompanyInfo, FinancialStatement, MarketData
+from .finnhub_adapter import FinnHubMarketAdapter
 from .repositories import MarketDataRepository
 from .yfinance_adapter import YFinanceAdapter
-from .finnhub_adapter import FinnHubMarketAdapter
 
 __all__ = [
     "MarketData",

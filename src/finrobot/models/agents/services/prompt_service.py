@@ -1,6 +1,5 @@
 from textwrap import dedent
 
-
 leader_system_message = dedent(
     """
     You are the leader of the following group members:

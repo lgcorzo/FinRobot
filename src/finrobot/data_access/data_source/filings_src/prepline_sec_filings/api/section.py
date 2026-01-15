@@ -3,54 +3,47 @@
 # DO NOT MODIFY DIRECTLY
 #####################################################################
 
-import io
-import os
+import csv
 import gzip
+import io
+import json
 import mimetypes
-from typing import List, Union
+import os
+import re
+import secrets
+import signal
+from base64 import b64encode
+from enum import Enum
+from typing import Dict, List, Mapping, Optional, Union
+
 from fastapi import (
-    status,
+    APIRouter,
     FastAPI,
     File,
     Form,
+    HTTPException,
     Request,
     UploadFile,
-    APIRouter,
-    HTTPException,
+    status,
 )
-from fastapi.responses import PlainTextResponse
-import json
 from fastapi.responses import StreamingResponse
-from starlette.datastructures import Headers
-from starlette.types import Send
-from base64 import b64encode
-from typing import Optional, Mapping, Iterator, Tuple
-import secrets
-from prepline_sec_filings.sections import (
-    section_string_to_enum,
-    validate_section_names,
-    SECSection,
-)
 from prepline_sec_filings.sec_document import (
-    SECDocument,
     REPORT_TYPES,
     VALID_FILING_TYPES,
+    SECDocument,
 )
-from enum import Enum
-import re
-import signal
-from unstructured.staging.base import convert_to_isd
 from prepline_sec_filings.sections import (
     ALL_SECTIONS,
     SECTIONS_10K,
     SECTIONS_10Q,
     SECTIONS_S1,
+    section_string_to_enum,
+    validate_section_names,
 )
-import csv
-from typing import Dict
-from unstructured.documents.elements import Text, NarrativeText, Title, ListItem
+from starlette.datastructures import Headers
+from starlette.types import Send
+from unstructured.staging.base import convert_to_isd
 from unstructured.staging.label_studio import stage_for_label_studio
-
 
 app = FastAPI()
 router = APIRouter()
@@ -159,9 +152,7 @@ def pipeline_api(
         else:
             m_section = [enum.name for enum in SECTIONS_S1]
     for section in m_section:
-        results[section] = sec_document.get_section_narrative(
-            section_string_to_enum[section]
-        )
+        results[section] = sec_document.get_section_narrative(section_string_to_enum[section])
     for i, section_regex in enumerate(m_section_regex):
         regex_enum = get_regex_enum(section_regex)
         with timeout(seconds=5):
@@ -170,23 +161,15 @@ def pipeline_api(
     if response_type == "application/json":
         if response_schema == LABELSTUDIO:
             return {
-                section: stage_for_label_studio(section_narrative)
-                for section, section_narrative in results.items()
+                section: stage_for_label_studio(section_narrative) for section, section_narrative in results.items()
             }
         elif response_schema == ISD:
-            return {
-                section: convert_to_isd(section_narrative)
-                for section, section_narrative in results.items()
-            }
+            return {section: convert_to_isd(section_narrative) for section, section_narrative in results.items()}
         else:
-            raise ValueError(
-                f"output_schema '{response_schema}' is not supported for {response_type}"
-            )
+            raise ValueError(f"output_schema '{response_schema}' is not supported for {response_type}")
     elif response_type == "text/csv":
         if response_schema != ISD:
-            raise ValueError(
-                f"output_schema '{response_schema}' is not supported for {response_type}"
-            )
+            raise ValueError(f"output_schema '{response_schema}' is not supported for {response_type}")
         return convert_to_isd_csv(results)
     else:
         raise ValueError(f"response_type '{response_type}' is not supported")
@@ -216,10 +199,7 @@ def get_validated_mimetype(file):
         if content_type not in allowed_mimetypes:
             raise HTTPException(
                 status_code=400,
-                detail=(
-                    f"Unable to process {file.filename}: "
-                    f"File type {content_type} is not supported."
-                ),
+                detail=(f"Unable to process {file.filename}: " f"File type {content_type} is not supported."),
             )
 
     return content_type
@@ -337,10 +317,7 @@ def pipeline_1(
                 "application/json",
             ]:
                 raise HTTPException(
-                    detail=(
-                        f"Conflict in media type {content_type}"
-                        ' with response type "multipart/mixed".\n'
-                    ),
+                    detail=(f"Conflict in media type {content_type}" ' with response type "multipart/mixed".\n'),
                     status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 )
 
@@ -360,10 +337,7 @@ def pipeline_1(
 
                 if is_expected_response_type(media_type, type(response)):
                     raise HTTPException(
-                        detail=(
-                            f"Conflict in media type {media_type}"
-                            f" with response type {type(response)}.\n"
-                        ),
+                        detail=(f"Conflict in media type {media_type}" f" with response type {type(response)}.\n"),
                         status_code=status.HTTP_406_NOT_ACCEPTABLE,
                     )
 
@@ -385,9 +359,7 @@ def pipeline_1(
                     )
 
         if content_type == "multipart/mixed":
-            return MultipartMixedResponse(
-                response_generator(is_multipart=True), content_type=media_type
-            )
+            return MultipartMixedResponse(response_generator(is_multipart=True), content_type=media_type)
         else:
             return (
                 list(response_generator(is_multipart=False))[0]

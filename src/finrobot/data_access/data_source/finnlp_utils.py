@@ -1,21 +1,19 @@
 import os
 from typing import Annotated
-from pandas import DataFrame
 
 from finnlp.data_sources.news.cnbc_streaming import CNBC_Streaming
-from finnlp.data_sources.news.yicai_streaming import Yicai_Streaming
-from finnlp.data_sources.news.investorplace_streaming import InvestorPlace_Streaming
-# from finnlp.data_sources.news.eastmoney_streaming import Eastmoney_Streaming
-
-from finnlp.data_sources.social_media.xueqiu_streaming import Xueqiu_Streaming
-from finnlp.data_sources.social_media.stocktwits_streaming import Stocktwits_Streaming
-# from finnlp.data_sources.social_media.reddit_streaming import Reddit_Streaming
-
-from finnlp.data_sources.news.sina_finance_date_range import Sina_Finance_Date_Range
 from finnlp.data_sources.news.finnhub_date_range import Finnhub_Date_Range
+from finnlp.data_sources.news.investorplace_streaming import InvestorPlace_Streaming
 
-from finrobot.infrastructure.io.files import save_output, SavePathType
+# from finnlp.data_sources.social_media.reddit_streaming import Reddit_Streaming
+from finnlp.data_sources.news.sina_finance_date_range import Sina_Finance_Date_Range
+from finnlp.data_sources.news.yicai_streaming import Yicai_Streaming
+from finnlp.data_sources.social_media.stocktwits_streaming import Stocktwits_Streaming
 
+# from finnlp.data_sources.news.eastmoney_streaming import Eastmoney_Streaming
+from finnlp.data_sources.social_media.xueqiu_streaming import Xueqiu_Streaming
+from finrobot.infrastructure.io.files import SavePathType, save_output
+from pandas import DataFrame
 
 US_Proxy = {
     "use_proxy": "us_free",
@@ -68,10 +66,25 @@ class FinNLPUtils:
         selected_columns: Annotated[
             list[str],
             "List of column names of news to return, should be chosen from 'description', 'cn:lastPubDate', 'dateModified', 'cn:dateline', 'cn:branding', 'section', 'cn:type', 'author', 'cn:source', 'cn:subtype', 'duration', 'summary', 'expires', 'cn:sectionSubType', 'cn:contentClassification', 'pubdateunix', 'url', 'datePublished', 'cn:promoImage', 'cn:title', 'cn:keyword', 'cn:liveURL', 'brand', 'hint', 'hint_detail'. Default to ['author', 'datePublished', 'description' ,'section', 'cn:title', 'summary']",
-        ] = ["author", "datePublished", "description", "section", "cn:title", "summary"],
+        ] = [
+            "author",
+            "datePublished",
+            "description",
+            "section",
+            "cn:title",
+            "summary",
+        ],
         save_path: SavePathType = None,
     ) -> DataFrame:
-        return streaming_download(CNBC_Streaming, {}, "CNBC News", keyword, rounds, selected_columns, save_path)
+        return streaming_download(
+            CNBC_Streaming,
+            {},
+            "CNBC News",
+            keyword,
+            rounds,
+            selected_columns,
+            save_path,
+        )
 
     def yicai_news_download(
         keyword: Annotated[str, "Keyword to search in news stream"],
@@ -82,7 +95,15 @@ class FinNLPUtils:
         ] = ["author", "creationDate", "desc", "source", "title"],
         save_path: SavePathType = None,
     ) -> DataFrame:
-        return streaming_download(Yicai_Streaming, {}, "Yicai News", keyword, rounds, selected_columns, save_path)
+        return streaming_download(
+            Yicai_Streaming,
+            {},
+            "Yicai News",
+            keyword,
+            rounds,
+            selected_columns,
+            save_path,
+        )
 
     def investor_place_news_download(
         keyword: Annotated[str, "Keyword to search in news stream"],
@@ -94,7 +115,13 @@ class FinNLPUtils:
         save_path: SavePathType = None,
     ) -> DataFrame:
         return streaming_download(
-            InvestorPlace_Streaming, {}, "Investor Place News", keyword, rounds, selected_columns, save_path
+            InvestorPlace_Streaming,
+            {},
+            "Investor Place News",
+            keyword,
+            rounds,
+            selected_columns,
+            save_path,
         )
 
     # def eastmoney_news_download(
@@ -130,7 +157,14 @@ class FinNLPUtils:
         save_path: SavePathType = None,
     ) -> DataFrame:
         return date_range_download(
-            Sina_Finance_Date_Range, {}, "Sina Finance News", start_date, end_date, None, selected_columns, save_path
+            Sina_Finance_Date_Range,
+            {},
+            "Sina Finance News",
+            start_date,
+            end_date,
+            None,
+            selected_columns,
+            save_path,
         )
 
     def finnhub_news_download(
@@ -181,7 +215,13 @@ class FinNLPUtils:
         save_path: SavePathType = None,
     ) -> DataFrame:
         return streaming_download(
-            Xueqiu_Streaming, {}, "Xueqiu Social Media", stock, rounds, selected_columns, save_path
+            Xueqiu_Streaming,
+            {},
+            "Xueqiu Social Media",
+            stock,
+            rounds,
+            selected_columns,
+            save_path,
         )
 
     def stocktwits_social_media_download(
@@ -200,7 +240,13 @@ class FinNLPUtils:
         save_path: SavePathType = None,
     ) -> DataFrame:
         return streaming_download(
-            Stocktwits_Streaming, {}, "Stocktwits Social Media", stock, rounds, selected_columns, save_path
+            Stocktwits_Streaming,
+            {},
+            "Stocktwits Social Media",
+            stock,
+            rounds,
+            selected_columns,
+            save_path,
         )
 
     # def reddit_social_media_download(

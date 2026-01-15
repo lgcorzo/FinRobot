@@ -1,7 +1,7 @@
 """Module for defining/enumerating the common sections from SEC forms"""
 
-from enum import Enum
 import re
+from enum import Enum
 from typing import List
 
 
@@ -20,25 +20,18 @@ class SECSection(Enum):
     COMPENSATION = re.compile(r"compensation")
     RELATED_PARTY_TRANSACTIONS = re.compile(r"(?:relationships|related).*transactions")
     PRINCIPAL_STOCKHOLDERS = re.compile(
-        r"(?:principal.*(?:stockholder|shareholder)s?)|(?:(security|stock|share) "
-        r"ownership .*certain)"
+        r"(?:principal.*(?:stockholder|shareholder)s?)|(?:(security|stock|share) " r"ownership .*certain)"
     )
-    DESCRIPTION_OF_STOCK = re.compile(
-        r"^description of (?:capital stock|share capital|securities)"
-    )
+    DESCRIPTION_OF_STOCK = re.compile(r"^description of (?:capital stock|share capital|securities)")
     DESCRIPTION_OF_DEBT = re.compile(r"^description of .*debt")
     FUTURE_SALE = re.compile(r"(?:shares|stock) eligible for future sale")
-    US_TAX = re.compile(
-        r"(?:us|u\.s\.|united states|material federal).* tax (?:consideration|consequence)"
-    )
+    US_TAX = re.compile(r"(?:us|u\.s\.|united states|material federal).* tax (?:consideration|consequence)")
     UNDERWRITING = re.compile(r"underwrit")
     LEGAL_MATTERS = re.compile(r"legal matters")
     EXPERTS = re.compile(r"^experts$")
     MORE_INFORMATION = re.compile(r"(?:additional|more) information")
     FINANCIAL_STATEMENTS = r"financial statements"
-    MARKET_RISK_DISCLOSURES = (
-        r"(?:quantitative|qualitative) disclosures? about market risk"
-    )
+    MARKET_RISK_DISCLOSURES = r"(?:quantitative|qualitative) disclosures? about market risk"
     CONTROLS_AND_PROCEDURES = r"controls and procedures"
     LEGAL_PROCEEDINGS = r"legal proceedings"
     DEFAULTS = r"defaults (?:up)?on .*securities"
@@ -46,9 +39,7 @@ class SECSection(Enum):
     OTHER_INFORMATION = r"other information"
     UNRESOLVED_STAFF_COMMENTS = r"unresolved staff comments"
     PROPERTIES = r"^properties$"
-    MARKET_FOR_REGISTRANT_COMMON_EQUITY = (
-        r"market for(?: the)? (?:registrant|company)(?:['\u2019]s)? common equity"
-    )
+    MARKET_FOR_REGISTRANT_COMMON_EQUITY = r"market for(?: the)? (?:registrant|company)(?:['\u2019]s)? common equity"
     ACCOUNTING_DISAGREEMENTS = r"disagreements with accountants"
     FOREIGN_JURISDICTIONS = r"diclosure .*foreign jurisdictions .*inspection"
     EXECUTIVE_OFFICERS = r"executive officers"
@@ -146,9 +137,7 @@ def validate_section_names(section_names: List[str]):
     elif len(section_names) > 1 and ALL_SECTIONS in section_names:
         raise ValueError(f"{ALL_SECTIONS} may not be specified with other sections")
 
-    invalid_names = [
-        name for name in section_names if name not in section_string_to_enum
-    ]
+    invalid_names = [name for name in section_names if name not in section_string_to_enum]
     if invalid_names:
         raise ValueError(f"The following section names are not valid: {invalid_names}")
     return None

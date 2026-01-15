@@ -1,16 +1,15 @@
 """FinnHub Adapter - Market Data Repository Implementation."""
 
-import os
-import finnhub
-import pandas as pd
 import json
-from typing import Annotated
+import os
 from collections import defaultdict
 from functools import wraps
-from datetime import datetime
+from typing import Annotated
 
+import finnhub
+import pandas as pd
+from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
-from finrobot.infrastructure.io.files import save_output, SavePathType
 
 
 def init_finnhub_client(func):

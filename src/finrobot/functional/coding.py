@@ -1,12 +1,12 @@
 import os
-from typing_extensions import Annotated
+
 from IPython import get_ipython
+from typing_extensions import Annotated
 
 default_path = "./"
 
 
 class IPythonUtils:
-
     def exec_python(cell: Annotated[str, "Valid Python cell to execute."]) -> str:
         """
         run cell in ipython and return the execution result.
@@ -21,7 +21,7 @@ class IPythonUtils:
         return log
 
     def display_image(
-        image_path: Annotated[str, "Path to image file to display."]
+        image_path: Annotated[str, "Path to image file to display."],
     ) -> str:
         """
         Display image in Jupyter Notebook.
@@ -36,7 +36,6 @@ class IPythonUtils:
 
 
 class CodingUtils:  # Borrowed from https://microsoft.github.io/autogen/docs/notebooks/agentchat_function_call_code_writing
-
     def list_dir(directory: Annotated[str, "Directory to check."]) -> str:
         """
         List files in choosen directory.

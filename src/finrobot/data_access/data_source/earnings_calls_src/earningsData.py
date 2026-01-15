@@ -1,9 +1,10 @@
-from tenacity import retry, stop_after_attempt, wait_random_exponential
-import requests
 import json
-from datetime import datetime
 import re
+from datetime import datetime
 from typing import List
+
+import requests
+from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 
 def correct_date(yr, dt):

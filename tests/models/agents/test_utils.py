@@ -1,7 +1,7 @@
 """Tests for agent utils."""
 
-import pytest
 from unittest.mock import MagicMock
+
 from finrobot.models.agents.utils import instruction_trigger, order_trigger
 
 

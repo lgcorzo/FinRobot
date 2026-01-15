@@ -1,6 +1,6 @@
 """Reporting Domain - Report generation services."""
 
-from .entities import Report, Section, PDFDocument
+from .entities import PDFDocument, Report, Section
 
 __all__ = [
     "Report",

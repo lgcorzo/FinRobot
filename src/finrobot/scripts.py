@@ -1,7 +1,7 @@
 """Entry point for FinRobot CLI."""
 
 import argparse
-import sys
+
 from finrobot.settings import FinRobotSettings
 
 

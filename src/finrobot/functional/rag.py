@@ -1,6 +1,6 @@
-from autogen.agentchat.contrib.retrieve_user_proxy_agent import RetrieveUserProxyAgent
 from typing import Annotated
 
+from autogen.agentchat.contrib.retrieve_user_proxy_agent import RetrieveUserProxyAgent
 
 PROMPT_RAG_FUNC = """Below is the context retrieved from the required file based on your query.
 If you can't answer the question with or without the current context, you should try using a more refined search query according to your requirements, or ask for more contexts.
@@ -12,12 +12,8 @@ Retrieved context is: {input_context}
 
 
 def get_rag_function(retrieve_config, description=""):
-
     def termination_msg(x):
-        return (
-            isinstance(x, dict)
-            and "TERMINATE" == str(x.get("content", ""))[-9:].upper()
-        )
+        return isinstance(x, dict) and "TERMINATE" == str(x.get("content", ""))[-9:].upper()
 
     if "customized_prompt" not in retrieve_config:
         retrieve_config["customized_prompt"] = PROMPT_RAG_FUNC
@@ -41,20 +37,11 @@ def get_rag_function(retrieve_config, description=""):
         ],
         n_results: Annotated[int, "Number of results to retrieve, default to 3"] = 3,
     ) -> str:
-
         rag_assitant.n_results = n_results  # Set the number of results to be retrieved.
         # Check if we need to update the context.
-        update_context_case1, update_context_case2 = rag_assitant._check_update_context(
-            message
-        )
-        if (
-            update_context_case1 or update_context_case2
-        ) and rag_assitant.update_context:
-            rag_assitant.problem = (
-                message
-                if not hasattr(rag_assitant, "problem")
-                else rag_assitant.problem
-            )
+        update_context_case1, update_context_case2 = rag_assitant._check_update_context(message)
+        if (update_context_case1 or update_context_case2) and rag_assitant.update_context:
+            rag_assitant.problem = message if not hasattr(rag_assitant, "problem") else rag_assitant.problem
             _, ret_msg = rag_assitant._generate_retrieve_user_reply(message)
         else:
             _context = {"problem": message, "n_results": n_results}

@@ -1,6 +1,7 @@
+from textwrap import dedent
+
 from finrobot.data_access.data_source import *
 from finrobot.functional import *
-from textwrap import dedent
 
 library = [
     {
@@ -48,7 +49,7 @@ library = [
     {
         "name": "Expert_Investor",
         "profile": dedent(
-            f"""
+            """
             Role: Expert Investor
             Department: Finance
             Primary Responsibility: Generation of Customized Financial Analysis Reports

@@ -1,6 +1,5 @@
 """Test settings configuration."""
 
-import pytest
 from finrobot.settings import FinRobotSettings
 
 

@@ -1,6 +1,7 @@
 """Schemas for FinRobot data validation."""
 
 import typing as T
+
 import pandas as pd
 import pandera as pa
 import pandera.typing as papd

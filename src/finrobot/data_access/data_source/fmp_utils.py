@@ -1,13 +1,14 @@
 import os
-import requests
-import numpy as np
-import pandas as pd
-from datetime import datetime, timedelta
-from finrobot.infrastructure.utils import decorate_all_methods, get_next_weekday
+from datetime import datetime
 
 # from finrobot.infrastructure.utils import decorate_all_methods, get_next_weekday
 from functools import wraps
 from typing import Annotated, List
+
+import numpy as np
+import pandas as pd
+import requests
+from finrobot.infrastructure.utils import decorate_all_methods, get_next_weekday
 
 
 def init_fmp_api(func):
@@ -183,7 +184,8 @@ class FMPUtils:
                     ),
                     "Gross Revenue": round(income_data[year_offset]["grossProfit"] / 1e6),
                     "Gross Margin": round(
-                        (income_data[year_offset]["grossProfit"] / income_data[year_offset]["revenue"]), 2
+                        (income_data[year_offset]["grossProfit"] / income_data[year_offset]["revenue"]),
+                        2,
                     ),
                     "EBITDA": round(income_data[year_offset]["ebitda"] / 1e6),
                     "EBITDA Margin": round((income_data[year_offset]["ebitdaratio"]), 2),
@@ -258,7 +260,8 @@ class FMPUtils:
                             else None
                         ),
                         "Gross Margin": round(
-                            (income_data[year_offset]["grossProfit"] / income_data[year_offset]["revenue"]), 2
+                            (income_data[year_offset]["grossProfit"] / income_data[year_offset]["revenue"]),
+                            2,
                         ),
                         "EBITDA Margin": round((income_data[year_offset]["ebitdaratio"]), 2),
                         "FCF Conversion": round(
@@ -272,7 +275,10 @@ class FMPUtils:
                             2,
                         ),
                         "ROIC": "{}%".format(round((key_metrics_data[year_offset]["roic"]) * 100, 1)),
-                        "EV/EBITDA": round((key_metrics_data[year_offset]["enterpriseValueOverEBITDA"]), 2),
+                        "EV/EBITDA": round(
+                            (key_metrics_data[year_offset]["enterpriseValueOverEBITDA"]),
+                            2,
+                        ),
                     }
 
             df = pd.DataFrame.from_dict(metrics, orient="index")

@@ -1,12 +1,12 @@
 """Tests for general utilities."""
 
-import os
-import pytest
 import json
-import pandas as pd
+import os
 from datetime import datetime
+
+import pandas as pd
+from finrobot.infrastructure.io.files import register_keys_from_json, save_output
 from finrobot.infrastructure.utils import get_current_date, get_next_weekday
-from finrobot.infrastructure.io.files import save_output, register_keys_from_json
 
 
 def test_save_output(tmp_path):

@@ -1,10 +1,8 @@
 """Market Data Domain Repository Interface."""
 
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, Any
-import pandas as pd
 
-from .entities import MarketData, CompanyInfo, FinancialStatement
+from .entities import CompanyInfo, FinancialStatement, MarketData
 
 
 class MarketDataRepository(ABC):

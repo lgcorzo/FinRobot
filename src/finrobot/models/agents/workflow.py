@@ -1,18 +1,16 @@
-from .agent_library import library
-from typing import Any, Callable, Dict, List, Optional, Annotated
 import asyncio
 import os
-from collections import defaultdict
-from functools import partial
 from abc import ABC, abstractmethod
-from finrobot.tools import get_toolkits
-from finrobot.functional.rag import get_rag_function
-from .utils import *
-from .prompts import leader_system_message, role_system_message
+from typing import Any, Callable, Dict, List
 
 # agent_framework imports
 from agent_framework import ChatAgent, ChatMessage
 from agent_framework.openai import OpenAIChatClient
+from finrobot.tools import get_toolkits
+
+from .agent_library import library
+from .prompts import leader_system_message, role_system_message
+from .utils import *
 
 
 class FinRobot(ChatAgent):
@@ -33,8 +31,8 @@ class FinRobot(ChatAgent):
 
         agent_config = self._preprocess_config(agent_config)
 
-        assert agent_config, f"agent_config is required."
-        assert agent_config.get("name", ""), f"name needs to be in config."
+        assert agent_config, "agent_config is required."
+        assert agent_config.get("name", ""), "name needs to be in config."
 
         name = orig_name if orig_name else agent_config["name"]
         default_system_message = agent_config.get("profile", None)

@@ -1,6 +1,7 @@
 """Tests for analysis job."""
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from finrobot.application.jobs.analysis import FinancialAnalysisJob
 
 

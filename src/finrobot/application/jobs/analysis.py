@@ -1,8 +1,10 @@
 """Application Layer - Financial Analysis Job."""
 
 import typing as T
-from .base import Job
+
 from finrobot.models.agents.workflow import SingleAssistant
+
+from .base import Job
 
 # %% JOBS
 

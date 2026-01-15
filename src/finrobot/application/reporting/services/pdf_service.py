@@ -1,31 +1,31 @@
 import os
 import traceback
-from reportlab.lib import colors
-from reportlab.lib import pagesizes
+from typing import Annotated
+
+from reportlab.lib import colors, pagesizes
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
 from reportlab.platypus import (
-    SimpleDocTemplate,
     Frame,
-    Paragraph,
-    Image,
-    PageTemplate,
     FrameBreak,
+    Image,
+    NextPageTemplate,
+    PageBreak,
+    PageTemplate,
+    Paragraph,
+    SimpleDocTemplate,
     Spacer,
     Table,
     TableStyle,
-    NextPageTemplate,
-    PageBreak,
 )
-from reportlab.lib.units import inch
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
 
 from finrobot.data_access.data_source import FMPUtils, YFinanceUtils
+
 from .analyzer import ReportAnalysisUtils
-from typing import Annotated
 
 
 class ReportLabUtils:
-
     def build_annual_report(
         ticker_symbol: Annotated[str, "ticker symbol"],
         save_path: Annotated[str, "path to save the annual report pdf"],
@@ -49,12 +49,8 @@ class ReportLabUtils:
             str,
             "a paragraph of text: the company's competitors analysis from its financial report and competitors' financial report",
         ],
-        share_performance_image_path: Annotated[
-            str, "path to the share performance image"
-        ],
-        pe_eps_performance_image_path: Annotated[
-            str, "path to the PE and EPS performance image"
-        ],
+        share_performance_image_path: Annotated[str, "path to the share performance image"],
+        pe_eps_performance_image_path: Annotated[str, "path to the PE and EPS performance image"],
         filing_date: Annotated[str, "filing date of the analyzed financial report"],
     ) -> str:
         """
@@ -77,8 +73,6 @@ class ReportLabUtils:
             )
             os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
             doc = SimpleDocTemplate(pdf_path, pagesize=pagesizes.A4)
-        
-
 
             # 定义两个栏位的Frame
             frame_left = Frame(
@@ -96,8 +90,14 @@ class ReportLabUtils:
                 id="right",
             )
 
-            single_frame = Frame(margin, margin, page_width-margin*2, page_height-margin*2, id='single')
-            single_column_layout = PageTemplate(id='OneCol', frames=[single_frame])
+            single_frame = Frame(
+                margin,
+                margin,
+                page_width - margin * 2,
+                page_height - margin * 2,
+                id="single",
+            )
+            single_column_layout = PageTemplate(id="OneCol", frames=[single_frame])
 
             left_column_width_p2 = (page_width - margin * 3) // 2
             right_column_width_p2 = left_column_width_p2
@@ -116,15 +116,11 @@ class ReportLabUtils:
                 id="right",
             )
 
-            #创建PageTemplate，并添加到文档
-            page_template = PageTemplate(
-                id="TwoColumns", frames=[frame_left, frame_right]
-            )
-            page_template_p2 = PageTemplate(
-                id="TwoColumns_p2", frames=[frame_left_p2, frame_right_p2]
-            )
+            # 创建PageTemplate，并添加到文档
+            page_template = PageTemplate(id="TwoColumns", frames=[frame_left, frame_right])
+            page_template_p2 = PageTemplate(id="TwoColumns_p2", frames=[frame_left_p2, frame_right_p2])
 
-             #Define single column Frame
+            # Define single column Frame
             single_frame = Frame(
                 margin,
                 margin,
@@ -204,7 +200,7 @@ class ReportLabUtils:
 
             content.append(Paragraph("Market Position", subtitle_style))
             content.append(Paragraph(market_position, custom_style))
-            
+
             content.append(Paragraph("Operating Results", subtitle_style))
             content.append(Paragraph(operating_results, custom_style))
 
@@ -291,7 +287,7 @@ class ReportLabUtils:
             # # 开始新的一页
             content.append(NextPageTemplate("OneCol"))
             content.append(PageBreak())
-            
+
             content.append(Paragraph("Risk Assessment", subtitle_style))
             content.append(Paragraph(risk_assessment, custom_style))
 

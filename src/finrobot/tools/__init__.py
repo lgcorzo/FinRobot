@@ -1,9 +1,10 @@
+from functools import wraps
+from typing import Callable, List
+
+from pandas import DataFrame
+
 from finrobot.data_access.data_source import *
 from finrobot.functional.coding import CodingUtils
-
-from typing import List, Callable
-from functools import wraps
-from pandas import DataFrame
 
 
 def stringify_output(func):

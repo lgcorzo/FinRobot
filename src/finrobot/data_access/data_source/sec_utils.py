@@ -1,12 +1,12 @@
 import os
-import requests
-from sec_api import ExtractorApi, QueryApi, RenderApi
 from functools import wraps
 from typing import Annotated
-from finrobot.infrastructure.utils import decorate_all_methods
-from finrobot.infrastructure.io.files import SavePathType
-from finrobot.data_access.data_source import FMPUtils
 
+import requests
+from finrobot.data_access.data_source import FMPUtils
+from finrobot.infrastructure.io.files import SavePathType
+from finrobot.infrastructure.utils import decorate_all_methods
+from sec_api import ExtractorApi, QueryApi, RenderApi
 
 CACHE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".cache")
 PDF_GENERATOR_API = "https://api.sec-api.io/filing-reader"

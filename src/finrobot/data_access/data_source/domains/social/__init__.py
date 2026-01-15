@@ -1,8 +1,8 @@
 """Social Domain - Social media data."""
 
 from .entities import SocialPost
-from .repositories import SocialRepository
 from .reddit_adapter import RedditAdapter
+from .repositories import SocialRepository
 
 __all__ = [
     "SocialPost",

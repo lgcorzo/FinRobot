@@ -43,6 +43,10 @@ pytest = "^8.2.2"
 pytest-cov = "^5.0.0"
 pytest-xdist = "^3.6.1"
 pytest-mock = "^3.14.0"
+ruff = "^0.4.0"
+types-requests = "^2.32.0"
+pandas-stubs = "^2.2.0"
+types-tqdm = "^4.66.0"
 
 [tool.poetry.group.dev.dependencies]
 invoke = "^2.2.0"
@@ -50,3 +54,48 @@ invoke = "^2.2.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+disable_error_code = [
+    "misc",
+    "import-untyped",
+    "name-defined",
+    "attr-defined",
+    "union-attr",
+    "call-overload",
+    "arg-type",
+    "assignment",
+    "operator",
+    "index",
+    "return-value",
+    "var-annotated",
+    "override",
+    "call-arg",
+    "str-format",
+    "truthy-function",
+    "return",
+    "used-before-def",
+]
+
+
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["__pycache__", ".venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501", "E402", "E722", "E731", "F401", "F403", "F405", "F841", "W291", "W293"]
+
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]
+skips = ["B101", "B113", "B311"]
+

@@ -1,15 +1,15 @@
 """FinnHub News Adapter - News Repository Implementation."""
 
 import os
+import random
+from datetime import datetime
+from functools import wraps
+from typing import Annotated
+
 import finnhub
 import pandas as pd
-import random
-from typing import Annotated
-from functools import wraps
-from datetime import datetime
-
+from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
-from finrobot.infrastructure.io.files import save_output, SavePathType
 
 
 def init_finnhub_client(func):

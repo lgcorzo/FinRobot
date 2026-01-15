@@ -1,13 +1,16 @@
-from typing import List
-import re
-from finrobot.data_access.data_source.filings_src.sec_filings import SECExtractor
 import concurrent.futures
-from functools import partial
-from finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch import get_cik_by_ticker
-import requests
-from finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch import get_filing
-import pandas as pd
+import re
 from datetime import datetime
+from functools import partial
+from typing import List
+
+import pandas as pd
+import requests
+from finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch import (
+    get_cik_by_ticker,
+    get_filing,
+)
+from finrobot.data_access.data_source.filings_src.sec_filings import SECExtractor
 from langchain.schema import Document
 
 
