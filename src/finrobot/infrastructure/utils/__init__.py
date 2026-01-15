@@ -1,52 +1,58 @@
-from datetime import date, timedelta, datetime
+"""Infrastructure Layer - General utilities."""
+
+import typing as T
+from datetime import datetime, timedelta
+
+# %% UTILS
 
 
-def get_current_date():
-    return date.today().strftime("%Y-%m-%d")
+def get_current_date() -> str:
+    """Get the current date as yyyy-mm-dd.
+
+    Returns:
+        str: current date.
+    """
+    return datetime.now().strftime("%Y-%m-%d")
 
 
-def decorate_all_methods(decorator):
-    def class_decorator(cls):
-        for attr_name, attr_value in cls.__dict__.items():
-            if callable(attr_value):
-                setattr(cls, attr_name, decorator(attr_value))
+def get_next_weekday(date: datetime | None = None) -> datetime:
+    """Get the next weekday of a given date.
+
+    If the date is a weekday, return the same date.
+    If the date is a weekend, return the next Monday.
+
+    Parameters:
+        date (datetime | None): date to check. Default to now.
+
+    Returns:
+        datetime: next weekday.
+    """
+    if date is None:
+        date = datetime.now()
+    if date.weekday() == 5:  # Saturday
+        return date + timedelta(days=2)
+    elif date.weekday() == 6:  # Sunday
+        return date + timedelta(days=1)
+    return date
+
+
+def decorate_all_methods(decorator: T.Callable) -> T.Callable:
+    """Decorate all methods of a class.
+
+    Parameters:
+        decorator (Callable): decorator to apply.
+
+    Returns:
+        Callable: class decorator.
+    """
+
+    def dectheclass(cls: T.Type) -> T.Type:
+        for name, m in vars(cls).items():
+            if callable(m) and not name.startswith("__"):
+                setattr(cls, name, decorator(m))
         return cls
 
-    return class_decorator
+    return dectheclass
 
 
-def get_next_weekday(date):
-    if not isinstance(date, datetime):
-        date = datetime.strptime(date, "%Y-%m-%d")
-
-    if date.weekday() >= 5:
-        days_to_add = 7 - date.weekday()
-        next_weekday = date + timedelta(days=days_to_add)
-        return next_weekday
-    else:
-        return date
-
-
-# def create_inner_assistant(
-#         name, system_message, llm_config, max_round=10,
-#         code_execution_config=None
-#     ):
-
-#     inner_assistant = autogen.AssistantAgent(
-#         name=name,
-#         system_message=system_message + "Reply TERMINATE when the task is done.",
-#         llm_config=llm_config,
-#         is_termination_msg=lambda x: x.get("content", "").find("TERMINATE") >= 0,
-#     )
-#     executor = autogen.UserProxyAgent(
-#         name=f"{name}-executor",
-#         human_input_mode="NEVER",
-#         code_execution_config=code_execution_config,
-#         default_auto_reply="",
-#         is_termination_msg=lambda x: x.get("content", "").find("TERMINATE") >= 0,
-#     )
-#     assistant.register_nested_chats(
-#         [{"recipient": assistant, "message": reflection_message, "summary_method": "last_msg", "max_turns": 1}],
-#         trigger=ConversableAgent
-#         )
-#     return manager
+__all__ = ["get_current_date", "get_next_weekday", "decorate_all_methods"]

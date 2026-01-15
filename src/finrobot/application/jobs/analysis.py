@@ -1,22 +1,38 @@
-from finrobot.agents.workflow import SingleAssistant
+"""Application Layer - Financial Analysis Job."""
+
+import typing as T
+from .base import Job
+from finrobot.models.agents.workflow import SingleAssistant
+
+# %% JOBS
 
 
-class FinancialAnalysisJob:
-    """Job to run financial analysis."""
+class FinancialAnalysisJob(Job):
+    """Job to perform financial analysis of a company."""
 
-    def __init__(self, company: str, model_id: str):
-        self.company = company
-        self.model_id = model_id
+    KIND: T.Literal["analysis"] = "analysis"
+    company: str
+    model_id: str = "gpt-4"
 
-    def run(self):
-        """Execute the analysis job."""
-        print(f"Starting analysis for {self.company} with settings: {self.model_id}")
-
-        agent_config = {
+    def run(self) -> T.Any:
+        """Run the financial analysis job."""
+        config = {
             "name": "Financial_Analyst",
-            "description": f"Analyzes financial data for {self.company}",
-            "profile": "You are an expert financial analyst. Analyze the stock based on provided tools.",
+            "description": f"Identify the company {self.company} and perform a financial analysis.",
         }
+        llm_config = {"model": self.model_id}
 
-        assistant = SingleAssistant(agent_config)
-        assistant.chat(f"Analyze the stock performance of {self.company}")
+        assistant = SingleAssistant(config, llm_config=llm_config)
+
+        logger = self.logger_service.logger()
+        # In a real scenario, we might want to log this in MLflow too
+        logger.info(f"Starting financial analysis for {self.company} using {self.model_id}")
+
+        message = f"Please analyze the financial performance of {self.company} over the last year."
+        result = assistant.chat(message)
+
+        logger.info(f"Financial analysis for {self.company} completed.")
+        return result
+
+
+__all__ = ["FinancialAnalysisJob"]

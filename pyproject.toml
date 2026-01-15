@@ -8,9 +8,13 @@ packages = [{ include = "finrobot", from = "src" }]
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 loguru = "^0.7.2"
+mlflow = "3.5.0"
+omegaconf = "^2.3.0"
 pandas = "^2.2.2"
 pydantic = "^2.7.4"
 pydantic-settings = "^2.3.4"
+confluent-kafka = "^2.8.2"
+boto3 = "^1.42.24"
 # agent-framework-core = { git = "https://github.com/microsoft/agent-framework.git", subdirectory = "python/packages/core" }
 # Using the exact dependency from llmops
 agent-framework-core = { git = "https://github.com/microsoft/agent-framework.git", subdirectory = "python/packages/core" }
@@ -23,6 +27,25 @@ finnhub-python = "*"
 mplfinance = "*"
 # backtrader = "*" # Optional
 # sec_api = "*" # Optional
+plyer = "^2.1.0"
+psutil = "^6.0.0"
+pyarrow = "^15.0.2"
+pynvml = "^11.5.0"
+opentelemetry-instrumentation = ">=0.51b0"
+opentelemetry-exporter-otlp-proto-http = ">=1.30.0"
+opentelemetry-exporter-otlp = ">=1.30.0"
+
+[tool.poetry.group.checks.dependencies]
+bandit = "^1.7.9"
+coverage = "^7.5.4"
+mypy = "^1.10.1"
+pytest = "^8.2.2"
+pytest-cov = "^5.0.0"
+pytest-xdist = "^3.6.1"
+pytest-mock = "^3.14.0"
+
+[tool.poetry.group.dev.dependencies]
+invoke = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core"]

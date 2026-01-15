@@ -1,10 +1,11 @@
-"""Define settings for the FinRobot application."""
-
-# %% IMPORTS
+from __future__ import annotations
 
 import pydantic as pdt
 import pydantic_settings as pdts
 from typing import Optional
+
+from finrobot.infrastructure.io.osvariables import Env
+from finrobot.application import jobs
 
 # %% SETTINGS
 
@@ -15,6 +16,9 @@ class Settings(pdts.BaseSettings, strict=True, frozen=True, extra="forbid"):
 
 class FinRobotSettings(Settings):
     """Main settings of the FinRobot application."""
+
+    # Core environment
+    env: Env = Env()
 
     # OpenAI / LLM Configuration
     openai_api_key: Optional[str] = pdt.Field(default=None, description="OpenAI API Key")
@@ -27,6 +31,11 @@ class FinRobotSettings(Settings):
     # Job/Task configuration
     work_dir: str = "coding"
 
+    # Execution Job
+    job: Optional[jobs.JobKind] = pdt.Field(default=None, discriminator="KIND")
+
     class Config:
+        case_sensitive = False
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "allow"
