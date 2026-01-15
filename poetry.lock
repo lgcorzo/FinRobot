@@ -7097,6 +7097,20 @@ doc = ["intersphinx_registry", "jupyterlite-pyodide-kernel", "jupyterlite-sphinx
 test = ["Cython", "array-api-strict (>=2.0,<2.1.1)", "asv", "gmpy2", "hypothesis (>=6.30)", "meson", "mpmath", "ninja", "pooch", "pytest", "pytest-cov", "pytest-timeout", "pytest-xdist", "scikit-umfpack", "threadpoolctl"]
 
 [[package]]
+name = "sec-api"
+version = "1.0.32"
+description = "SEC EDGAR Filings API"
+optional = false
+python-versions = "*"
+files = [
+    {file = "sec-api-1.0.32.tar.gz", hash = "sha256:a1faff4f9ff09f79508c8eacbde9d62c085b774b06f7cbb36d3f5b677128796a"},
+    {file = "sec_api-1.0.32-py3-none-any.whl", hash = "sha256:ebafca830faf7edef80ef38c51dd6a2966dee62689485a5a4bf3e40ffe078c17"},
+]
+
+[package.dependencies]
+requests = "*"
+
+[[package]]
 name = "secretstorage"
 version = "3.5.0"
 description = "Python bindings to FreeDesktop.org Secret Service API"
@@ -8463,4 +8477,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "3af4fe392803a9936795c457b5285b7f92e4a4aec63237f55ce7d8effe002cd6"
+content-hash = "cf6d0ff015ab16b0a5c17eee735f8533677a955f8b9597d5edf015ebeb49d0a5"
