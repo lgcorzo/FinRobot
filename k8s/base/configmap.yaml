@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: finrobot-config
+  namespace: llm-apps
+data:
+  MLFLOW_TRACKING_URI: "http://mlflow.monitoring.svc.cluster.local:5000"
+  MLFLOW_REGISTRY_URI: "http://mlflow.monitoring.svc.cluster.local:5000"
+  MLFLOW_EXPERIMENT_NAME: "finrobot_experiment"
+  MLFLOW_REGISTERED_MODEL_NAME: "finrobot_model"
+  OPENAI_MODEL: "gpt-4"
+  WORK_DIR: "coding"

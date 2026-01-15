@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finrobot
+  namespace: llm-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finrobot
+  template:
+    metadata:
+      labels:
+        app: finrobot
+    spec:
+      initContainers:
+        - name: wait-for-dependencies
+          image: busybox:latest
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -zv mlflow.monitoring.svc.cluster.local 5000; do echo 'Waiting for MLflow...'; sleep 2; done",
+            ]
+      containers:
+        - name: finrobot-app
+          image: lgcorzo/finrobot:latest
+          envFrom:
+            - configMapRef:
+                name: finrobot-config
+            - secretRef:
+                name: finrobot-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: finrobot
+  namespace: llm-apps
+spec:
+  selector:
+    app: finrobot
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
