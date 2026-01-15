@@ -74,9 +74,9 @@ class TestSingleAssistantExpanded:
         with patch("asyncio.get_event_loop", side_effect=RuntimeError):
             with patch("asyncio.new_event_loop") as mock_new_loop:
                 with patch("asyncio.set_event_loop"):
-                    l = MagicMock()
-                    mock_new_loop.return_value = l
-                    l.is_running.return_value = False
+                    loop = MagicMock()
+                    mock_new_loop.return_value = loop
+                    loop.is_running.return_value = False
                     assistant.chat("hello")
                     mock_new_loop.assert_called_once()
 

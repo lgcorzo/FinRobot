@@ -1,7 +1,8 @@
 from unittest.mock import MagicMock, patch
+
 import pytest
-from finrobot.data_access.data_source.filings_src.sec_filings import SECExtractor
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sections import ALL_SECTIONS, SECTIONS_10Q
+from finrobot.data_access.data_source.filings_src.sec_filings import SECExtractor
 
 
 def test_sec_extractor_10q_pipeline():

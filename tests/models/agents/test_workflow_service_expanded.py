@@ -1,9 +1,10 @@
 import asyncio
 import os
 from unittest.mock import MagicMock, patch
+
 import pytest
-from finrobot.models.agents.services.workflow_service import FinRobot, SingleAssistant, SingleAssistantRAG
 from agent_framework import ChatMessage
+from finrobot.models.agents.services.workflow_service import FinRobot, SingleAssistant, SingleAssistantRAG
 
 
 @pytest.fixture

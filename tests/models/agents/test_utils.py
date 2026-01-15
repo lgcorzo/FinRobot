@@ -1,8 +1,9 @@
 import os
 import re
 from unittest.mock import MagicMock, patch
+
 import pytest
-from finrobot.models.agents.utils import instruction_trigger, instruction_message, order_trigger, order_message
+from finrobot.models.agents.utils import instruction_message, instruction_trigger, order_message, order_trigger
 
 
 def test_instruction_trigger():

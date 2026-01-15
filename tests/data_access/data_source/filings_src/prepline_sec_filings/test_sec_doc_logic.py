@@ -1,14 +1,15 @@
 from unittest.mock import MagicMock, patch
-import pytest
+
 import numpy as np
+import pytest
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
     SECDocument,
     SECSection,
-    get_narrative_texts,
     cluster_num_to_indices,
+    get_narrative_texts,
     to_sklearn_format,
 )
-from unstructured.documents.elements import Title, NarrativeText, ListItem, Text
+from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
 
 
 # Helper to avoid MagicMock in regex
@@ -89,8 +90,8 @@ def test_is_section_elem_patterns():
 
 def test_s1_titles():
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
-        is_risk_title,
         is_item_title,
+        is_risk_title,
     )
 
     assert is_risk_title("Risk Factors", "S-1") is True
@@ -99,8 +100,8 @@ def test_s1_titles():
 
 def test_match_functions():
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
-        match_s1_toc_title_to_section,
         match_10k_toc_title_to_section,
+        match_s1_toc_title_to_section,
     )
 
     assert match_s1_toc_title_to_section("P", "P") is True

@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
+
+from finrobot.models.agents.services.prompt_service import leader_system_message, order_template, role_system_message
 from finrobot.models.agents.services.workflow_service import FinRobot, SingleAssistant
-from finrobot.models.agents.services.prompt_service import leader_system_message, role_system_message, order_template
 
 
 def test_workflow_service_import():
