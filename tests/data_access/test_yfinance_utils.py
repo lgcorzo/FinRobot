@@ -1,0 +1,111 @@
+from unittest.mock import MagicMock, patch
+
+import pandas as pd
+import pytest
+from finrobot.data_access.data_source.yfinance_utils import YFinanceUtils
+
+
+class TestYFinanceUtils:
+    @patch("finrobot.data_access.data_source.yfinance_utils.yf.Ticker")
+    def test_get_stock_data(self, mock_ticker_cls):
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.history.return_value = pd.DataFrame({"Close": [150.0]})
+        mock_ticker.ticker = "AAPL"
+
+        result = YFinanceUtils.get_stock_data("AAPL", "2023-01-01", "2023-01-02")
+        assert not result.empty
+        assert result.iloc[0]["Close"] == 150.0
+
+    @patch("finrobot.data_access.data_source.yfinance_utils.yf.Ticker")
+    def test_get_stock_info(self, mock_ticker_cls):
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.info = {"shortName": "Apple"}
+
+        result = YFinanceUtils.get_stock_info("AAPL")
+        assert result["shortName"] == "Apple"
+
+    @patch("finrobot.data_access.data_source.yfinance_utils.yf.Ticker")
+    def test_get_income_stmt(self, mock_ticker_cls):
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.financials = pd.DataFrame({"2023": [1000000]})
+
+        result = YFinanceUtils.get_income_stmt("AAPL")
+        assert not result.empty
+
+    @patch("finrobot.data_access.data_source.yfinance_utils.yf.Ticker")
+    def test_get_analyst_recommendations(self, mock_ticker_cls):
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        # Mock recommendations DataFrame
+        # iloc[0, 1:] excludes 'period' if it was there, so let's match that.
+        df = pd.DataFrame({"period": ["0m"], "Strong Buy": [10], "Buy": [5], "Hold": [2]})
+        mock_ticker.recommendations = df
+
+        rec, count = YFinanceUtils.get_analyst_recommendations("AAPL")
+        assert rec == "Strong Buy"
+        assert count == 10
+
+    @patch("finrobot.data_access.data_source.yfinance_utils.yf.Ticker")
+    def test_get_analyst_recommendations_empty(self, mock_ticker_cls):
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.recommendations = pd.DataFrame()
+
+        rec, count = YFinanceUtils.get_analyst_recommendations("AAPL")
+        assert rec is None
+        assert count == 0
+
+    @patch("finrobot.data_access.data_source.yfinance_utils.yf.Ticker")
+    def test_get_company_info(self, mock_ticker_cls):
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.info = {
+            "shortName": "Apple",
+            "industry": "Tech",
+            "sector": "Consumer Electronics",
+            "country": "USA",
+            "website": "http",
+        }
+
+        # Test without save_path
+        res = YFinanceUtils.get_company_info("AAPL")
+        assert res.iloc[0]["Company Name"] == "Apple"
+
+        # Test with save_path
+        with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+            res = YFinanceUtils.get_company_info("AAPL", save_path="path.csv")
+            mock_to_csv.assert_called_with("path.csv")
+
+    @patch("finrobot.data_access.data_source.yfinance_utils.yf.Ticker")
+    def test_get_stock_dividends(self, mock_ticker_cls):
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.dividends = pd.Series([0.23], index=pd.to_datetime(["2023-01-01"]))
+
+        # Test without save_path
+        res = YFinanceUtils.get_stock_dividends("AAPL")
+        assert not res.empty
+
+        # Test with save_path
+        with patch("pandas.Series.to_csv") as mock_to_csv:
+            YFinanceUtils.get_stock_dividends("AAPL", save_path="path.csv")
+            mock_to_csv.assert_called_with("path.csv")
+
+    @patch("finrobot.data_access.data_source.yfinance_utils.yf.Ticker")
+    def test_get_balance_sheet(self, mock_ticker_cls):
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.balance_sheet = pd.DataFrame({"2023": [1]})
+        res = YFinanceUtils.get_balance_sheet("AAPL")
+        assert not res.empty
+
+    @patch("finrobot.data_access.data_source.yfinance_utils.yf.Ticker")
+    def test_get_cash_flow(self, mock_ticker_cls):
+        mock_ticker = MagicMock()
+        mock_ticker_cls.return_value = mock_ticker
+        mock_ticker.cashflow = pd.DataFrame({"2023": [1]})
+        res = YFinanceUtils.get_cash_flow("AAPL")
+        assert not res.empty
