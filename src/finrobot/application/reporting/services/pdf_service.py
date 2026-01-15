@@ -21,8 +21,7 @@ from reportlab.platypus import (
 )
 
 from finrobot.data_access.data_source import FMPUtils, YFinanceUtils
-
-from .analyzer import ReportAnalysisUtils
+from finrobot.functional.analyzer import ReportAnalysisUtils
 
 
 class ReportLabUtils:

@@ -1,0 +1,117 @@
+Coverage Report Summary
+============================= test session starts ==============================
+platform linux -- Python 3.12.4, pytest-8.4.2, pluggy-1.6.0
+rootdir: /mnt/F024B17C24B145FE/Repos/FinRobot
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.12.1, typeguard-4.4.4, asyncio-0.25.3, cov-5.0.0, mock-3.15.1, xdist-3.8.0
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None
+collected 175 items / 1 error
+
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/models/agents/test_workflow.py _____________
+import file mismatch:
+imported module 'test_workflow' has this __file__ attribute:
+  /mnt/F024B17C24B145FE/Repos/FinRobot/tests/application/integration/test_workflow.py
+which is not the same as the test file we want to collect:
+  /mnt/F024B17C24B145FE/Repos/FinRobot/tests/models/agents/test_workflow.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
+=============================== warnings summary ===============================
+src/finrobot/settings.py:18
+  /mnt/F024B17C24B145FE/Repos/FinRobot/src/finrobot/settings.py:18: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class FinRobotSettings(Settings):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+---------- coverage: platform linux, python 3.12.4-final-0 -----------
+Name                                                                                    Stmts   Miss  Cover   Missing
+---------------------------------------------------------------------------------------------------------------------
+src/finrobot/__init__.py                                                                    0      0   100%
+src/finrobot/__main__.py                                                                    3      3     0%   1-4
+src/finrobot/application/__init__.py                                                        2      0   100%
+src/finrobot/application/jobs/__init__.py                                                   4      0   100%
+src/finrobot/application/jobs/analysis.py                                                  18      9    50%   21-37
+src/finrobot/application/jobs/base.py                                                      31     16    48%   45-52, 70-77
+src/finrobot/application/reporting/__init__.py                                              2      0   100%
+src/finrobot/application/reporting/entities.py                                             23      0   100%
+src/finrobot/application/reporting/services/__init__.py                                     1      0   100%
+src/finrobot/application/reporting/services/pdf_service.py                                101     89    12%   60-393
+src/finrobot/application/reporting/templates/__init__.py                                    0      0   100%
+src/finrobot/core/schemas.py                                                               27      1    96%   25
+src/finrobot/data_access/data_source/__init__.py                                           11      0   100%
+src/finrobot/data_access/data_source/domains/__init__.py                                    5      0   100%
+src/finrobot/data_access/data_source/domains/filings/__init__.py                            5      0   100%
+src/finrobot/data_access/data_source/domains/filings/entities.py                           11      0   100%
+src/finrobot/data_access/data_source/domains/filings/fmp_adapter.py                        33     21    36%   15-21, 36-55
+src/finrobot/data_access/data_source/domains/filings/repositories.py                        7      1    86%   19
+src/finrobot/data_access/data_source/domains/filings/sec_adapter.py                        93     73    22%   22-30, 47-56, 65-85, 94-121, 139-182
+src/finrobot/data_access/data_source/domains/market_data/__init__.py                        5      0   100%
+src/finrobot/data_access/data_source/domains/market_data/entities.py                       29      1    97%   20
+src/finrobot/data_access/data_source/domains/market_data/finnhub_adapter.py                56     38    32%   19-25, 36-50, 61-80, 87-100
+src/finrobot/data_access/data_source/domains/market_data/repositories.py                   18      5    72%   19, 24, 29, 34, 39
+src/finrobot/data_access/data_source/domains/market_data/yfinance_adapter.py               62     41    34%   17-18, 34-37, 43-45, 52-65, 72-77, 81-83, 87-89, 93-95, 99-111, 115
+src/finrobot/data_access/data_source/domains/news/__init__.py                               4      0   100%
+src/finrobot/data_access/data_source/domains/news/entities.py                              12      0   100%
+src/finrobot/data_access/data_source/domains/news/finnhub_adapter.py                       32     16    50%   19-25, 42-59
+src/finrobot/data_access/data_source/domains/news/repositories.py                           6      1    83%   20
+src/finrobot/data_access/data_source/domains/social/__init__.py                             4      0   100%
+src/finrobot/data_access/data_source/domains/social/entities.py                            14      0   100%
+src/finrobot/data_access/data_source/domains/social/reddit_adapter.py                      41     25    39%   18-28, 52-92, 97-104
+src/finrobot/data_access/data_source/domains/social/repositories.py                         6      1    83%   20
+src/finrobot/data_access/data_source/earnings_calls_src/__init__.py                         1      0   100%
+src/finrobot/data_access/data_source/earnings_calls_src/earningsData.py                    22     12    45%   20-23, 35-38, 50-59
+src/finrobot/data_access/data_source/earnings_calls_src/main_earningsData.py               64     57    11%   11-13, 17-53, 57-92
+src/finrobot/data_access/data_source/filings_src/__init__.py                                1      0   100%
+src/finrobot/data_access/data_source/filings_src/prepline_sec_filings/__init__.py           0      0   100%
+src/finrobot/data_access/data_source/filings_src/prepline_sec_filings/fetch.py            111     74    33%   12, 33-34, 41-53, 60-84, 91-97, 105-109, 121-122, 134-137, 148-150, 163-167, 181-184, 190-191, 203-206, 212-214, 218-220, 225-226, 231-232, 242-255
+src/finrobot/data_access/data_source/filings_src/prepline_sec_filings/sec_document.py     203    155    24%   7, 51-54, 62-93, 97-118, 123-143, 149-162, 166-213, 217, 220-224, 227-232, 237-252, 258-267, 272-283, 288-292, 297-301, 306-307, 312, 317, 322, 327, 334-338, 346-347, 352-356, 362, 368-372, 378, 387-392
+src/finrobot/data_access/data_source/filings_src/prepline_sec_filings/sections.py          61      9    85%   56, 135-143
+src/finrobot/data_access/data_source/filings_src/secData.py                                65     54    17%   23-108
+src/finrobot/data_access/data_source/filings_src/sec_filings.py                           105     75    29%   32-33, 36, 39-43, 46-49, 63-70, 86-87, 98-107, 119-124, 135-142, 159-188, 198-204, 210-223
+src/finrobot/data_access/data_source/finance_data.py                                       27     18    33%   34-79
+src/finrobot/data_access/data_source/finnhub_utils.py                                      73     51    30%   19-25, 37-51, 69-87, 109-128, 140-153, 157-162
+src/finrobot/data_access/data_source/finnlp_utils.py                                       53     26    51%   31-41, 45-55, 79, 98, 117, 159, 180, 217, 242, 296
+src/finrobot/data_access/data_source/fmp_utils.py                                         121    100    17%   18-24, 37-63, 74-97, 104-118, 126-147, 155-219, 227-288, 292-295
+src/finrobot/data_access/data_source/marker_sec_src/__init__.py                             3      0   100%
+src/finrobot/data_access/data_source/marker_sec_src/pdf_to_md.py                           16     10    38%   15-26
+src/finrobot/data_access/data_source/marker_sec_src/pdf_to_md_parallel.py                  85     62    27%   28, 33, 37-64, 101-170
+src/finrobot/data_access/data_source/marker_sec_src/sec_filings_to_pdf.py                  76     60    21%   15-17, 22-46, 61-119, 123-133
+src/finrobot/data_access/data_source/reddit_utils.py                                       41     25    39%   16-26, 48-88, 93-100
+src/finrobot/data_access/data_source/sec_utils.py                                          93     73    22%   19-27, 42-51, 60-80, 89-116, 134-177
+src/finrobot/data_access/data_source/yfinance_utils.py                                     62     41    34%   15-16, 30-33, 39-41, 48-61, 68-73, 77-79, 83-85, 89-91, 95-107, 111
+src/finrobot/functional/__init__.py                                                         7      0   100%
+src/finrobot/functional/analyzer.py                                                       114     96    16%   10-14, 18-20, 37-63, 77-95, 109-127, 141-160, 179-197, 211-226, 242-281, 295-312, 326-354, 364-407
+src/finrobot/functional/charting.py                                                        95     81    15%   39-60, 70-128, 137-200, 205-208
+src/finrobot/functional/coding.py                                                          43     31    28%   14-21, 29-35, 43-44, 50-55, 69-75, 84-88
+src/finrobot/functional/quantitative.py                                                    87     69    21%   15-16, 19-23, 26-32, 35, 74-146, 151-157
+src/finrobot/functional/rag.py                                                             26     22    15%   15-60
+src/finrobot/functional/ragquery.py                                                        86     77    10%   17-99, 107-235
+src/finrobot/functional/reportlab.py                                                      101     89    12%   60-393
+src/finrobot/functional/text.py                                                             9      6    33%   13-19
+src/finrobot/infrastructure/__init__.py                                                     3      0   100%
+src/finrobot/infrastructure/io/__init__.py                                                  3      0   100%
+src/finrobot/infrastructure/io/configs.py                                                  11      4    64%   25, 37, 52, 68
+src/finrobot/infrastructure/io/files.py                                                    22     16    27%   22-31, 40-50
+src/finrobot/infrastructure/io/osvariables.py                                              18      0   100%
+src/finrobot/infrastructure/services/__init__.py                                            4      0   100%
+src/finrobot/infrastructure/services/alert_service.py                                      16      7    56%   18, 22-33
+src/finrobot/infrastructure/services/logger_service.py                                     55     23    58%   24, 59-83, 87
+src/finrobot/infrastructure/services/mlflow_service.py                                     44     11    75%   45-60, 67-73, 77
+src/finrobot/infrastructure/utils/__init__.py                                              20      8    60%   15, 30-36
+src/finrobot/models/agents/__init__.py                                                      0      0   100%
+src/finrobot/models/agents/agent_library.py                                                 5      0   100%
+src/finrobot/models/agents/prompts.py                                                       4      0   100%
+src/finrobot/models/agents/tools/__init__.py                                                2      0   100%
+src/finrobot/models/agents/tools/registry.py                                               32     23    28%   10-18, 23-42, 48, 79-87
+src/finrobot/models/agents/utils.py                                                        20     14    30%   8, 13-17, 23, 27-34
+src/finrobot/models/agents/workflow.py                                                     85     55    35%   25-60, 70-99, 104, 113, 120, 124, 134, 139-150, 156-159, 164, 168, 181
+src/finrobot/scripts.py                                                                    13     10    23%   10-24
+src/finrobot/settings.py                                                                   20      0   100%
+src/finrobot/tools/__init__.py                                                             32     23    28%   11-19, 24-43, 49, 80-88
+---------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                    2926   1908    35%
+
+=========================== short test summary info ============================
+ERROR tests/models/agents/test_workflow.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+========================= 1 warning, 1 error in 20.46s =========================

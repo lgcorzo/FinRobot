@@ -24,8 +24,4 @@ class Env(Singleton, BaseSettings):
     mlflow_s3_endpoint_url: str = ""
     mlflow_s3_ignore_tls: bool = False
 
-    class Config:
-        case_sensitive = False  # Optional: make env var lookup case-insensitive
-        env_file = ".env"  # Enable reading from .env file
-        env_file_encoding = "utf-8"
-        extra = "allow"
+    model_config = {"case_sensitive": False, "env_file": ".env", "env_file_encoding": "utf-8", "extra": "allow"}

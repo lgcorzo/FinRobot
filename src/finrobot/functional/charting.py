@@ -162,7 +162,6 @@ class ReportChartUtils:
             results[date] = close_price["Close"]
 
         pe = [p / e for p, e in zip(results.values(), eps.values[::-1])]
-        dates = eps.index[::-1]
         eps = eps.values[::-1]
 
         info = YFinanceUtils.get_stock_info(ticker_symbol)

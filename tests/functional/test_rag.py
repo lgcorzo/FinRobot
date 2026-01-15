@@ -1,21 +1,45 @@
-"""Tests for functional RAG module."""
+from unittest.mock import MagicMock, patch
+
+import pytest
+from finrobot.functional.rag import PROMPT_RAG_FUNC, get_rag_function
 
 
-class TestRAGFunction:
-    """Test suite for RAG functions.
+@patch("finrobot.functional.rag.RetrieveUserProxyAgent")
+def test_get_rag_function(mock_agent_cls):
+    # Mock instance
+    mock_agent = MagicMock()
+    mock_agent_cls.return_value = mock_agent
 
-    These tests verify the module can be imported.
-    """
+    # Mock internal methods
+    mock_agent._check_update_context.return_value = (False, False)
+    mock_agent.update_context = False
+    mock_agent.message_generator.return_value = "Retrieved Content"
 
-    def test_rag_module_import(self):
-        """Test that rag module can be imported."""
-        from finrobot.functional import rag
+    # Test initialization
+    retrieve_config = {"docs_path": ["/tmp/doc.txt"]}
+    retrieve_content, agent_instance = get_rag_function(retrieve_config)
 
-        assert rag is not None
+    assert agent_instance == mock_agent
+    assert retrieve_config["customized_prompt"] == PROMPT_RAG_FUNC
 
-    def test_get_rag_function_exists(self):
-        """Test that get_rag_function exists."""
-        from finrobot.functional.rag import get_rag_function
+    # Test retrieve_content calls - Case 1: No context update
+    res = retrieve_content("query")
+    assert res == "Retrieved Content"
+    mock_agent.message_generator.assert_called()
 
-        assert get_rag_function is not None
-        assert callable(get_rag_function)
+    # Test retrieve_content logic - Case 2: Update context
+    mock_agent._check_update_context.return_value = (True, False)
+    mock_agent.update_context = True
+    mock_agent._generate_retrieve_user_reply.return_value = (True, "New Context")
+
+    res = retrieve_content("query2")
+    assert res == "New Context"
+    mock_agent._generate_retrieve_user_reply.assert_called_with("query2")
+
+
+@patch("finrobot.functional.rag.RetrieveUserProxyAgent")
+def test_get_rag_function_docstring(mock_agent_cls):
+    retrieve_config = {"docs_path": ["doc1", "doc2"]}
+    retrieve_content, _ = get_rag_function(retrieve_config)
+    assert "Availale Documents" in retrieve_content.__doc__
+    assert "doc1" in retrieve_content.__doc__

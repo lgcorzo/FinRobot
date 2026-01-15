@@ -104,6 +104,7 @@ def rag_database_earnings_call(ticker: str, year: str) -> str:
 
 
 def rag_database_sec(ticker: str, year: str, FROM_MARKDOWN=False, filing_types=["10-K", "10-Q"]) -> str:
+    emb_fn = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
     if not FROM_MARKDOWN:
         sec_data, sec_form_names = get_data(
             ticker=ticker,
@@ -112,7 +113,6 @@ def rag_database_sec(ticker: str, year: str, FROM_MARKDOWN=False, filing_types=[
             include_amends=True,
             filing_types=filing_types,
         )
-        emb_fn = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1024,
             chunk_overlap=100,
