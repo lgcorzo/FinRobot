@@ -87,7 +87,9 @@ The Smart Scheduler is central to ensuring model diversity and optimizing the in
 
 ## Architecture (Domain-Driven Design)
 
-FinRobot follows a **Domain-Driven Design (DDD)** architecture, organizing code into clear domain boundaries:
+FinRobot follows a **Domain-Driven Design (DDD)** architecture, organizing code into clear domain boundaries.
+
+For a detailed explanation of the layers and components, please refer to the [Architecture Documentation](docs/architecture.md).
 
 ```
 src/finrobot/
@@ -97,70 +99,36 @@ src/finrobot/
 ├── scripts.py                      # CLI entry point
 │
 ├── core/                           # Shared Kernel
-│   └── schemas.py                  # Pandera validation schemas
+│   └── schemas.py                  # Validation schemas
+│
+├── models/                         # Domain Layer
+│   └── agents/                     # AI Agents (Microsoft Agent Framework)
+│
+├── application/                    # Application Layer
+│   ├── jobs/                       # Orchestration jobs
+│   └── reporting/                  # Report generation services
 │
 ├── infrastructure/                 # Infrastructure Layer
 │   ├── io/                         # File operations
-│   │   └── files.py                # save_output, register_keys
-│   └── utils/                      # Utilities
-│       └── decorators.py           # Decorators, date helpers
+│   ├── services/                   # Logging, Alerting, MLflow
+│   └── utils/                      # Decorators, helpers
 │
-├── data_source/                    # Data Access Domain
-│   ├── domains/
-│   │   ├── market_data/            # Stock prices, financials
-│   │   │   ├── entities.py         # MarketData, CompanyInfo
-│   │   │   ├── repositories.py     # MarketDataRepository
-│   │   │   ├── yfinance_adapter.py # YFinance implementation
-│   │   │   └── finnhub_adapter.py  # FinnHub implementation
-│   │   ├── filings/                # SEC filings, reports
-│   │   │   ├── entities.py         # SECFiling
-│   │   │   ├── sec_adapter.py      # SEC API implementation
-│   │   │   └── fmp_adapter.py      # FMP implementation
-│   │   ├── news/                   # Financial news
-│   │   │   └── finnhub_adapter.py  # FinnHub news
-│   │   └── social/                 # Social media
-│   │       └── reddit_adapter.py   # Reddit implementation
-│   └── (legacy utils for compat)
+├── data_access/                    # Data Access / Interface Adapters
+│   └── data_source/                # External Data Connectors (SEC, YFinance, etc.)
 │
-├── analysis/                       # Analysis Domain
-│   ├── entities.py                 # AnalysisResult, ChartData
-│   └── services/
-│       ├── charting_service.py     # Chart generation
-│       ├── quantitative_service.py # Quantitative analysis
-│       ├── text_service.py         # Text analysis
-│       └── analyzer_service.py     # Financial analyzer
+├── evaluation/                     # Evaluation Domain
 │
-├── reporting/                      # Reporting Domain
-│   ├── entities.py                 # Report, Section, PDFDocument
-│   ├── services/
-│   │   └── pdf_service.py          # PDF generation
-│   └── templates/
-│
-├── agents/                         # Agents Domain
-│   ├── entities.py                 # AgentProfile, Conversation
-│   ├── services/
-│   │   ├── workflow_service.py     # Agent workflows
-│   │   └── prompt_service.py       # Prompt management
-│   ├── tools/
-│   │   └── registry.py             # Tool registration
-│   ├── agent_library.py            # Agent configurations
-│   └── workflow.py                 # Main workflow (compat)
-│
-├── application/                    # Application Layer
-│   └── jobs/
-│       └── analysis.py             # FinancialAnalysisJob
-│
-└── functional/                     # Legacy (backward compat)
+└── functional/                     # Functional Utilities (Shared/Legacy)
 ```
 
-### DDD Layers
+### DDD Layers Summary
 
-| Layer              | Purpose             | Modules                                              |
-| ------------------ | ------------------- | ---------------------------------------------------- |
-| **Domain**         | Core business logic | `analysis/`, `reporting/`, `agents/`, `data_source/` |
-| **Application**    | Use cases & jobs    | `application/jobs/`                                  |
-| **Infrastructure** | Cross-cutting       | `infrastructure/io/`, `infrastructure/utils/`        |
-| **Shared Kernel**  | Common types        | `core/schemas.py`                                    |
+| Layer              | Purpose             | Modules                                       |
+| ------------------ | ------------------- | --------------------------------------------- | --- |
+| **Domain**         | Core business logic | `models/`, `core/`                            |
+| **Application**    | Use cases & jobs    | `application/jobs/`, `application/reporting/` |
+| **Infrastructure** | Cross-cutting       | `infrastructure/`, `data_access/`             |
+| **Presentation**   | Entry points        | `scripts.py`, `tasks/`, Notebooks             |     |
 
 ### Key Domain Entities
 
