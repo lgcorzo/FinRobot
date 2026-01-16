@@ -438,3 +438,8 @@ docker run --env-file .env finrobot-kafka
 ```bash
 poetry run python -m finrobot.infrastructure.messaging.kafka_app
 ```
+
+
+poetry cache clear . --all
+rm poetry.lock
+poetry lock -vv
