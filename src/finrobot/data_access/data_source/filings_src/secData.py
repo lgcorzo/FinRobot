@@ -1,8 +1,8 @@
 import concurrent.futures
 import re
+import typing as T
 from datetime import datetime
 from functools import partial
-from typing import List
 
 import pandas as pd
 import requests
@@ -18,9 +18,9 @@ from finrobot.data_access.data_source.filings_src.sec_filings import SECExtracto
 def sec_main(
     ticker: str,
     year: str,
-    filing_types: List[str] = ["10-K", "10-Q"],
-    include_amends=True,
-):
+    filing_types: T.List[str] = ["10-K", "10-Q"],
+    include_amends: bool = True,
+) -> T.Tuple[T.List[Document], T.List[str]]:
     cik = get_cik_by_ticker(ticker)
     rgld_cik = int(cik.lstrip("0"))
 

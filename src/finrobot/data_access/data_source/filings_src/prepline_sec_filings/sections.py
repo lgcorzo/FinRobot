@@ -1,8 +1,8 @@
 """Module for defining/enumerating the common sections from SEC forms"""
 
 import re
+import typing as T
 from enum import Enum
-from typing import List
 
 
 class SECSection(Enum):
@@ -52,7 +52,7 @@ class SECSection(Enum):
     OFFER_PRICE = r"(?:determination of )offering price"
 
     @property
-    def pattern(self):
+    def pattern(self) -> T.Union[re.Pattern[str], str]:
         return self.value
 
 
@@ -130,7 +130,7 @@ SECTIONS_S1 = (
 )
 
 
-def validate_section_names(section_names: List[str]):
+def validate_section_names(section_names: T.List[str]) -> None:
     """Return section names that don't correspond to a defined enum."""
     if len(section_names) == 1 and section_names[0] == ALL_SECTIONS:
         return None

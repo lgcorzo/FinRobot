@@ -109,7 +109,7 @@ class SECExtractor:
             matches = re.findall(r"20\d{4}", details)
 
         if matches:
-            return matches[-1]  # Return the first match
+            return T.cast(str, matches[-1])  # Return the first match
         else:
             return None  # In case no match is found
 
@@ -200,8 +200,8 @@ class SECExtractor:
             section: convert_to_isd(section_narrative) for section, section_narrative in results.items()
         }, sec_document.filing_type
 
-    @sleep_and_retry
-    @limits(calls=10, period=1)
+    @sleep_and_retry  # type: ignore[misc]
+    @limits(calls=10, period=1)  # type: ignore[misc]
     def get_filing(self, url: str, company: str, email: str) -> str:
         """Fetches the specified filing from the SEC EDGAR Archives. Conforms to the rate
         limits specified on the SEC website.

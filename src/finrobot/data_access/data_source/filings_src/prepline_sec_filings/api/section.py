@@ -203,7 +203,7 @@ def get_validated_mimetype(file: UploadFile) -> str:
                 detail=(f"Unable to process {file.filename}: " f"File type {content_type} is not supported."),
             )
 
-    return content_type
+    return content_type or ""
 
 
 class MultipartMixedResponse(StreamingResponse):
