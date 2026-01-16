@@ -1,9 +1,8 @@
 import importlib
 import json
 import os
-from pprint import pformat
-from typing import Annotated, Dict, List, Optional, Tuple, Union
 import typing as T
+from pprint import pformat
 
 import backtrader as bt
 import yfinance as yf
@@ -13,7 +12,7 @@ from matplotlib import pyplot as plt
 
 class DeployedCapitalAnalyzer(bt.Analyzer):
     def start(self) -> None:
-        self.deployed_capital: List[float] = []
+        self.deployed_capital: T.List[float] = []
         self.initial_cash = self.strategy.broker.get_cash()  # Initial cash in account
 
     def notify_order(self, order: T.Any) -> None:
@@ -36,42 +35,24 @@ class DeployedCapitalAnalyzer(bt.Analyzer):
         else:
             self.retn = 0.0
 
-    def get_analysis(self) -> Dict[str, float]:
+    def get_analysis(self) -> T.Dict[str, float]:
         return {"return_on_deployed_capital": self.retn}
 
 
 class BackTraderUtils:
     @staticmethod
     def back_test(
-        ticker_symbol: Annotated[str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"],
-        start_date: Annotated[str, "Start date of the historical data in 'YYYY-MM-DD' format"],
-        end_date: Annotated[str, "End date of the historical data in 'YYYY-MM-DD' format"],
-        strategy: Annotated[
-            str,
-            "BackTrader Strategy class to be backtested. Can be pre-defined or custom. Pre-defined options: 'SMA_CrossOver'. If custom, provide module path and class name as a string like 'my_module:TestStrategy'.",
-        ],
-        strategy_params: Annotated[
-            str,
-            "Additional parameters to be passed to the strategy class formatted as json string. E.g. {'fast': 10, 'slow': 30} for SMACross.",
-        ] = "",
-        sizer: Annotated[
-            int | str | None,
-            "Sizer used for backtesting. Can be a fixed number or a custom Sizer class. If input is integer, a corresponding fixed sizer will be applied. If custom, provide module path and class name as a string like 'my_module:TestSizer'.",
-        ] = None,
-        sizer_params: Annotated[
-            str,
-            "Additional parameters to be passed to the sizer class formatted as json string.",
-        ] = "",
-        indicator: Annotated[
-            str | None,
-            "Custom indicator class added to strategy. Provide module path and class name as a string like 'my_module:TestIndicator'.",
-        ] = None,
-        indicator_params: Annotated[
-            str,
-            "Additional parameters to be passed to the indicator class formatted as json string.",
-        ] = "",
-        cash: Annotated[float, "Initial cash amount for the backtest. Default to 10000.0"] = 10000.0,
-        save_fig: Annotated[str | None, "Path to save the plot of backtest results. Default to None."] = None,
+        ticker_symbol: str,
+        start_date: str,
+        end_date: str,
+        strategy: str,
+        strategy_params: str = "",
+        sizer: T.Optional[T.Union[int, str]] = None,
+        sizer_params: str = "",
+        indicator: T.Optional[str] = None,
+        indicator_params: str = "",
+        cash: float = 10000.0,
+        save_fig: T.Optional[str] = None,
     ) -> str:
         """
         Use the Backtrader library to backtest a trading strategy on historical stock data.

@@ -1,12 +1,12 @@
 import os
+import typing as T
 from datetime import datetime, timedelta
 from textwrap import dedent
-from typing import Annotated, List
 
 from finrobot.data_access.data_source import FMPUtils, SECUtils, YFinanceUtils
 
 
-def combine_prompt(instruction, resource, table_str=None):
+def combine_prompt(instruction: str, resource: str, table_str: T.Optional[str] = None) -> str:
     if table_str:
         prompt = f"{table_str}\n\nResource: {resource}\n\nInstruction: {instruction}"
     else:
@@ -14,7 +14,7 @@ def combine_prompt(instruction, resource, table_str=None):
     return prompt
 
 
-def save_to_file(data: str, file_path: str):
+def save_to_file(data: str, file_path: str) -> None:
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, "w") as f:
         f.write(data)
@@ -22,12 +22,9 @@ def save_to_file(data: str, file_path: str):
 
 class ReportAnalysisUtils:
     def analyze_income_stmt(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        save_path: Annotated[
-            str,
-            "txt file path, to which the returned instruction & resources are written.",
-        ],
+        ticker_symbol: str,
+        fyear: str,
+        save_path: str,
     ) -> str:
         """
         Retrieve the income statement for the given ticker symbol with the related section of its 10-K report.
@@ -63,12 +60,9 @@ class ReportAnalysisUtils:
         return f"instruction & resources saved to {save_path}"
 
     def analyze_balance_sheet(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        save_path: Annotated[
-            str,
-            "txt file path, to which the returned instruction & resources are written.",
-        ],
+        ticker_symbol: str,
+        fyear: str,
+        save_path: str,
     ) -> str:
         """
         Retrieve the balance sheet for the given ticker symbol with the related section of its 10-K report.
@@ -95,12 +89,9 @@ class ReportAnalysisUtils:
         return f"instruction & resources saved to {save_path}"
 
     def analyze_cash_flow(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        save_path: Annotated[
-            str,
-            "txt file path, to which the returned instruction & resources are written.",
-        ],
+        ticker_symbol: str,
+        fyear: str,
+        save_path: str,
     ) -> str:
         """
         Retrieve the cash flow statement for the given ticker symbol with the related section of its 10-K report.
@@ -127,12 +118,9 @@ class ReportAnalysisUtils:
         return f"instruction & resources saved to {save_path}"
 
     def analyze_segment_stmt(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        save_path: Annotated[
-            str,
-            "txt file path, to which the returned instruction & resources are written.",
-        ],
+        ticker_symbol: str,
+        fyear: str,
+        save_path: str,
     ) -> str:
         """
         Retrieve the income statement and the related section of its 10-K report for the given ticker symbol.
@@ -160,14 +148,11 @@ class ReportAnalysisUtils:
         return f"instruction & resources saved to {save_path}"
 
     def income_summarization(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        income_stmt_analysis: Annotated[str, "in-depth income statement analysis"],
-        segment_analysis: Annotated[str, "in-depth segment analysis"],
-        save_path: Annotated[
-            str,
-            "txt file path, to which the returned instruction & resources are written.",
-        ],
+        ticker_symbol: str,
+        fyear: str,
+        income_stmt_analysis: str,
+        segment_analysis: str,
+        save_path: str,
     ) -> str:
         """
         With the income statement and segment analysis for the given ticker symbol.
@@ -197,12 +182,9 @@ class ReportAnalysisUtils:
         return f"instruction & resources saved to {save_path}"
 
     def get_risk_assessment(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        save_path: Annotated[
-            str,
-            "txt file path, to which the returned instruction & resources are written.",
-        ],
+        ticker_symbol: str,
+        fyear: str,
+        save_path: str,
     ) -> str:
         """
         Retrieve the risk factors for the given ticker symbol with the related section of its 10-K report.
@@ -226,13 +208,10 @@ class ReportAnalysisUtils:
         return f"instruction & resources saved to {save_path}"
 
     def get_competitors_analysis(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        competitors: Annotated[List[str], "competitors company"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        save_path: Annotated[
-            str,
-            "txt file path, to which the returned instruction & resources are written.",
-        ],
+        ticker_symbol: str,
+        competitors: T.List[str],
+        fyear: str,
+        save_path: str,
     ) -> str:
         """
         Analyze financial metrics differences between a company and its competitors.
@@ -281,12 +260,9 @@ class ReportAnalysisUtils:
         return f"instruction & resources saved to {save_path}"
 
     def analyze_business_highlights(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        save_path: Annotated[
-            str,
-            "txt file path, to which the returned instruction & resources are written.",
-        ],
+        ticker_symbol: str,
+        fyear: str,
+        save_path: str,
     ) -> str:
         """
         Retrieve the business summary and related section of its 10-K report for the given ticker symbol.
@@ -312,12 +288,9 @@ class ReportAnalysisUtils:
         return f"instruction & resources saved to {save_path}"
 
     def analyze_company_description(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        save_path: Annotated[
-            str,
-            "txt file path, to which the returned instruction & resources are written.",
-        ],
+        ticker_symbol: str,
+        fyear: str,
+        save_path: str,
     ) -> str:
         """
         Retrieve the company description and related sections of its 10-K report for the given ticker symbol.
@@ -354,9 +327,9 @@ class ReportAnalysisUtils:
         return f"instruction & resources saved to {save_path}"
 
     def get_key_data(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        filing_date: Annotated[str | datetime, "the filing date of the financial report being analyzed"],
-    ) -> dict:
+        ticker_symbol: str,
+        filing_date: T.Union[str, datetime],
+    ) -> T.Dict[str, T.Any]:
         """
         return key financial data used in annual report for the given ticker symbol and filing date
         """
@@ -393,15 +366,19 @@ class ReportAnalysisUtils:
         # print(f"Over the past 6 months, the average daily trading volume for {ticker_symbol} was: {avg_daily_volume_6m:.2f}")
         rating, _ = YFinanceUtils.get_analyst_recommendations(ticker_symbol)
         target_price = FMPUtils.get_target_price(ticker_symbol, filing_date)
+        mkt_cap = FMPUtils.get_historical_market_cap(ticker_symbol, filing_date)
+        mkt_cap_str = "{:.2f}".format(mkt_cap / 1e6) if isinstance(mkt_cap, (int, float)) else str(mkt_cap)
+
+        bvps = FMPUtils.get_historical_bvps(ticker_symbol, filing_date)
+        bvps_str = "{:.2f}".format(bvps) if isinstance(bvps, (int, float)) else str(bvps)
+
         result = {
             "Rating": rating,
             "Target Price": target_price,
             f"6m avg daily vol ({info['currency']}mn)": "{:.2f}".format(avg_daily_volume_6m / 1e6),
             f"Closing Price ({info['currency']})": "{:.2f}".format(close_price),
-            f"Market Cap ({info['currency']}mn)": "{:.2f}".format(
-                FMPUtils.get_historical_market_cap(ticker_symbol, filing_date) / 1e6
-            ),
+            f"Market Cap ({info['currency']}mn)": mkt_cap_str,
             f"52 Week Price Range ({info['currency']})": "{:.2f} - {:.2f}".format(fiftyTwoWeekLow, fiftyTwoWeekHigh),
-            f"BVPS ({info['currency']})": "{:.2f}".format(FMPUtils.get_historical_bvps(ticker_symbol, filing_date)),
+            f"BVPS ({info['currency']})": bvps_str,
         }
         return result
