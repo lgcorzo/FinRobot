@@ -59,7 +59,7 @@ def get_data(
                 out_folder=output_ticker_year_path,
                 metadata_file=metadata_file_path,
                 inference_ram=inference_ram,
-                workers=workers,
+                workers=workers if workers is not None else 5,
                 num_chunks=num_chunks,
                 vram_per_task=vram_per_task,
             )

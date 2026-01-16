@@ -91,7 +91,7 @@ def sec_main(
     print("Scraped")
     print("Started Extracting")
     with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
-        results = executor.map(sec_extractor.get_section_texts_from_text, results_texts)
+        results = executor.map(sec_extractor.get_section_texts_from_text, results_texts)  # type: ignore[arg-type]
     section_texts = []
     for res in results:
         section_texts.append(res)

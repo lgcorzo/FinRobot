@@ -200,8 +200,8 @@ class SECExtractor:
             section: convert_to_isd(section_narrative) for section, section_narrative in results.items()
         }, sec_document.filing_type
 
-    @sleep_and_retry  # type: ignore[misc]
-    @limits(calls=10, period=1)  # type: ignore[misc]
+    @sleep_and_retry  # type: ignore[untyped-decorator]
+    @limits(calls=10, period=1)  # type: ignore[untyped-decorator]
     def get_filing(self, url: str, company: str, email: str) -> str:
         """Fetches the specified filing from the SEC EDGAR Archives. Conforms to the rate
         limits specified on the SEC website.

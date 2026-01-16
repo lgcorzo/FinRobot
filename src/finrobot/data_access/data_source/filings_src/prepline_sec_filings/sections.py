@@ -53,7 +53,7 @@ class SECSection(Enum):
 
     @property
     def pattern(self) -> T.Union[re.Pattern[str], str]:
-        return self.value
+        return T.cast(T.Union[re.Pattern[str], str], self.value)
 
 
 ALL_SECTIONS = "_ALL"
