@@ -13,6 +13,11 @@ from collections import defaultdict
 
 import numpy as np
 import numpy.typing as npt
+
+# from src.prepline_sec_filings.title import is_possible_title
+from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sections import (
+    SECSection,
+)
 from sklearn.cluster import DBSCAN
 from unstructured.cleaners.core import clean
 from unstructured.documents.elements import (
@@ -24,11 +29,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.documents.html import HTMLDocument
 from unstructured.nlp.partition import is_possible_title
-
-# from src.prepline_sec_filings.title import is_possible_title
-from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sections import (
-    SECSection,
-)
 
 VALID_FILING_TYPES: Final[List[str]] = [
     "10-K",

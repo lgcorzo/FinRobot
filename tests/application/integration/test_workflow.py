@@ -4,7 +4,6 @@ import typing as T
 from unittest.mock import patch
 
 import pytest
-
 from finrobot.models.agents.workflow import SingleAssistant
 from finrobot.settings import FinRobotSettings
 

@@ -3,7 +3,6 @@
 import pandas as pd
 import pandera.errors as pa_errors
 import pytest
-
 from finrobot.core.schemas import FinancialReportSchema, MarketDataSchema
 
 

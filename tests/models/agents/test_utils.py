@@ -3,7 +3,6 @@ import re
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from finrobot.models.agents.utils import instruction_message, instruction_trigger, order_message, order_trigger
 
 

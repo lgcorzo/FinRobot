@@ -2,10 +2,9 @@ import typing as T
 from functools import wraps
 
 import yfinance as yf
-from pandas import DataFrame
-
 from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
+from pandas import DataFrame
 
 
 def init_ticker(func: T.Callable[..., T.Any]) -> T.Callable[..., T.Any]:

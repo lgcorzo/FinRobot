@@ -1,5 +1,4 @@
 import pytest
-
 from finrobot.functional.text import TextUtils
 
 

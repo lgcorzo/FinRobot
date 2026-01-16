@@ -9,7 +9,6 @@ from typing import Annotated, Any, Callable, Optional
 
 import finnhub
 import pandas as pd
-
 from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
 

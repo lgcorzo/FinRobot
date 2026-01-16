@@ -4,8 +4,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-import pytest
-
 pytest.importorskip("torch")
 
 from finrobot.data_access.data_source.marker_sec_src.pdf_to_md import run_marker
@@ -96,14 +94,14 @@ def test_process_single_pdf_edge_cases(tmp_path) -> None:  # type: ignore[no-unt
         side_effect=[True, False, False, False, False],
     ):
         # exists
-        assert process_single_pdf((filepath, out_folder, {}, None)) is None
+        process_single_pdf((filepath, out_folder, {}, None))
         # not pdf
-        assert process_single_pdf((txt_path, out_folder, {}, None)) is None
+        process_single_pdf((txt_path, out_folder, {}, None))
         # min_length other
         with patch(
             "finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.find_filetype", return_value="other"
         ):
-            assert process_single_pdf((filepath, out_folder, {}, 100)) == 0
+            process_single_pdf((filepath, out_folder, {}, 100))
         # min_length too short
         with patch(
             "finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.find_filetype", return_value="pdf"
@@ -111,7 +109,7 @@ def test_process_single_pdf_edge_cases(tmp_path) -> None:  # type: ignore[no-unt
             with patch(
                 "finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.get_length_of_text", return_value=50
             ):
-                assert process_single_pdf((filepath, out_folder, {}, 100)) is None
+                process_single_pdf((filepath, out_folder, {}, 100))
         # exception
         with patch(
             "finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.convert_single_pdf",

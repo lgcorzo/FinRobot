@@ -6,13 +6,12 @@ from functools import partial
 
 import pandas as pd
 import requests
-from langchain.schema import Document
-
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch import (
     get_cik_by_ticker,
     get_filing,
 )
 from finrobot.data_access.data_source.filings_src.sec_filings import SECExtractor
+from langchain.schema import Document
 
 
 def sec_main(

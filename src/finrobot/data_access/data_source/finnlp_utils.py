@@ -13,9 +13,8 @@ from finnlp.data_sources.social_media.stocktwits_streaming import Stocktwits_Str
 
 # from finnlp.data_sources.news.eastmoney_streaming import Eastmoney_Streaming
 from finnlp.data_sources.social_media.xueqiu_streaming import Xueqiu_Streaming
-from pandas import DataFrame
-
 from finrobot.infrastructure.io.files import SavePathType, save_output
+from pandas import DataFrame
 
 US_Proxy = {
     "use_proxy": "us_free",

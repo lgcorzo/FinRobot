@@ -5,7 +5,6 @@ import typing as T
 from functools import wraps
 
 import requests
-
 from finrobot.infrastructure.utils import decorate_all_methods
 
 fmp_api_key: str = ""

@@ -1,7 +1,8 @@
 """Tests for toolkits."""
 
-import pandas as pd
+from typing import Any
 
+import pandas as pd
 from finrobot.tools import get_toolkits, get_toolkits_from_cls, stringify_output
 
 
@@ -16,11 +17,11 @@ class MockClass:
 def test_stringify_output() -> None:
     """Test output stringification."""
 
-    @stringify_output  # type: ignore[untyped-decorator]
+    @stringify_output
     def return_df() -> pd.DataFrame:
         return pd.DataFrame({"a": [1, 2]})
 
-    @stringify_output  # type: ignore[untyped-decorator]
+    @stringify_output
     def return_int() -> int:
         return 123
 
@@ -46,7 +47,7 @@ def test_get_toolkits_mixed() -> None:
         """Docstring"""
         return "tool"
 
-    config = [MockClass, my_tool]
+    config: list[Any] = [MockClass, my_tool]
 
     tools = get_toolkits(config)
     assert len(tools) == 2  # 1 from MockClass, 1 from function

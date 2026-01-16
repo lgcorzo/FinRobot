@@ -7,7 +7,6 @@ from typing import Annotated, Any, Callable, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 import requests
-
 from finrobot.infrastructure.utils import decorate_all_methods, get_next_weekday
 
 fmp_api_key: Optional[str] = None

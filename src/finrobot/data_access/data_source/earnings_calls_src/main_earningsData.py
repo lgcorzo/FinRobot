@@ -1,12 +1,11 @@
 import re
 import typing as T
 
-from langchain.schema import Document
-from tenacity import RetryError
-
 from finrobot.data_access.data_source.earnings_calls_src.earningsData import (
     get_earnings_transcript,
 )
+from langchain.schema import Document
+from tenacity import RetryError
 
 
 def clean_speakers(speaker: str) -> str:

@@ -2,7 +2,6 @@ import typing as T
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from finrobot.data_access.data_source.filings_src.sec_filings import SECExtractor, timeout
 from finrobot.data_access.data_source.filings_src.secData import sec_main
 

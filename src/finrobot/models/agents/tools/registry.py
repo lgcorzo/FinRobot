@@ -1,9 +1,8 @@
 import typing as T
 from functools import wraps
 
-from pandas import DataFrame
-
 from finrobot.functional.coding import CodingUtils
+from pandas import DataFrame
 
 
 def stringify_output(func: T.Callable[..., T.Any]) -> T.Callable[..., str]:

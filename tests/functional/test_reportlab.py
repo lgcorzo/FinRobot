@@ -4,9 +4,8 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
-from PIL import Image
-
 from finrobot.functional.reportlab import ReportLabUtils
+from PIL import Image
 
 
 @pytest.fixture

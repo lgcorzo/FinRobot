@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from agent_framework import ChatMessage
-
 from finrobot.models.agents.services.workflow_service import FinRobot, SingleAssistant, SingleAssistantRAG
 
 
@@ -36,6 +35,7 @@ def test_finrobot_init_complex(mock_openai_client, mock_toolkits) -> None:  # ty
         instr = getattr(agent, "_instructions", getattr(agent, "instructions", ""))
         assert "Agent Title" in instr
         assert "Leader of Group" in instr
+        assert agent.description is not None
         assert "Task 1" in agent.description
 
 

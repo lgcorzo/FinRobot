@@ -6,7 +6,6 @@ from abc import ABC, abstractmethod
 # agent_framework imports
 from agent_framework import ChatAgent, ChatMessage
 from agent_framework.openai import OpenAIChatClient
-
 from finrobot.tools import get_toolkits
 
 from ..agent_library import library

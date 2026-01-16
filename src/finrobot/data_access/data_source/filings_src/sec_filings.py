@@ -6,9 +6,6 @@ from datetime import date
 from enum import Enum
 
 import requests
-from ratelimit import limits, sleep_and_retry
-from unstructured.staging.base import convert_to_isd
-
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
     REPORT_TYPES,
     VALID_FILING_TYPES,
@@ -22,6 +19,8 @@ from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sections 
     section_string_to_enum,
     validate_section_names,
 )
+from ratelimit import limits, sleep_and_retry
+from unstructured.staging.base import convert_to_isd
 
 DATE_FORMAT_TOKENS = "%Y-%m-%d"
 DEFAULT_BEFORE_DATE = date.today().strftime(DATE_FORMAT_TOKENS)

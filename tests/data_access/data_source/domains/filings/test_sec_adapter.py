@@ -2,7 +2,6 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from finrobot.data_access.data_source.domains.filings.sec_adapter import SECAdapter
 
 
@@ -20,6 +19,7 @@ class TestSECAdapter:
         mock_query.get_filings.return_value = {"filings": [{"ticker": "AAPL", "filedAt": "2023-01-01"}]}
 
         result = SECAdapter.get_10k_metadata("AAPL", "2023-01-01", "2023-01-31")
+        assert result is not None
         assert result["ticker"] == "AAPL"
 
     @patch("finrobot.data_access.data_source.domains.filings.sec_adapter.RenderApi")

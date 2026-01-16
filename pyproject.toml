@@ -26,7 +26,8 @@ numpy = ">=1.26.4"
 plotly = "^5.22.0"
 plyer = "^2.1.0"
 psutil = "^6.0.0"
-
+fastapi = "^0.111.0"
+uvicorn = "^0.30.1"
 # Financial data sources
 yfinance = "^1.0.0"
 finnhub-python = "^2.4.26"
@@ -78,6 +79,7 @@ transformers = "^4.48.3"
 
 [tool.bandit]
 targets = ["src"]
+skips = ["B101", "B113", "B311"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"

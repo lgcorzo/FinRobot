@@ -3,7 +3,6 @@ from typing import Generator
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from finrobot.data_access.data_source.sec_utils import SECUtils
 
 
@@ -23,6 +22,7 @@ class TestSECUtils:
         }
 
         result = SECUtils.get_10k_metadata("AAPL", "2023-01-01", "2023-12-31")
+        assert result is not None
         assert result["ticker"] == "AAPL"
 
     @patch("finrobot.data_access.data_source.sec_utils.RenderApi")

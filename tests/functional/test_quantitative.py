@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
-
 from finrobot.functional.quantitative import BackTraderUtils, DeployedCapitalAnalyzer
 
 

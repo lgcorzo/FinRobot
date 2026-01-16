@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
-
 from finrobot.data_access.data_source.reddit_utils import RedditUtils
 
 

@@ -7,11 +7,10 @@ import webbrowser
 from typing import Dict, Final, List, Optional, Tuple, Union
 
 import requests
-from ratelimit import limits, sleep_and_retry
-
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
     VALID_FILING_TYPES,
 )
+from ratelimit import limits, sleep_and_retry
 
 SEC_ARCHIVE_URL: Final[str] = "https://www.sec.gov/Archives/edgar/data"
 SEC_SEARCH_URL: Final[str] = "http://www.sec.gov/cgi-bin/browse-edgar"
