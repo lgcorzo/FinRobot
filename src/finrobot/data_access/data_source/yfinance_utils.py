@@ -39,7 +39,7 @@ class YFinanceUtils:
     ) -> Dict[str, Any]:
         """Fetches and returns latest stock information."""
         ticker = symbol
-        stock_info = ticker.info
+        stock_info = T.cast(Dict[str, Any], ticker.info)
         return stock_info
 
     def get_company_info(

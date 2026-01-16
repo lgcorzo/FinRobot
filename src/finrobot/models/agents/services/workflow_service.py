@@ -59,7 +59,7 @@ class FinRobot(ChatAgent):
         client = OpenAIChatClient(model_id=model, api_key=api_key, base_url=base_url)
 
         super().__init__(
-            chat_client=client,
+            chat_client=client,  # type: ignore[arg-type]
             name=name,
             instructions=system_message,
             description=agent_config["description"],

@@ -14,7 +14,7 @@ def stringify_output(func: Callable[..., Any]) -> Callable[..., str]:
     def wrapper(*args: Any, **kwargs: Any) -> str:
         result = func(*args, **kwargs)
         if isinstance(result, DataFrame):
-            return result.to_string()
+            return T.cast(str, result.to_string())
         else:
             return str(result)
 
