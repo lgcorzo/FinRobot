@@ -8,14 +8,14 @@ from finrobot.data_access.data_source.domains.market_data.finnhub_adapter import
 
 
 @pytest.fixture
-def finnhub_api_key():
+def finnhub_api_key() -> None:
     with patch.dict(os.environ, {"FINNHUB_API_KEY": "test_key"}):
         yield "test_key"
 
 
 class TestFinnHubMarketAdapter:
     @patch("finrobot.data_access.data_source.domains.market_data.finnhub_adapter.finnhub.Client")
-    def test_get_company_profile(self, mock_client_cls, finnhub_api_key):
+    def test_get_company_profile(self, mock_client_cls, finnhub_api_key) -> None:
         mock_client = MagicMock()
         mock_client_cls.return_value = mock_client
         mock_client.company_profile2.return_value = {
@@ -35,7 +35,7 @@ class TestFinnHubMarketAdapter:
         assert "Technology" in result
 
     @patch("finrobot.data_access.data_source.domains.market_data.finnhub_adapter.finnhub.Client")
-    def test_get_basic_financials_history(self, mock_client_cls, finnhub_api_key):
+    def test_get_basic_financials_history(self, mock_client_cls, finnhub_api_key) -> None:
         mock_client = MagicMock()
         mock_client_cls.return_value = mock_client
         mock_client.company_basic_financials.return_value = {
@@ -47,7 +47,7 @@ class TestFinnHubMarketAdapter:
         assert len(df) == 1
 
     @patch("finrobot.data_access.data_source.domains.market_data.finnhub_adapter.finnhub.Client")
-    def test_get_basic_financials(self, mock_client_cls, finnhub_api_key):
+    def test_get_basic_financials(self, mock_client_cls, finnhub_api_key) -> None:
         mock_client = MagicMock()
         mock_client_cls.return_value = mock_client
         mock_client.company_basic_financials.return_value = {

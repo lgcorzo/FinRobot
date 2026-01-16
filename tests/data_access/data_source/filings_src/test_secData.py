@@ -10,7 +10,7 @@ from finrobot.data_access.data_source.filings_src.secData import sec_main
 
 # Mock the ThreadPoolExecutor and ProcessPoolExecutor to run synchronously or mock results
 @pytest.fixture
-def mock_executors():
+def mock_executors() -> None:
     with (
         patch("concurrent.futures.ThreadPoolExecutor") as mock_thread_pool,
         patch("concurrent.futures.ProcessPoolExecutor") as mock_process_pool,
@@ -33,12 +33,14 @@ def mock_executors():
 @patch("finrobot.data_access.data_source.filings_src.secData.get_cik_by_ticker")
 @patch("finrobot.data_access.data_source.filings_src.secData.get_filing")
 @patch("finrobot.data_access.data_source.filings_src.secData.SECExtractor")
-def test_sec_main(mock_extractor_cls, mock_get_filing, mock_get_cik, mock_requests_get, mock_document, mock_executors):
+def test_sec_main(
+    mock_extractor_cls, mock_get_filing, mock_get_cik, mock_requests_get, mock_document, mock_executors
+) -> None:
     # Setup Mocks
     mock_get_cik.return_value = "0000320193"
 
     # Make Document mock return an object with page_content attribute set
-    def mock_document_side_effect(page_content, metadata):
+    def mock_document_side_effect(page_content, metadata) -> None:
         m = MagicMock()
         m.page_content = page_content
         m.metadata = metadata
@@ -87,7 +89,7 @@ def test_sec_main(mock_extractor_cls, mock_get_filing, mock_get_cik, mock_reques
 
 @patch("finrobot.data_access.data_source.filings_src.secData.requests.get")
 @patch("finrobot.data_access.data_source.filings_src.secData.get_cik_by_ticker")
-def test_sec_main_api_error(mock_get_cik, mock_requests_get):
+def test_sec_main_api_error(mock_get_cik, mock_requests_get) -> None:
     mock_get_cik.return_value = "0000320193"
     mock_response = MagicMock()
     mock_response.status_code = 404

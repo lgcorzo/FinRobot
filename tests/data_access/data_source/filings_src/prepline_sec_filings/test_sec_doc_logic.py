@@ -14,7 +14,7 @@ from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_docum
 
 
 # Helper to avoid MagicMock in regex
-def mock_clean(text, **kwargs):
+def mock_clean(text, **kwargs) -> None:
     t = str(text).strip()
     if kwargs.get("lowercase"):
         t = t.lower()
@@ -22,7 +22,7 @@ def mock_clean(text, **kwargs):
 
 
 @pytest.fixture(autouse=True)
-def patch_clean():
+def patch_clean() -> None:
     with patch(
         "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.clean_sec_text",
         side_effect=mock_clean,
@@ -30,7 +30,7 @@ def patch_clean():
         yield m
 
 
-def test_sec_doc_misc_logic():
+def test_sec_doc_misc_logic() -> None:
     doc = SECDocument.from_elements([])
     doc.filing_type = "10-K"
     with patch("unstructured.documents.html.HTMLDocument.doc_after_cleaners") as mock_base:
@@ -61,7 +61,7 @@ def test_sec_doc_misc_logic():
         assert fmt.shape == (1, 1)
 
 
-def test_get_toc_sections_search():
+def test_get_toc_sections_search() -> None:
     doc = SECDocument.from_elements([])
     doc.filing_type = "10-K"
     toc_mock = MagicMock()
@@ -79,7 +79,7 @@ def test_get_toc_sections_search():
         assert end == e2
 
 
-def test_is_section_elem_patterns():
+def test_is_section_elem_patterns() -> None:
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import is_section_elem
 
     elem = Title(text="Item 1. Business")
@@ -89,7 +89,7 @@ def test_is_section_elem_patterns():
     assert is_section_elem(SECSection.PROSPECTUS_SUMMARY, elem, "S-1") is True
 
 
-def test_s1_titles():
+def test_s1_titles() -> None:
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
         is_item_title,
         is_risk_title,
@@ -99,7 +99,7 @@ def test_s1_titles():
     assert is_item_title("PROSPECTUS", "S-1") is True
 
 
-def test_match_functions():
+def test_match_functions() -> None:
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
         match_10k_toc_title_to_section,
         match_s1_toc_title_to_section,
@@ -111,14 +111,14 @@ def test_match_functions():
     assert match_10k_toc_title_to_section("unknown", "other") is False
 
 
-def test_get_risk_narrative():
+def test_get_risk_narrative() -> None:
     doc = SECDocument.from_elements([])
     with patch.object(doc, "get_section_narrative") as mock_get:
         doc.get_risk_narrative()
         mock_get.assert_called_with(SECSection.RISK_FACTORS)
 
 
-def test_get_element_by_title():
+def test_get_element_by_title() -> None:
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import get_element_by_title
 
     e1 = Title(text="Item 1")
@@ -130,7 +130,7 @@ def test_get_element_by_title():
 
 
 # NEW TESTS FOR FINAL COVERAGE PUSH
-def test_sec_document_final_gaps():
+def test_sec_document_final_gaps() -> None:
     # Line 93: _filter_table_of_contents fallback []
     doc = SECDocument.from_elements([])
     doc.filing_type = "UNKNOWN"

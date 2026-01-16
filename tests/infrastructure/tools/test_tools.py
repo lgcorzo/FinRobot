@@ -6,22 +6,22 @@ from finrobot.tools import get_toolkits, get_toolkits_from_cls, stringify_output
 
 
 class MockClass:
-    def method_a(self):
+    def method_a(self) -> None:
         return "a"
 
-    def _private_method(self):
+    def _private_method(self) -> None:
         return "private"
 
 
-def test_stringify_output():
+def test_stringify_output() -> None:
     """Test output stringification."""
 
     @stringify_output
-    def return_df():
+    def return_df() -> None:
         return pd.DataFrame({"a": [1, 2]})
 
     @stringify_output
-    def return_int():
+    def return_int() -> None:
         return 123
 
     assert isinstance(return_df(), str)
@@ -29,7 +29,7 @@ def test_stringify_output():
     assert return_int() == "123"
 
 
-def test_get_toolkits_from_cls():
+def test_get_toolkits_from_cls() -> None:
     """Test pulling methods from a class."""
     tools = get_toolkits_from_cls(MockClass)
     assert len(tools) == 1
@@ -39,10 +39,10 @@ def test_get_toolkits_from_cls():
     assert len(tools_private) == 2
 
 
-def test_get_toolkits_mixed():
+def test_get_toolkits_mixed() -> None:
     """Test getting tools from config list."""
 
-    def my_tool():
+    def my_tool() -> None:
         """Docstring"""
         return "tool"
 

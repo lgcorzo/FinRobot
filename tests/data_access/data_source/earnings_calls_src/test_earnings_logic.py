@@ -5,7 +5,7 @@ import pytest
 from finrobot.data_access.data_source.earnings_calls_src.main_earningsData import get_earnings_all_docs
 
 
-def test_get_earnings_all_docs():
+def test_get_earnings_all_docs() -> None:
     mock_resp = {"content": "\nSpeaker 1: Hello\nSpeaker 2: Hi", "year": 2023, "date": "2023-01-01 00:00:00"}
     with patch(
         "finrobot.data_access.data_source.earnings_calls_src.main_earningsData.get_earnings_transcript",

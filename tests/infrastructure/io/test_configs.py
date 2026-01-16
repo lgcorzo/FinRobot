@@ -14,7 +14,7 @@ from finrobot.infrastructure.io.configs import (
 class TestConfigs:
     """Test suite for OmegaConf configuration utilities."""
 
-    def test_parse_string_yaml(self):
+    def test_parse_string_yaml(self) -> None:
         """Test parsing a YAML string."""
         yaml_str = "key: value\nnumber: 42"
         result = parse_string(yaml_str)
@@ -22,7 +22,7 @@ class TestConfigs:
         assert result.key == "value"
         assert result.number == 42
 
-    def test_parse_string_nested(self):
+    def test_parse_string_nested(self) -> None:
         """Test parsing nested YAML structure."""
         yaml_str = """
         parent:
@@ -36,7 +36,7 @@ class TestConfigs:
         assert result.parent.child == "value"
         assert len(result.parent.list) == 2
 
-    def test_parse_file(self):
+    def test_parse_file(self) -> None:
         """Test parsing a YAML file."""
         yaml_content = "name: test\nversion: 1.0"
 
@@ -51,7 +51,7 @@ class TestConfigs:
         finally:
             os.unlink(temp_path)
 
-    def test_merge_configs(self):
+    def test_merge_configs(self) -> None:
         """Test merging multiple configurations."""
         config1 = parse_string("a: 1\nb: 2")
         config2 = parse_string("b: 3\nc: 4")
@@ -63,7 +63,7 @@ class TestConfigs:
         assert merged.b == 3  # Overwritten by config2
         assert merged.c == 4
 
-    def test_to_object(self):
+    def test_to_object(self) -> None:
         """Test converting OmegaConf to Python object."""
         config = parse_string("key: value\nnumber: 42")
         obj = to_object(config)

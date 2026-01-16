@@ -8,19 +8,19 @@ from finrobot.data_access.data_source.filings_src.prepline_sec_filings import fe
 
 
 @pytest.fixture(autouse=True)
-def setup_env():
+def setup_env() -> None:
     # Global environment patch for the entire test module
     with patch.dict(os.environ, {"SEC_API_KEY": "test", "SEC_API_ORGANIZATION": "Org", "SEC_API_EMAIL": "Email"}):
         yield
 
 
-def test_sec_adapter_api_key_check():
+def test_sec_adapter_api_key_check() -> None:
     with patch.dict(os.environ, {}, clear=True):
         res = SECAdapter.get_10k_metadata("AAPL", "2023-01-01", "2023-12-31")
         assert res is None
 
 
-def test_sec_adapter_no_filings():
+def test_sec_adapter_no_filings() -> None:
     import finrobot.data_access.data_source.domains.filings.sec_adapter as sa
 
     with patch.object(sa, "QueryApi") as mock_q_class:
@@ -31,13 +31,13 @@ def test_sec_adapter_no_filings():
         assert res is None
 
 
-def test_sec_adapter_download_errors():
+def test_sec_adapter_download_errors() -> None:
     with patch.object(SECAdapter, "get_10k_metadata", return_value=None):
         res = SECAdapter.download_10k_filing("AAPL", "2023-01-01", "2023-12-31", "tmp")
         assert "No 2023 10-K filing found" in res
 
 
-def test_sec_adapter_section_logic(tmp_path):
+def test_sec_adapter_section_logic(tmp_path) -> None:
     import finrobot.data_access.data_source.domains.filings.sec_adapter as sa
 
     with patch.object(sa, "ExtractorApi") as mock_e_class:
@@ -63,7 +63,7 @@ def test_sec_adapter_section_logic(tmp_path):
                 assert str(res).strip() == "Section text"
 
 
-def test_fetch_extra_logic():
+def test_fetch_extra_logic() -> None:
     s = fetch._get_session(company=None, email=None)
     assert s.headers["User-Agent"] == "Org Email"
 

@@ -10,7 +10,7 @@ from finrobot.infrastructure.io.files import register_keys_from_json, save_outpu
 from finrobot.infrastructure.utils import get_current_date, get_next_weekday
 
 
-def test_save_output(tmp_path):
+def test_save_output(tmp_path) -> None:
     """Test saving dataframe to CSV."""
     df = pd.DataFrame({"a": [1, 2]})
     file_path = tmp_path / "test.csv"
@@ -22,14 +22,14 @@ def test_save_output(tmp_path):
     # Should just pass
 
 
-def test_get_current_date():
+def test_get_current_date() -> None:
     """Test date format."""
     d = get_current_date()
     assert isinstance(d, str)
     assert len(d.split("-")) == 3
 
 
-def test_register_keys_from_json(tmp_path):
+def test_register_keys_from_json(tmp_path) -> None:
     """Test environment variable registration."""
     config = {"TEST_KEY_123": "VALUE_123"}
     config_path = tmp_path / "config.json"
@@ -40,7 +40,7 @@ def test_register_keys_from_json(tmp_path):
     assert os.environ["TEST_KEY_123"] == "VALUE_123"
 
 
-def test_get_next_weekday():
+def test_get_next_weekday() -> None:
     """Test weekday calculation."""
     # Monday
     d1 = datetime(2025, 1, 13)

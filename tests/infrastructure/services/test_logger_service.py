@@ -8,20 +8,20 @@ from finrobot.infrastructure.services.logger_service import LoggerService
 class TestLoggerService:
     """Test suite for LoggerService."""
 
-    def test_logger_service_instantiation(self):
+    def test_logger_service_instantiation(self) -> None:
         """Test that LoggerService can be instantiated with defaults."""
         service = LoggerService()
         assert service.level == "DEBUG"
         assert service.sink == "stderr"
 
-    def test_logger_service_custom_level(self):
+    def test_logger_service_custom_level(self) -> None:
         """Test LoggerService with custom log level."""
         service = LoggerService(level="INFO")
         assert service.level == "INFO"
 
     @patch("finrobot.infrastructure.services.logger_service.TracerProvider")
     @patch("finrobot.infrastructure.services.logger_service.LoggerProvider")
-    def test_logger_service_start(self, mock_logger_provider, mock_tracer_provider):
+    def test_logger_service_start(self, mock_logger_provider, mock_tracer_provider) -> None:
         """Test that start() initializes OpenTelemetry providers."""
         service = LoggerService()
         service.start()
@@ -29,7 +29,7 @@ class TestLoggerService:
         mock_tracer_provider.assert_called_once()
         mock_logger_provider.assert_called_once()
 
-    def test_logger_service_logger_returns_loguru(self):
+    def test_logger_service_logger_returns_loguru(self) -> None:
         """Test that logger() returns a loguru logger instance."""
         service = LoggerService()
         service.start()
@@ -41,7 +41,7 @@ class TestLoggerService:
         assert hasattr(logger, "error")
         assert hasattr(logger, "warning")
 
-    def test_logger_service_stop(self):
+    def test_logger_service_stop(self) -> None:
         """Test that stop() completes without error."""
         service = LoggerService()
         service.start()

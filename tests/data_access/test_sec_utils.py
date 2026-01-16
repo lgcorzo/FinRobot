@@ -1,4 +1,5 @@
 import os
+from typing import Generator
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -7,14 +8,14 @@ from finrobot.data_access.data_source.sec_utils import SECUtils
 
 
 @pytest.fixture
-def sec_api_key():
+def sec_api_key() -> Generator[str, None, None]:
     with patch.dict(os.environ, {"SEC_API_KEY": "test_key"}):
         yield "test_key"
 
 
 class TestSECUtils:
     @patch("finrobot.data_access.data_source.sec_utils.QueryApi")
-    def test_get_10k_metadata(self, mock_query_api_cls, sec_api_key):
+    def test_get_10k_metadata(self, mock_query_api_cls: MagicMock, sec_api_key: str) -> None:
         mock_query_api = MagicMock()
         mock_query_api_cls.return_value = mock_query_api
         mock_query_api.get_filings.return_value = {
@@ -30,8 +31,14 @@ class TestSECUtils:
     @patch("os.makedirs")
     @patch("builtins.open", new_callable=MagicMock)
     def test_download_10k_filing(
-        self, mock_open, mock_makedirs, mock_isdir, mock_get_meta, mock_render_api_cls, sec_api_key
-    ):
+        self,
+        mock_open: MagicMock,
+        mock_makedirs: MagicMock,
+        mock_isdir: MagicMock,
+        mock_get_meta: MagicMock,
+        mock_render_api_cls: MagicMock,
+        sec_api_key: str,
+    ) -> None:
         mock_render_api = MagicMock()
         mock_render_api_cls.return_value = mock_render_api
         mock_render_api.get_filing.return_value = "<html>content</html>"
@@ -54,8 +61,14 @@ class TestSECUtils:
     @patch("os.makedirs")
     @patch("builtins.open", new_callable=MagicMock)
     def test_get_10k_section(
-        self, mock_open, mock_makedirs, mock_exists, mock_get_fmp, mock_extractor_api_cls, sec_api_key
-    ):
+        self,
+        mock_open: MagicMock,
+        mock_makedirs: MagicMock,
+        mock_exists: MagicMock,
+        mock_get_fmp: MagicMock,
+        mock_extractor_api_cls: MagicMock,
+        sec_api_key: str,
+    ) -> None:
         mock_extractor_api = MagicMock()
         mock_extractor_api_cls.return_value = mock_extractor_api
         mock_extractor_api.get_section.return_value = "section text"
@@ -72,7 +85,7 @@ class TestSECUtils:
         mock_extractor_api.get_section.assert_called_with("http://link", "1A", "text")
 
     @patch("finrobot.data_access.data_source.sec_utils.os.environ.get")
-    def test_init_sec_api_missing_key(self, mock_get, sec_api_key):
+    def test_init_sec_api_missing_key(self, mock_get: MagicMock, sec_api_key: str) -> None:
         # Patch environ.get to return None for SEC_API_KEY
         # But sec_api_key fixture sets it in os.environ dict.
         # We need to ensure 'if os.environ.get("SEC_API_KEY") is None' returns True.
@@ -93,7 +106,7 @@ class TestSECUtils:
             assert res is None
 
     @patch("finrobot.data_access.data_source.sec_utils.QueryApi")
-    def test_get_10k_metadata_no_filings(self, mock_query_api_cls, sec_api_key):
+    def test_get_10k_metadata_no_filings(self, mock_query_api_cls: MagicMock, sec_api_key: str) -> None:
         mock_query_api = MagicMock()
         mock_query_api_cls.return_value = mock_query_api
         mock_query_api.get_filings.return_value = {"filings": []}
@@ -102,13 +115,13 @@ class TestSECUtils:
         assert result is None
 
     @patch("finrobot.data_access.data_source.sec_utils.SECUtils.get_10k_metadata")
-    def test_download_10k_filing_no_metadata(self, mock_get_meta, sec_api_key):
+    def test_download_10k_filing_no_metadata(self, mock_get_meta: MagicMock, sec_api_key: str) -> None:
         mock_get_meta.return_value = None
         res = SECUtils.download_10k_filing("AAPL", "2023-01-01", "2023-12-31", "save")
         assert "No 2023 10-K filing found" in res
 
     @patch("finrobot.data_access.data_source.sec_utils.SECUtils.get_10k_metadata")
-    def test_download_10k_filing_exception(self, mock_get_meta, sec_api_key):
+    def test_download_10k_filing_exception(self, mock_get_meta: MagicMock, sec_api_key: str) -> None:
         mock_get_meta.return_value = {
             "ticker": "AAPL",
             "filedAt": "2023-01-01",
@@ -127,14 +140,14 @@ class TestSECUtils:
             assert "downloaded failed" in res
 
     @patch("finrobot.data_access.data_source.sec_utils.SECUtils.get_10k_metadata")
-    def test_download_10k_pdf_no_metadata(self, mock_get_meta, sec_api_key):
+    def test_download_10k_pdf_no_metadata(self, mock_get_meta: MagicMock, sec_api_key: str) -> None:
         mock_get_meta.return_value = None
         res = SECUtils.download_10k_pdf("AAPL", "2023-01-01", "2023-12-31", "save")
         assert "No 2023 10-K filing found" in res
 
     @patch("finrobot.data_access.data_source.sec_utils.SECUtils.get_10k_metadata")
     @patch("requests.get")
-    def test_download_10k_pdf_success(self, mock_get, mock_get_meta, sec_api_key):
+    def test_download_10k_pdf_success(self, mock_get: MagicMock, mock_get_meta: MagicMock, sec_api_key: str) -> None:
         mock_get_meta.return_value = {
             "ticker": "AAPL",
             "filedAt": "2023-01-01",
@@ -151,7 +164,7 @@ class TestSECUtils:
                 assert "download succeeded" in res
 
     @patch("finrobot.data_access.data_source.sec_utils.SECUtils.get_10k_metadata")
-    def test_download_10k_pdf_exception(self, mock_get_meta, sec_api_key):
+    def test_download_10k_pdf_exception(self, mock_get_meta: MagicMock, sec_api_key: str) -> None:
         mock_get_meta.return_value = {
             "ticker": "AAPL",
             "filedAt": "2023-01-01",
@@ -163,19 +176,19 @@ class TestSECUtils:
             res = SECUtils.download_10k_pdf("AAPL", "2023-01-01", "2023-12-31", "save")
             assert "downloaded failed" in res
 
-    def test_get_10k_section_invalid_section(self, sec_api_key):
+    def test_get_10k_section_invalid_section(self, sec_api_key: str) -> None:
         with pytest.raises(ValueError):
             SECUtils.get_10k_section("AAPL", "2023", "Invalid")
 
     @patch("finrobot.data_access.data_source.sec_utils.FMPUtils.get_sec_report")
-    def test_get_10k_section_fmp_failure(self, mock_fmp, sec_api_key):
+    def test_get_10k_section_fmp_failure(self, mock_fmp: MagicMock, sec_api_key: str) -> None:
         mock_fmp.return_value = "Error from FMP"
         res = SECUtils.get_10k_section("AAPL", "2023", "1A")
         assert res == "Error from FMP"
 
     @patch("os.path.exists", return_value=True)
     @patch("builtins.open", new_callable=MagicMock)
-    def test_get_10k_section_cache_hit(self, mock_open, mock_exists, sec_api_key):
+    def test_get_10k_section_cache_hit(self, mock_open: MagicMock, mock_exists: MagicMock, sec_api_key: str) -> None:
         # report_address passed to avoid FMP call
         mock_file = MagicMock()
         mock_file.read.return_value = "cached text"
@@ -188,7 +201,14 @@ class TestSECUtils:
     @patch("os.path.exists", return_value=False)
     @patch("builtins.open", new_callable=MagicMock)
     @patch("os.makedirs")
-    def test_get_10k_section_with_save_path(self, mock_mkdirs, mock_open, mock_exists, mock_extractor_cls, sec_api_key):
+    def test_get_10k_section_with_save_path(
+        self,
+        mock_mkdirs: MagicMock,
+        mock_open: MagicMock,
+        mock_exists: MagicMock,
+        mock_extractor_cls: MagicMock,
+        sec_api_key: str,
+    ) -> None:
         mock_extractor = MagicMock()
         mock_extractor_cls.return_value = mock_extractor
         mock_extractor.get_section.return_value = "text"

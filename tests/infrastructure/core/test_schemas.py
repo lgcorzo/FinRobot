@@ -7,7 +7,7 @@ import pytest
 from finrobot.core.schemas import FinancialReportSchema, MarketDataSchema
 
 
-def test_market_data_schema_valid():
+def test_market_data_schema_valid() -> None:
     """Test valid market data."""
     valid_data = pd.DataFrame(
         {
@@ -24,7 +24,7 @@ def test_market_data_schema_valid():
     assert not validated.empty
 
 
-def test_market_data_schema_invalid():
+def test_market_data_schema_invalid() -> None:
     """Test invalid market data."""
     invalid_data = pd.DataFrame(
         {
@@ -36,7 +36,7 @@ def test_market_data_schema_invalid():
         MarketDataSchema.check(invalid_data)
 
 
-def test_financial_report_schema_valid():
+def test_financial_report_schema_valid() -> None:
     """Test valid financial report."""
     valid_data = pd.DataFrame(
         {

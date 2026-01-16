@@ -8,14 +8,14 @@ from finrobot.data_access.data_source.domains.news.finnhub_adapter import FinnHu
 
 
 @pytest.fixture
-def finnhub_api_key():
+def finnhub_api_key() -> None:
     with patch.dict(os.environ, {"FINNHUB_API_KEY": "test_key"}):
         yield "test_key"
 
 
 class TestFinnHubNewsAdapter:
     @patch("finrobot.data_access.data_source.domains.news.finnhub_adapter.finnhub.Client")
-    def test_get_company_news(self, mock_client_cls, finnhub_api_key):
+    def test_get_company_news(self, mock_client_cls, finnhub_api_key) -> None:
         mock_client = MagicMock()
         mock_client_cls.return_value = mock_client
         mock_client.company_news.return_value = [

@@ -14,7 +14,7 @@ from finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel import (
 
 
 @pytest.fixture
-def mock_settings():
+def mock_settings() -> None:
     with patch("finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.settings") as mock:
         mock.CUDA = False
         mock.INFERENCE_RAM = 100
@@ -22,7 +22,7 @@ def mock_settings():
         yield mock
 
 
-def test_run_marker(tmp_path):
+def test_run_marker(tmp_path) -> None:
     input_dir = tmp_path / "input"
     input_dir.mkdir()
     (input_dir / "test1.pdf").write_text("dummy")
@@ -38,7 +38,7 @@ def test_run_marker(tmp_path):
                 mock_convert.assert_called_once()
 
 
-def test_run_marker_mp_complex(mock_settings, tmp_path):
+def test_run_marker_mp_complex(mock_settings, tmp_path) -> None:
     in_dir = tmp_path / "in"
     in_dir.mkdir()
     (in_dir / "doc1.pdf").write_text("d")
@@ -67,7 +67,7 @@ def test_run_marker_mp_complex(mock_settings, tmp_path):
             mock_load.assert_called_once()
 
 
-def test_run_marker_mp_cuda(mock_settings, tmp_path):
+def test_run_marker_mp_cuda(mock_settings, tmp_path) -> None:
     mock_settings.CUDA = True
     in_dir = tmp_path / "in"
     in_dir.mkdir()
@@ -82,7 +82,7 @@ def test_run_marker_mp_cuda(mock_settings, tmp_path):
                 model.share_memory.assert_called_once()
 
 
-def test_process_single_pdf_edge_cases(tmp_path):
+def test_process_single_pdf_edge_cases(tmp_path) -> None:
     filepath = str(tmp_path / "test.pdf")
     txt_path = str(tmp_path / "test.txt")
     out_folder = str(tmp_path / "out")

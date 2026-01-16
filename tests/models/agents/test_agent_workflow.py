@@ -7,7 +7,7 @@ from finrobot.models.agents.workflow import FinRobot, SingleAssistant
 
 
 @pytest.fixture
-def mock_agent_config():
+def mock_agent_config() -> None:
     return {
         "name": "Finance_Analyst",
         "description": "Financial Analyst agent",
@@ -20,7 +20,7 @@ class TestWorkflow:
     @patch("finrobot.models.agents.workflow.get_toolkits")
     @patch("finrobot.models.agents.workflow.OpenAIChatClient")
     @patch("finrobot.models.agents.workflow.library")
-    def test_finrobot_init_with_dict(self, mock_library, mock_client_cls, mock_get_toolkits, mock_agent_config):
+    def test_finrobot_init_with_dict(self, mock_library, mock_client_cls, mock_get_toolkits, mock_agent_config) -> None:
         mock_get_toolkits.return_value = []
         mock_client = MagicMock()
         mock_client_cls.return_value = mock_client
@@ -32,7 +32,9 @@ class TestWorkflow:
     @patch("finrobot.models.agents.workflow.get_toolkits")
     @patch("finrobot.models.agents.workflow.OpenAIChatClient")
     @patch("finrobot.models.agents.workflow.library")
-    def test_finrobot_init_with_library_name(self, mock_library, mock_client_cls, mock_get_toolkits, mock_agent_config):
+    def test_finrobot_init_with_library_name(
+        self, mock_library, mock_client_cls, mock_get_toolkits, mock_agent_config
+    ) -> None:
         mock_get_toolkits.return_value = []
         mock_library.__contains__.return_value = True
         mock_library.__getitem__.return_value = mock_agent_config
@@ -41,12 +43,12 @@ class TestWorkflow:
         assert agent.name == "Finance_Analyst"
 
     @patch("finrobot.models.agents.workflow.FinRobot")
-    def test_single_assistant_chat(self, mock_finrobot_cls):
+    def test_single_assistant_chat(self, mock_finrobot_cls) -> None:
         mock_agent = MagicMock()
         mock_finrobot_cls.return_value = mock_agent
 
         # mock_agent.run is an async method
-        async def mock_run(msg):
+        async def mock_run(msg) -> None:
             pass
 
         mock_agent.run = mock_run

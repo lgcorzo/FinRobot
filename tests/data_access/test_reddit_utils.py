@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, timezone
+from typing import Generator
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -9,14 +10,14 @@ from finrobot.data_access.data_source.reddit_utils import RedditUtils
 
 
 @pytest.fixture
-def reddit_creds():
+def reddit_creds() -> Generator[None, None, None]:
     with patch.dict(os.environ, {"REDDIT_CLIENT_ID": "test_id", "REDDIT_CLIENT_SECRET": "test_secret"}):
         yield
 
 
 class TestRedditUtils:
     @patch("finrobot.data_access.data_source.reddit_utils.praw.Reddit")
-    def test_get_reddit_posts(self, mock_reddit_cls, reddit_creds):
+    def test_get_reddit_posts(self, mock_reddit_cls: MagicMock, reddit_creds: None) -> None:
         mock_reddit = MagicMock()
         mock_reddit_cls.return_value = mock_reddit
 

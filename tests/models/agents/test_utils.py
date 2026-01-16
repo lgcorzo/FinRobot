@@ -7,7 +7,7 @@ import pytest
 from finrobot.models.agents.utils import instruction_message, instruction_trigger, order_message, order_trigger
 
 
-def test_instruction_trigger():
+def test_instruction_trigger() -> None:
     sender = MagicMock()
     sender.last_message.return_value = {"content": "instruction & resources saved to some_path"}
     assert instruction_trigger(sender) is True
@@ -16,7 +16,7 @@ def test_instruction_trigger():
     assert instruction_trigger(sender) is False
 
 
-def test_instruction_message(tmp_path):
+def test_instruction_message(tmp_path) -> None:
     sender = MagicMock()
     recipient = MagicMock()
 
@@ -31,7 +31,7 @@ def test_instruction_message(tmp_path):
     assert "TERMINATE" in instruction
 
 
-def test_order_trigger():
+def test_order_trigger() -> None:
     sender = MagicMock()
     sender.name = "Analyst"
     sender.last_message.return_value = {"content": "Execute [TRADE] order"}
@@ -41,7 +41,7 @@ def test_order_trigger():
     assert order_trigger(sender, "Analyst", "[ANALYSIS]") is False
 
 
-def test_order_message():
+def test_order_message() -> None:
     sender = MagicMock()
     recipient = MagicMock()
 

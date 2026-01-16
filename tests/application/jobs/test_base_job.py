@@ -23,18 +23,18 @@ class ConcreteJob(Job):
 class TestJob:
     """Test suite for Job base class."""
 
-    def test_job_instantiation(self):
+    def test_job_instantiation(self) -> None:
         """Test that a concrete Job can be instantiated."""
         job = ConcreteJob()
         assert job.KIND == "test"
         assert job.test_param == "default"
 
-    def test_job_custom_params(self):
+    def test_job_custom_params(self) -> None:
         """Test Job with custom parameters."""
         job = ConcreteJob(test_param="custom")
         assert job.test_param == "custom"
 
-    def test_job_has_services(self):
+    def test_job_has_services(self) -> None:
         """Test that Job has default services."""
         job = ConcreteJob()
         assert job.logger_service is not None
@@ -42,7 +42,7 @@ class TestJob:
         assert job.mlflow_service is not None
 
     @patch.object(ConcreteJob, "run", return_value={"result": "mocked"})
-    def test_job_run(self, mock_run):
+    def test_job_run(self, mock_run) -> None:
         """Test that run() can be called."""
         job = ConcreteJob()
         result = job.run()
@@ -53,7 +53,7 @@ class TestJob:
     @patch("finrobot.infrastructure.services.logger_service.LoggerService.start")
     @patch("finrobot.infrastructure.services.alert_service.AlertsService.start")
     @patch("finrobot.infrastructure.services.mlflow_service.MlflowService.start")
-    def test_job_context_manager_enter(self, mock_mlflow_start, mock_alerts_start, mock_logger_start):
+    def test_job_context_manager_enter(self, mock_mlflow_start, mock_alerts_start, mock_logger_start) -> None:
         """Test that __enter__ starts services."""
         job = ConcreteJob()
 
@@ -78,7 +78,7 @@ class TestJob:
         mock_logger_stop,
         mock_alerts_stop,
         mock_mlflow_stop,
-    ):
+    ) -> None:
         """Test that __exit__ stops services."""
         job = ConcreteJob()
         job.__enter__()  # Need to start first for logger to work
@@ -90,7 +90,7 @@ class TestJob:
         mock_logger_stop.assert_called_once()
         assert result is False  # Should propagate exceptions
 
-    def test_job_frozen(self):
+    def test_job_frozen(self) -> None:
         """Test that Job is frozen (immutable)."""
         job = ConcreteJob()
 

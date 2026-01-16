@@ -59,14 +59,14 @@ class MockFinder:
         if any(fullname == p or fullname.startswith(p + ".") for p in mocked_prefixes):
             return importlib.machinery.ModuleSpec(
                 fullname,
-                MockLoader,
-                is_package=True,  # type: ignore
+                MockLoader,  # type: ignore[arg-type]
+                is_package=True,
             )
         return None
 
 
 # Register the finder
-sys.meta_path.insert(0, MockFinder)
+sys.meta_path.insert(0, MockFinder)  # type: ignore[arg-type]
 
 # Also pre-populate some critical ones to avoid initial lookup issues
 for p in ["langchain", "chromadb", "unstructured", "backtrader", "pypdf"]:
