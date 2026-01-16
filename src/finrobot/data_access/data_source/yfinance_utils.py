@@ -1,6 +1,6 @@
+import typing as T
 from functools import wraps
 from typing import Annotated, Any, Callable, Dict, List, Optional, Tuple, Union
-import typing as T
 
 import yfinance as yf
 from pandas import DataFrame

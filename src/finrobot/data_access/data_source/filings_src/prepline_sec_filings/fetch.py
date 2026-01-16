@@ -3,12 +3,10 @@ import os
 import re
 import sys
 import typing as T
+import webbrowser
 from typing import Dict, Final, List, Optional, Tuple, Union
 
 import requests
-
-import webbrowser
-
 from ratelimit import limits, sleep_and_retry
 
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (

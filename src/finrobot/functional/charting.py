@@ -1,7 +1,7 @@
 import os
+import typing as T
 from datetime import datetime, timedelta
 from typing import Annotated, Any, Dict, List, Optional, Tuple, Union
-import typing as T
 
 import mplfinance as mpf
 import pandas as pd

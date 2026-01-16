@@ -1,6 +1,6 @@
 import os
-from typing import Annotated, Any, List, Optional, Union, Dict, Callable
 import typing as T
+from typing import Annotated, Any, Callable, Dict, List, Optional, Union
 
 from finnlp.data_sources.news.cnbc_streaming import CNBC_Streaming
 from finnlp.data_sources.news.finnhub_date_range import Finnhub_Date_Range

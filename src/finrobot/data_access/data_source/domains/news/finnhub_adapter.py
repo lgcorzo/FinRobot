@@ -2,10 +2,10 @@
 
 import os
 import random
+import typing as T
 from datetime import datetime
 from functools import wraps
 from typing import Annotated, Any, Callable, Optional
-import typing as T
 
 import finnhub
 import pandas as pd

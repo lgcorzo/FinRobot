@@ -1,8 +1,8 @@
 import re
 import sys
+import typing as T
 from functools import partial
 from typing import Any, Iterable, Iterator, List, Optional, Tuple
-import typing as T
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final

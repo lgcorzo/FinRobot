@@ -1,9 +1,9 @@
 import json
 import os
 import re
+import typing as T
 from datetime import datetime
 from typing import Any, Dict, Final, List, Tuple, Union
-import typing as T
 
 import pandas as pd
 import pdfkit

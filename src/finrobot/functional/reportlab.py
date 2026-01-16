@@ -1,7 +1,7 @@
 import os
 import traceback
-from typing import Annotated, Any, Dict, List, Optional, Union
 import typing as T
+from typing import Annotated, Any, Dict, List, Optional, Union
 
 from reportlab.lib import colors, pagesizes
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT
