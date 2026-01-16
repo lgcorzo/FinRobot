@@ -1,10 +1,11 @@
+import typing as T
 from unittest.mock import MagicMock, patch
 
 from finrobot.models.agents.services.prompt_service import leader_system_message, order_template, role_system_message
 from finrobot.models.agents.services.workflow_service import FinRobot, SingleAssistant
 
 
-def test_workflow_service_import():
+def test_workflow_service_import() -> None:
     # Verify we can instantiate from service module
     with patch("finrobot.models.agents.services.workflow_service.get_toolkits") as mock_get:
         with patch("finrobot.models.agents.services.workflow_service.OpenAIChatClient") as mock_client:
@@ -12,7 +13,7 @@ def test_workflow_service_import():
             assert agent.name == "test"
 
 
-def test_prompt_service_templates():
+def test_prompt_service_templates() -> None:
     # Verify templates can be formatted
     assert "{group_desc}" in leader_system_message
     formatted_leader = leader_system_message.format(group_desc="Developers")

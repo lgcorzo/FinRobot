@@ -6,6 +6,7 @@ from typing import Any, Callable, Dict, List
 # agent_framework imports
 from agent_framework import ChatAgent, ChatMessage
 from agent_framework.openai import OpenAIChatClient
+
 from finrobot.tools import get_toolkits
 
 from ..agent_library import library
@@ -18,10 +19,10 @@ class FinRobot(ChatAgent):
         self,
         agent_config: str | Dict[str, Any],
         system_message: str | None = None,  # overwrites previous config
-        toolkits: List[Callable | dict | type] = [],  # overwrites previous config
+        toolkits: List[Callable | dict | Any] = [],  # overwrites previous config
         llm_config: Dict[str, Any] = {},
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         orig_name = ""
         if isinstance(agent_config, str):
             orig_name = agent_config
@@ -66,7 +67,7 @@ class FinRobot(ChatAgent):
             **kwargs,
         )
 
-    def _preprocess_config(self, config):
+    def _preprocess_config(self, config: Dict[str, Any]) -> Dict[str, Any]:
         role_prompt, leader_prompt, responsibilities = "", "", ""
 
         if "responsibilities" in config:
@@ -98,7 +99,7 @@ class FinRobot(ChatAgent):
 
         return config
 
-    def register_proxy(self, proxy):
+    def register_proxy(self, proxy: Any) -> None:
         # In agent_framework, we don't register proxy explicitly for tools usually.
         # But if needed, we might handle it here. For now, pass.
         pass
@@ -116,11 +117,11 @@ class SingleAssistantBase(ABC):
         )
 
     @abstractmethod
-    def chat(self):
+    def chat(self, message: str, **kwargs: Any) -> Any:
         pass
 
     @abstractmethod
-    def reset(self):
+    def reset(self) -> None:
         pass
 
 
@@ -129,12 +130,12 @@ class SingleAssistant(SingleAssistantBase):
         self,
         agent_config: str | Dict[str, Any],
         llm_config: Dict[str, Any] = {},
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__(agent_config, llm_config=llm_config)
         # No UserProxyAgent in this style, assuming simple chat loop or direct interaction
 
-    def chat(self, message: str, use_cache=False, **kwargs):
+    def chat(self, message: str, use_cache: bool = False, **kwargs: Any) -> Any:
         # We need to run async implementation synchronously if called from sync code
         try:
             loop = asyncio.get_event_loop()
@@ -148,10 +149,9 @@ class SingleAssistant(SingleAssistantBase):
             response = self._run_chat_sync(message)
         else:
             response = loop.run_until_complete(self._chat_async(message))
+        return response
 
-        # print("Response:", response)
-
-    async def _chat_async(self, message: str):
+    async def _chat_async(self, message: str) -> Any:
         # Create a user message
         user_msg = ChatMessage(text=message, role="user")
         # Run the agent
@@ -160,10 +160,10 @@ class SingleAssistant(SingleAssistantBase):
         # Accessing last message? ChatAgent usually updates its state/memory.
         # We might want to print the output.
 
-    def _run_chat_sync(self, message: str):
+    def _run_chat_sync(self, message: str) -> Any:
         return asyncio.run(self._chat_async(message))
 
-    def reset(self):
+    def reset(self) -> None:
         # agent_framework agents might not have reset?
         pass
 
@@ -174,10 +174,10 @@ class SingleAssistantRAG(SingleAssistant):
     def __init__(
         self,
         agent_config: str | Dict[str, Any],
-        retrieve_config={},
-        rag_description="",
-        **kwargs,
-    ):
+        retrieve_config: Dict[str, Any] = {},
+        rag_description: str = "",
+        **kwargs: Any,
+    ) -> None:
         super().__init__(
             agent_config,
             **kwargs,

@@ -7,6 +7,7 @@ from typing import Annotated, List
 
 import pandas as pd
 import praw
+
 from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
 

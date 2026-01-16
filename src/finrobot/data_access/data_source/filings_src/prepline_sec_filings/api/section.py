@@ -12,6 +12,7 @@ import os
 import re
 import secrets
 import signal
+import typing as T
 from base64 import b64encode
 from enum import Enum
 from typing import Dict, List, Mapping, Optional, Union
@@ -49,10 +50,10 @@ app = FastAPI()
 router = APIRouter()
 
 
-def is_expected_response_type(media_type, response_type):
+def is_expected_response_type(media_type: str, response_type: type) -> bool:
     if media_type == "application/json" and response_type not in [dict, list]:
         return True
-    elif media_type == "text/csv" and response_type != str:
+    elif media_type == "text/csv" and response_type is not str:
         return True
     else:
         return False
@@ -62,39 +63,39 @@ def is_expected_response_type(media_type, response_type):
 
 
 class timeout:
-    def __init__(self, seconds=1, error_message="Timeout"):
+    def __init__(self, seconds: int = 1, error_message: str = "Timeout") -> None:
         self.seconds = seconds
         self.error_message = error_message
 
-    def handle_timeout(self, signum, frame):
+    def handle_timeout(self, signum: int, frame: Optional[T.Any]) -> None:
         raise TimeoutError(self.error_message)
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         try:
             signal.signal(signal.SIGALRM, self.handle_timeout)
             signal.alarm(self.seconds)
         except ValueError:
             pass
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, type: Optional[type], value: Optional[BaseException], traceback: Optional[T.Any]) -> None:
         try:
             signal.alarm(0)
         except ValueError:
             pass
 
 
-def get_regex_enum(section_regex):
+def get_regex_enum(section_regex: str) -> Enum:
     class CustomSECSection(Enum):
         CUSTOM = re.compile(section_regex)
 
         @property
-        def pattern(self):
+        def pattern(self) -> T.Any:
             return self.value
 
     return CustomSECSection.CUSTOM
 
 
-def convert_to_isd_csv(results: dict) -> str:
+def convert_to_isd_csv(results: Dict[str, T.Any]) -> str:
     """
     Returns the representation of document elements as an Initial Structured Document (ISD)
     in CSV Format.
@@ -123,12 +124,12 @@ ISD = "isd"
 
 
 def pipeline_api(
-    text,
-    response_type="application/json",
-    response_schema="isd",
-    m_section=[],
-    m_section_regex=[],
-):
+    text: str,
+    response_type: str = "application/json",
+    response_schema: str = "isd",
+    m_section: List[str] = [],
+    m_section_regex: List[str] = [],
+) -> T.Any:
     """Many supported sections including: RISK_FACTORS, MANAGEMENT_DISCUSSION, and many more"""
     validate_section_names(m_section)
 
@@ -175,7 +176,7 @@ def pipeline_api(
         raise ValueError(f"response_type '{response_type}' is not supported")
 
 
-def get_validated_mimetype(file):
+def get_validated_mimetype(file: UploadFile) -> str:
     """
     Return a file's mimetype, either via the file.content_type or the mimetypes lib if that's too
     generic. If the user has set UNSTRUCTURED_ALLOWED_MIMETYPES, validate against this list and
@@ -208,7 +209,7 @@ def get_validated_mimetype(file):
 class MultipartMixedResponse(StreamingResponse):
     CRLF = b"\r\n"
 
-    def __init__(self, *args, content_type: str = None, **kwargs):
+    def __init__(self, *args: T.Any, content_type: Optional[str] = None, **kwargs: T.Any) -> None:
         super().__init__(*args, **kwargs)
         self.content_type = content_type
 
@@ -219,17 +220,17 @@ class MultipartMixedResponse(StreamingResponse):
         self.raw_headers.append((b"content-type", content_type.encode("latin-1")))
 
     @property
-    def boundary(self):
+    def boundary(self) -> bytes:
         return b"--" + self.boundary_value.encode()
 
-    def _build_part_headers(self, headers: dict) -> bytes:
+    def _build_part_headers(self, headers: Dict[str, T.Any]) -> bytes:
         header_bytes = b""
         for header, value in headers.items():
             header_bytes += f"{header}: {value}".encode() + self.CRLF
         return header_bytes
 
     def build_part(self, chunk: bytes) -> bytes:
-        part = self.boundary + self.CRLF
+        part: bytes = self.boundary + self.CRLF
         part_headers = {
             "Content-Length": len(chunk),
             "Content-Transfer-Encoding": "base64",
@@ -263,8 +264,8 @@ class MultipartMixedResponse(StreamingResponse):
         await send({"type": "http.response.body", "body": b"", "more_body": False})
 
 
-def ungz_file(file: UploadFile, gz_uncompressed_content_type=None) -> UploadFile:
-    def return_content_type(filename):
+def ungz_file(file: UploadFile, gz_uncompressed_content_type: Optional[str] = None) -> UploadFile:
+    def return_content_type(filename: str) -> str:
         if gz_uncompressed_content_type:
             return gz_uncompressed_content_type
         else:
@@ -293,7 +294,7 @@ def pipeline_1(
     output_schema: str = Form(default=None),
     section: List[str] = Form(default=[]),
     section_regex: List[str] = Form(default=[]),
-):
+) -> T.Any:
     if text_files:
         for file_index in range(len(text_files)):
             if text_files[file_index].content_type == "application/gzip":
@@ -321,7 +322,7 @@ def pipeline_1(
                     status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 )
 
-        def response_generator(is_multipart):
+        def response_generator(is_multipart: bool) -> T.Generator[T.Any, None, None]:
             for file in text_files:
                 get_validated_mimetype(file)
 

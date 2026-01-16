@@ -5,15 +5,16 @@ from finrobot.models.agents.tools.registry import (
     get_toolkits,
     get_toolkits_from_cls,
 )
+import typing as T
 
 
 class TestToolRegistry:
     """Test suite for tool registry."""
 
-    def test_get_toolkits_from_list(self):
+    def test_get_toolkits_from_list(self) -> None:
         """Test that get_toolkits works with a list of functions."""
 
-        def sample_func():
+        def sample_func() -> str:
             return "test"
 
         result = get_toolkits([sample_func])
@@ -22,16 +23,16 @@ class TestToolRegistry:
         assert len(result) == 1
         assert callable(result[0])
 
-    def test_get_toolkits_from_class(self):
+    def test_get_toolkits_from_class(self) -> None:
         """Test that get_toolkits works with a class."""
 
         class SampleClass:
             @staticmethod
-            def method_one():
+            def method_one() -> str:
                 return "one"
 
             @staticmethod
-            def method_two():
+            def method_two() -> str:
                 return "two"
 
         result = get_toolkits([SampleClass])
@@ -39,35 +40,35 @@ class TestToolRegistry:
         assert isinstance(result, list)
         assert len(result) >= 2
 
-    def test_get_toolkits_from_dict(self):
+    def test_get_toolkits_from_dict(self) -> None:
         """Test that get_toolkits works with dict configuration."""
 
-        def sample_func():
+        def sample_func() -> str:
             return "test"
 
-        config = [{"function": sample_func, "name": "test_func"}]
+        config: list[T.Any] = [{"function": sample_func, "name": "test_func"}]
         result = get_toolkits(config)
 
         assert isinstance(result, list)
         assert len(result) == 1
 
-    def test_get_coding_tools(self):
+    def test_get_coding_tools(self) -> None:
         """Test that get_coding_tools returns tools."""
         result = get_coding_tools()
 
         assert isinstance(result, list)
         assert len(result) > 0
 
-    def test_get_toolkits_from_cls(self):
+    def test_get_toolkits_from_cls(self) -> None:
         """Test that get_toolkits_from_cls extracts class methods."""
 
         class TestClass:
             @staticmethod
-            def public_method():
+            def public_method() -> None:
                 pass
 
             @staticmethod
-            def _private_method():
+            def _private_method() -> None:
                 pass
 
         result = get_toolkits_from_cls(TestClass)
@@ -76,16 +77,16 @@ class TestToolRegistry:
         # Should only include public methods by default
         assert any(callable(f) for f in result)
 
-    def test_get_toolkits_from_cls_include_private(self):
+    def test_get_toolkits_from_cls_include_private(self) -> None:
         """Test that get_toolkits_from_cls can include private methods."""
 
         class TestClass:
             @staticmethod
-            def public_method():
+            def public_method() -> None:
                 pass
 
             @staticmethod
-            def _private_method():
+            def _private_method() -> None:
                 pass
 
         result = get_toolkits_from_cls(TestClass, include_private=True)

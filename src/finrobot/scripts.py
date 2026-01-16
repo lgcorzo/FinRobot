@@ -18,7 +18,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.task == "analyze" and args.company:
         from finrobot.application.jobs.analysis import FinancialAnalysisJob
 
-        job = FinancialAnalysisJob(args.company, settings.openai_model)
+        job = FinancialAnalysisJob(company=args.company, model_id=settings.openai_model)
         job.run()
 
     return 0

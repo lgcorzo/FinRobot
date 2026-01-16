@@ -1,8 +1,9 @@
 import importlib
 import json
 import os
+import typing as T
 from pprint import pformat
-from typing import Annotated
+from typing import Annotated, Dict, List, Optional, Union
 
 import backtrader as bt
 import yfinance as yf
@@ -11,18 +12,22 @@ from matplotlib import pyplot as plt
 
 
 class DeployedCapitalAnalyzer(bt.Analyzer):
-    def start(self):
-        self.deployed_capital = []
+    def start(self) -> None:
+        self.deployed_capital: List[float] = []
         self.initial_cash = self.strategy.broker.get_cash()  # Initial cash in account
 
-    def notify_order(self, order):
+    def notify_order(self, order: T.Any) -> None:
         if order.status in [order.Completed]:
             if order.isbuy():
-                self.deployed_capital.append(order.executed.price * order.executed.size)
+                price = getattr(order.executed, "price", 0)
+                size = getattr(order.executed, "size", 0)
+                self.deployed_capital.append(price * size)
             elif order.issell():
-                self.deployed_capital.append(order.executed.price * order.executed.size)
+                price = getattr(order.executed, "price", 0)
+                size = getattr(order.executed, "size", 0)
+                self.deployed_capital.append(price * size)
 
-    def stop(self):
+    def stop(self) -> None:
         total_deployed = sum(self.deployed_capital)
         final_cash = self.strategy.broker.get_value()
         net_profit = final_cash - self.initial_cash
@@ -31,7 +36,7 @@ class DeployedCapitalAnalyzer(bt.Analyzer):
         else:
             self.retn = 0
 
-    def get_analysis(self):
+    def get_analysis(self) -> T.Dict[str, float]:
         return {"return_on_deployed_capital": self.retn}
 
 
@@ -47,7 +52,7 @@ class BackTraderUtils:
         ],
         strategy_params: Annotated[
             str,
-            "Additional parameters to be passed to the strategy class formatted as json string. E.g. {'fast': 10, 'slow': 30} for SMACross.",
+            "Additional parameters to be passed to the strategy class formatted as json string or dict. E.g. {'fast': 10, 'slow': 30} for SMACross.",
         ] = "",
         sizer: Annotated[
             int | str | None,
@@ -81,7 +86,8 @@ class BackTraderUtils:
             module = importlib.import_module(module_path)
             strategy_class = getattr(module, class_name)
 
-        strategy_params = json.loads(strategy_params) if strategy_params else {}
+        if isinstance(strategy_params, str):
+            strategy_params = json.loads(strategy_params) if strategy_params else {}
         cerebro.addstrategy(strategy_class, **strategy_params)
         dataname_yf = yf.download(ticker_symbol, start_date, end_date, auto_adjust=True)
         dataname_yf.columns = [col[0] if isinstance(col, tuple) else col for col in dataname_yf.columns.values]

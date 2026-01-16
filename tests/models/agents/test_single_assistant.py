@@ -1,6 +1,5 @@
-"""Tests for SingleAssistant workflow."""
-
 from unittest.mock import MagicMock, patch
+import typing as T
 
 
 class TestSingleAssistant:
@@ -11,7 +10,7 @@ class TestSingleAssistant:
     """
 
     @patch("finrobot.models.agents.workflow.SingleAssistant")
-    def test_single_assistant_instantiation_mock(self, mock_assistant_cls):
+    def test_single_assistant_instantiation_mock(self, mock_assistant_cls: T.Any) -> None:
         """Test that SingleAssistant can be instantiated via mock."""
         mock_instance = MagicMock()
         mock_assistant_cls.return_value = mock_instance
@@ -25,7 +24,7 @@ class TestSingleAssistant:
         mock_assistant_cls.assert_called_once_with(config, llm_config=llm_config)
 
     @patch("finrobot.models.agents.workflow.SingleAssistant")
-    def test_chat_method_mock(self, mock_assistant_cls):
+    def test_chat_method_mock(self, mock_assistant_cls: T.Any) -> None:
         """Test that chat() method works via mock."""
         mock_instance = MagicMock()
         mock_instance.chat.return_value = "Test response"
@@ -40,7 +39,7 @@ class TestSingleAssistant:
         assert result == "Test response"
 
     @patch("finrobot.models.agents.workflow.SingleAssistant")
-    def test_single_assistant_with_tools_mock(self, mock_assistant_cls):
+    def test_single_assistant_with_tools_mock(self, mock_assistant_cls: T.Any) -> None:
         """Test SingleAssistant with tools configuration via mock."""
         mock_instance = MagicMock()
         mock_assistant_cls.return_value = mock_instance

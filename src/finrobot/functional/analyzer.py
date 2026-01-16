@@ -1,12 +1,13 @@
 import os
+import typing as T
 from datetime import datetime, timedelta
 from textwrap import dedent
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 
 from finrobot.data_access.data_source import FMPUtils, SECUtils, YFinanceUtils
 
 
-def combine_prompt(instruction, resource, table_str=None):
+def combine_prompt(instruction: str, resource: str, table_str: Optional[str] = None) -> str:
     if table_str:
         prompt = f"{table_str}\n\nResource: {resource}\n\nInstruction: {instruction}"
     else:
@@ -14,7 +15,7 @@ def combine_prompt(instruction, resource, table_str=None):
     return prompt
 
 
-def save_to_file(data: str, file_path: str):
+def save_to_file(data: str, file_path: str) -> None:
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, "w") as f:
         f.write(data)
@@ -323,7 +324,7 @@ class ReportAnalysisUtils:
         Retrieve the company description and related sections of its 10-K report for the given ticker symbol.
         Then return with an instruction on how to describe the company's industry, strengths, trends, and strategic initiatives.
         """
-        company_name = YFinanceUtils.get_stock_info(ticker_symbol).get("shortName", "N/A")
+        company_name = T.cast(str, YFinanceUtils.get_stock_info(ticker_symbol).get("shortName", "N/A"))
         business_summary = SECUtils.get_10k_section(ticker_symbol, fyear, 1)
         section_7 = SECUtils.get_10k_section(ticker_symbol, fyear, 7)
         section_text = (
@@ -356,7 +357,7 @@ class ReportAnalysisUtils:
     def get_key_data(
         ticker_symbol: Annotated[str, "ticker symbol"],
         filing_date: Annotated[str | datetime, "the filing date of the financial report being analyzed"],
-    ) -> dict:
+    ) -> dict[str, T.Any]:
         """
         return key financial data used in annual report for the given ticker symbol and filing date
         """
@@ -390,18 +391,23 @@ class ReportAnalysisUtils:
         filing_date = filing_date.strftime("%Y-%m-%d")
 
         # Print the result
-        # print(f"Over the past 6 months, the average daily trading volume for {ticker_symbol} was: {avg_daily_volume_6m:.2f}")
-        rating, _ = YFinanceUtils.get_analyst_recommendations(ticker_symbol)
+        res_recommendations = YFinanceUtils.get_analyst_recommendations(ticker_symbol)
+        rating = res_recommendations[0] if res_recommendations else None
         target_price = FMPUtils.get_target_price(ticker_symbol, filing_date)
+
+        mkt_cap_res = FMPUtils.get_historical_market_cap(ticker_symbol, filing_date)
+        mkt_cap = float(mkt_cap_res) if not isinstance(mkt_cap_res, str) else 0.0
+
+        bvps_res = FMPUtils.get_historical_bvps(ticker_symbol, filing_date)
+        bvps = float(bvps_res) if not isinstance(bvps_res, str) else 0.0
+
         result = {
             "Rating": rating,
             "Target Price": target_price,
             f"6m avg daily vol ({info['currency']}mn)": "{:.2f}".format(avg_daily_volume_6m / 1e6),
             f"Closing Price ({info['currency']})": "{:.2f}".format(close_price),
-            f"Market Cap ({info['currency']}mn)": "{:.2f}".format(
-                FMPUtils.get_historical_market_cap(ticker_symbol, filing_date) / 1e6
-            ),
+            f"Market Cap ({info['currency']}mn)": "{:.2f}".format(mkt_cap / 1e6),
             f"52 Week Price Range ({info['currency']})": "{:.2f} - {:.2f}".format(fiftyTwoWeekLow, fiftyTwoWeekHigh),
-            f"BVPS ({info['currency']})": "{:.2f}".format(FMPUtils.get_historical_bvps(ticker_symbol, filing_date)),
+            f"BVPS ({info['currency']})": "{:.2f}".format(bvps),
         }
         return result

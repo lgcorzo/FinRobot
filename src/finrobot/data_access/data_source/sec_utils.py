@@ -1,20 +1,26 @@
 import os
+import typing as T
 from functools import wraps
-from typing import Annotated
+from typing import Annotated, Any, Dict, List, Optional, Union
 
 import requests
+from sec_api import ExtractorApi, QueryApi, RenderApi
+
 from finrobot.data_access.data_source import FMPUtils
 from finrobot.infrastructure.io.files import SavePathType
 from finrobot.infrastructure.utils import decorate_all_methods
-from sec_api import ExtractorApi, QueryApi, RenderApi
 
 CACHE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".cache")
 PDF_GENERATOR_API = "https://api.sec-api.io/filing-reader"
 
+extractor_api: T.Any = None
+query_api: T.Any = None
+render_api: T.Any = None
 
-def init_sec_api(func):
+
+def init_sec_api(func: T.Callable[..., T.Any]) -> T.Callable[..., T.Any]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: T.Any, **kwargs: T.Any) -> T.Any:
         global extractor_api, query_api, render_api
         if os.environ.get("SEC_API_KEY") is None:
             print("Please set the environment variable SEC_API_KEY to use sec_api.")
@@ -32,10 +38,10 @@ def init_sec_api(func):
 @decorate_all_methods(init_sec_api)
 class SECUtils:
     def get_10k_metadata(
-        ticker: Annotated[str, "ticker symbol"],
-        start_date: Annotated[str, "start date of the 10-k file search range, in yyyy-mm-dd format"],
-        end_date: Annotated[str, "end date of the 10-k file search range, in yyyy-mm-dd format"],
-    ):
+        ticker: str,
+        start_date: str,
+        end_date: str,
+    ) -> Optional[Dict[str, Any]]:
         """
         Search for 10-k filings within a given time period, and return the meta data of the latest one
         """
@@ -47,14 +53,14 @@ class SECUtils:
         }
         response = query_api.get_filings(query)
         if response["filings"]:
-            return response["filings"][0]
+            return T.cast(Dict[str, Any], response["filings"][0])
         return None
 
     def download_10k_filing(
-        ticker: Annotated[str, "ticker symbol"],
-        start_date: Annotated[str, "start date of the 10-k file search range, in yyyy-mm-dd format"],
-        end_date: Annotated[str, "end date of the 10-k file search range, in yyyy-mm-dd format"],
-        save_folder: Annotated[str, "name of the folder to store the downloaded filing"],
+        ticker: str,
+        start_date: str,
+        end_date: str,
+        save_folder: str,
     ) -> str:
         """Download the latest 10-K filing as htm for a given ticker within a given time period."""
         metadata = SECUtils.get_10k_metadata(ticker, start_date, end_date)
@@ -80,10 +86,10 @@ class SECUtils:
             return f"No 2023 10-K filing found for {ticker}"
 
     def download_10k_pdf(
-        ticker: Annotated[str, "ticker symbol"],
-        start_date: Annotated[str, "start date of the 10-k file search range, in yyyy-mm-dd format"],
-        end_date: Annotated[str, "end date of the 10-k file search range, in yyyy-mm-dd format"],
-        save_folder: Annotated[str, "name of the folder to store the downloaded pdf filing"],
+        ticker: str,
+        start_date: str,
+        end_date: str,
+        save_folder: str,
     ) -> str:
         """Download the latest 10-K filing as pdf for a given ticker within a given time period."""
         metadata = SECUtils.get_10k_metadata(ticker, start_date, end_date)
@@ -116,17 +122,11 @@ class SECUtils:
             return f"No 2023 10-K filing found for {ticker}"
 
     def get_10k_section(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "fiscal year of the 10-K report"],
-        section: Annotated[
-            str | int,
-            "Section of the 10-K report to extract, should be in [1, 1A, 1B, 2, 3, 4, 5, 6, 7, 7A, 8, 9, 9A, 9B, 10, 11, 12, 13, 14, 15]",
-        ],
-        report_address: Annotated[
-            str,
-            "URL of the 10-K report, if not specified, will get report url from fmp api",
-        ] = None,
-        save_path: SavePathType = None,
+        ticker_symbol: str,
+        fyear: str,
+        section: Union[str, int],
+        report_address: Optional[str] = None,
+        save_path: Optional[str] = None,
     ) -> str:
         """
         Get a specific section of a 10-K report from the SEC API.

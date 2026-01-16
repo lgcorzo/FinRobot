@@ -1,16 +1,20 @@
 """FMP Filings Adapter - SEC report data from Financial Modeling Prep."""
 
 import os
+import typing as T
 from functools import wraps
 from typing import Annotated
 
 import requests
+
 from finrobot.infrastructure.utils import decorate_all_methods
 
+fmp_api_key: str = ""
 
-def init_fmp_api(func):
+
+def init_fmp_api(func: T.Callable) -> T.Callable:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: T.Any, **kwargs: T.Any) -> T.Any:
         global fmp_api_key
         if os.environ.get("FMP_API_KEY") is None:
             print("Please set the environment variable FMP_API_KEY to use the FMP API.")
@@ -27,6 +31,7 @@ def init_fmp_api(func):
 class FMPFilingsAdapter:
     """FMP implementation for SEC filings data."""
 
+    @staticmethod
     def get_sec_report(
         ticker_symbol: Annotated[str, "ticker symbol"],
         fyear: Annotated[str, "year of the 10-K report, 'yyyy' or 'latest'"] = "latest",

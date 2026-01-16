@@ -1,6 +1,5 @@
-"""Tests for analyzer_service."""
-
 from unittest.mock import patch
+import typing as T
 
 import pandas as pd
 
@@ -13,7 +12,7 @@ class TestReportAnalysisUtils:
     """
 
     @patch("finrobot.data_access.data_source.yfinance_utils.YFinanceUtils")
-    def test_yfinance_income_statement_mock(self, mock_yfinance):
+    def test_yfinance_income_statement_mock(self, mock_yfinance: T.Any) -> None:
         """Test income statement retrieval via mock."""
         mock_yfinance.get_income_statement.return_value = pd.DataFrame(
             {
@@ -28,7 +27,7 @@ class TestReportAnalysisUtils:
         assert "Total Revenue" in result.columns
 
     @patch("finrobot.data_access.data_source.yfinance_utils.YFinanceUtils")
-    def test_yfinance_stock_info_mock(self, mock_yfinance):
+    def test_yfinance_stock_info_mock(self, mock_yfinance: T.Any) -> None:
         """Test stock info retrieval via mock."""
         mock_yfinance.get_stock_info.return_value = {
             "trailingPE": 25.5,
@@ -42,7 +41,7 @@ class TestReportAnalysisUtils:
         assert "trailingPE" in result
 
     @patch("finrobot.data_access.data_source.sec_utils.SECUtils")
-    def test_sec_filing_retrieval_mock(self, mock_sec):
+    def test_sec_filing_retrieval_mock(self, mock_sec: T.Any) -> None:
         """Test SEC filing retrieval via mock."""
         mock_sec.get_10k_section.return_value = "This is the risk factors section..."
 

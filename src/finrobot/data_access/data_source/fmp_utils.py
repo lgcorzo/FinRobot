@@ -1,19 +1,21 @@
 import os
 from datetime import datetime
-
-# from finrobot.infrastructure.utils import decorate_all_methods, get_next_weekday
 from functools import wraps
-from typing import Annotated, List
+from typing import Annotated, Any, Callable, Dict, List, Optional, Tuple, Union
+import typing as T
 
 import numpy as np
 import pandas as pd
 import requests
+
 from finrobot.infrastructure.utils import decorate_all_methods, get_next_weekday
 
+fmp_api_key: Optional[str] = None
 
-def init_fmp_api(func):
+
+def init_fmp_api(func: T.Callable[..., T.Any]) -> T.Callable[..., T.Any]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: T.Any, **kwargs: T.Any) -> T.Any:
         global fmp_api_key
         if os.environ.get("FMP_API_KEY") is None:
             print("Please set the environment variable FMP_API_KEY to use the FMP API.")
@@ -46,11 +48,11 @@ class FMPUtils:
             data = response.json()
             est = []
 
-            date = datetime.strptime(date, "%Y-%m-%d")
+            target_date = datetime.strptime(date, "%Y-%m-%d")
             for tprice in data:
                 tdate = tprice["publishedDate"].split("T")[0]
-                tdate = datetime.strptime(tdate, "%Y-%m-%d")
-                if abs((tdate - date).days) <= 999:
+                tdate_obj = datetime.strptime(tdate, "%Y-%m-%d")
+                if abs((tdate_obj - target_date).days) <= 999:
                     est.append(tprice["priceTarget"])
 
             if est:
@@ -98,10 +100,11 @@ class FMPUtils:
 
     def get_historical_market_cap(
         ticker_symbol: Annotated[str, "ticker symbol"],
-        date: Annotated[str, "date of the market cap, should be 'yyyy-mm-dd'"],
-    ) -> str:
+        date_str: Annotated[str, "date of the market cap, should be 'yyyy-mm-dd'"],
+    ) -> Union[float, str]:
         """Get the historical market capitalization for a given stock on a given date"""
-        date = get_next_weekday(date).strftime("%Y-%m-%d")
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        date = get_next_weekday(date_obj).strftime("%Y-%m-%d")
         url = f"https://financialmodelingprep.com/api/v3/historical-market-capitalization/{ticker_symbol}?limit=100&from={date}&to={date}&apikey={fmp_api_key}"
 
         # 发送GET请求
@@ -112,15 +115,16 @@ class FMPUtils:
         if response.status_code == 200:
             # 解析JSON数据
             data = response.json()
-            mkt_cap = data[0]["marketCap"]
-            return mkt_cap
+            if data and "marketCap" in data[0]:
+                return T.cast(float, data[0]["marketCap"])
+            return "No market cap data found"
         else:
             return f"Failed to retrieve data: {response.status_code}"
 
     def get_historical_bvps(
         ticker_symbol: Annotated[str, "ticker symbol"],
         target_date: Annotated[str, "date of the BVPS, should be 'yyyy-mm-dd'"],
-    ) -> str:
+    ) -> Union[float, str]:
         """Get the historical book value per share for a given stock on a given date"""
         # 从FMP API获取历史关键财务指标数据
         url = f"https://financialmodelingprep.com/api/v3/key-metrics/{ticker_symbol}?limit=40&apikey={fmp_api_key}"
@@ -133,16 +137,16 @@ class FMPUtils:
         # 找到最接近目标日期的数据
         closest_data = None
         min_date_diff = float("inf")
-        target_date = datetime.strptime(target_date, "%Y-%m-%d")
+        target_date_obj = datetime.strptime(target_date, "%Y-%m-%d")
         for entry in data:
             date_of_data = datetime.strptime(entry["date"], "%Y-%m-%d")
-            date_diff = abs(target_date - date_of_data).days
+            date_diff = abs((target_date_obj - date_of_data).days)
             if date_diff < min_date_diff:
                 min_date_diff = date_diff
                 closest_data = entry
 
         if closest_data:
-            return closest_data.get("bookValuePerShare", "No BVPS data available")
+            return T.cast(Union[float, str], closest_data.get("bookValuePerShare", "No BVPS data available"))
         else:
             return "No close date data found"
 
@@ -190,8 +194,8 @@ class FMPUtils:
                     "EBITDA": round(income_data[year_offset]["ebitda"] / 1e6),
                     "EBITDA Margin": round((income_data[year_offset]["ebitdaratio"]), 2),
                     "FCF": round(
-                        key_metrics_data[year_offset]["enterpriseValue"]
-                        / key_metrics_data[year_offset]["evToOperatingCashFlow"]
+                        float(key_metrics_data[year_offset]["enterpriseValue"])
+                        / float(key_metrics_data[year_offset]["evToOperatingCashFlow"])
                         / 1e6
                     ),
                     "FCF Conversion": round(
@@ -222,7 +226,7 @@ class FMPUtils:
         ticker_symbol: Annotated[str, "ticker symbol"],
         competitors: Annotated[List[str], "list of competitor ticker symbols"],
         years: Annotated[int, "number of the years to search from, default to 4"] = 4,
-    ) -> dict:
+    ) -> Dict[str, pd.DataFrame]:
         """Get financial metrics for the company and its competitors."""
         base_url = "https://financialmodelingprep.com/api/v3"
         all_data = {}
@@ -266,11 +270,11 @@ class FMPUtils:
                         "EBITDA Margin": round((income_data[year_offset]["ebitdaratio"]), 2),
                         "FCF Conversion": round(
                             (
-                                key_metrics_data[year_offset]["enterpriseValue"]
-                                / key_metrics_data[year_offset]["evToOperatingCashFlow"]
+                                float(key_metrics_data[year_offset]["enterpriseValue"])
+                                / float(key_metrics_data[year_offset]["evToOperatingCashFlow"])
                                 / income_data[year_offset]["netIncome"]
                                 if key_metrics_data[year_offset]["evToOperatingCashFlow"] != 0
-                                else None
+                                else 0.0
                             ),
                             2,
                         ),

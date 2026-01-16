@@ -4,9 +4,10 @@ from typing import Annotated, List, Tuple
 
 import mplfinance as mpf
 import pandas as pd
-from finrobot.data_access.data_source.yfinance_utils import YFinanceUtils
 from matplotlib import pyplot as plt
 from pandas import DateOffset
+
+from finrobot.data_access.data_source.yfinance_utils import YFinanceUtils
 
 
 class MplFinanceUtils:

@@ -1,17 +1,21 @@
 import os
 from datetime import datetime, timezone
 from functools import wraps
-from typing import Annotated, List
+from typing import Annotated, Any, List, Optional
+import typing as T
 
 import pandas as pd
 import praw
+
 from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
 
+reddit_client: T.Any = None
 
-def init_reddit_client(func):
+
+def init_reddit_client(func: T.Callable[..., Any]) -> T.Callable[..., Any]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         global reddit_client
         if not all([os.environ.get("REDDIT_CLIENT_ID"), os.environ.get("REDDIT_CLIENT_SECRET")]):
             print("Please set the environment variables for Reddit API credentials.")

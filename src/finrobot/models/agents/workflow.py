@@ -1,11 +1,13 @@
 import asyncio
 import os
+import typing as T
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, List
+from typing import Annotated, Any, Callable, Dict, List, Optional, Tuple, Union
 
 # agent_framework imports
 from agent_framework import ChatAgent, ChatMessage
 from agent_framework.openai import OpenAIChatClient
+
 from finrobot.tools import get_toolkits
 
 from .agent_library import library
@@ -16,18 +18,22 @@ from .utils import *
 class FinRobot(ChatAgent):
     def __init__(
         self,
-        agent_config: str | Dict[str, Any],
-        system_message: str | None = None,  # overwrites previous config
-        toolkits: List[Callable | dict | type] = [],  # overwrites previous config
+        agent_config: Union[str, Dict[str, Any]],
+        system_message: Optional[str] = None,  # overwrites previous config
+        toolkits: List[Union[T.Callable[..., Any], Dict[str, Any], Any]] = [],  # overwrites previous config
         llm_config: Dict[str, Any] = {},
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         orig_name = ""
         if isinstance(agent_config, str):
             orig_name = agent_config
             name = orig_name.replace("_Shadow", "")
             assert name in library, f"FinRobot {name} not found in agent library."
             agent_config = library[name]
+
+        if isinstance(agent_config, str):
+            # This should not happen given the logic above, but for mypy
+            raise ValueError("agent_config cannot be a string after library lookup")
 
         agent_config = self._preprocess_config(agent_config)
 
@@ -58,15 +64,15 @@ class FinRobot(ChatAgent):
         client = OpenAIChatClient(model_id=model, api_key=api_key, base_url=base_url)
 
         super().__init__(
-            chat_client=client,
+            chat_client=T.cast(Any, client),
             name=name,
             instructions=system_message,
-            description=agent_config["description"],
+            description=T.cast(str, agent_config["description"]),
             tools=tools,
             **kwargs,
         )
 
-    def _preprocess_config(self, config):
+    def _preprocess_config(self, config: Dict[str, Any]) -> Dict[str, Any]:
         role_prompt, leader_prompt, responsibilities = "", "", ""
 
         if "responsibilities" in config:
@@ -98,7 +104,7 @@ class FinRobot(ChatAgent):
 
         return config
 
-    def register_proxy(self, proxy):
+    def register_proxy(self, proxy: Any) -> None:
         # In agent_framework, we don't register proxy explicitly for tools usually.
         # But if needed, we might handle it here. For now, pass.
         pass
@@ -107,7 +113,7 @@ class FinRobot(ChatAgent):
 class SingleAssistantBase(ABC):
     def __init__(
         self,
-        agent_config: str | Dict[str, Any],
+        agent_config: Union[str, Dict[str, Any]],
         llm_config: Dict[str, Any] = {},
     ):
         self.assistant = FinRobot(
@@ -116,26 +122,26 @@ class SingleAssistantBase(ABC):
         )
 
     @abstractmethod
-    def chat(self):
+    def chat(self, message: str, **kwargs: Any) -> Any:
         pass
 
     @abstractmethod
-    def reset(self):
+    def reset(self) -> None:
         pass
 
 
 class SingleAssistant(SingleAssistantBase):
     def __init__(
         self,
-        agent_config: str | Dict[str, Any],
+        agent_config: Union[str, Dict[str, Any]],
         llm_config: Dict[str, Any] = {},
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__(agent_config, llm_config=llm_config)
         # No UserProxyAgent in this style, assuming simple chat loop or direct interaction
 
-    def chat(self, message: str, use_cache=False, **kwargs):
-        # We need to run async implementation synchronously if called from sync code
+    def chat(self, message: str, use_cache: bool = False, **kwargs: Any) -> Any:
+        # We need to run asyncio implementation synchronously if called from sync code
         try:
             loop = asyncio.get_event_loop()
         except RuntimeError:
@@ -148,10 +154,9 @@ class SingleAssistant(SingleAssistantBase):
             response = self._run_chat_sync(message)
         else:
             response = loop.run_until_complete(self._chat_async(message))
+        return response
 
-        # print("Response:", response)
-
-    async def _chat_async(self, message: str):
+    async def _chat_async(self, message: str) -> Any:
         # Create a user message
         user_msg = ChatMessage(text=message, role="user")
         # Run the agent
@@ -160,10 +165,10 @@ class SingleAssistant(SingleAssistantBase):
         # Accessing last message? ChatAgent usually updates its state/memory.
         # We might want to print the output.
 
-    def _run_chat_sync(self, message: str):
+    def _run_chat_sync(self, message: str) -> Any:
         return asyncio.run(self._chat_async(message))
 
-    def reset(self):
+    def reset(self) -> None:
         # agent_framework agents might not have reset?
         pass
 
@@ -173,11 +178,11 @@ class SingleAssistantRAG(SingleAssistant):
     # For now, placeholder or adapting logic
     def __init__(
         self,
-        agent_config: str | Dict[str, Any],
-        retrieve_config={},
-        rag_description="",
-        **kwargs,
-    ):
+        agent_config: Union[str, Dict[str, Any]],
+        retrieve_config: Dict[str, Any] = {},
+        rag_description: str = "",
+        **kwargs: Any,
+    ) -> None:
         super().__init__(
             agent_config,
             **kwargs,

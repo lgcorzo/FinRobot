@@ -10,9 +10,10 @@ from langchain.schema import Document
 # Mock the ThreadPoolExecutor and ProcessPoolExecutor to run synchronously or mock results
 @pytest.fixture
 def mock_executors():
-    with patch("concurrent.futures.ThreadPoolExecutor") as mock_thread_pool, patch(
-        "concurrent.futures.ProcessPoolExecutor"
-    ) as mock_process_pool:
+    with (
+        patch("concurrent.futures.ThreadPoolExecutor") as mock_thread_pool,
+        patch("concurrent.futures.ProcessPoolExecutor") as mock_process_pool,
+    ):
         # Configure ThreadPool
         mock_thread_instance = mock_thread_pool.return_value
         mock_thread_instance.__enter__.return_value = mock_thread_instance

@@ -1,24 +1,19 @@
-"""Module for fetching data from the SEC EDGAR Archives"""
-
 import json
 import os
 import re
 import sys
-from typing import List, Optional, Tuple, Union
+import typing as T
+from typing import Dict, Final, List, Optional, Tuple, Union
 
 import requests
 
-if sys.version_info < (3, 8):
-    from typing_extensions import Final
-else:
-    from typing import Final
-
 import webbrowser
+
+from ratelimit import limits, sleep_and_retry
 
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
     VALID_FILING_TYPES,
 )
-from ratelimit import limits, sleep_and_retry
 
 SEC_ARCHIVE_URL: Final[str] = "https://www.sec.gov/Archives/edgar/data"
 SEC_SEARCH_URL: Final[str] = "http://www.sec.gov/cgi-bin/browse-edgar"
@@ -31,11 +26,11 @@ def get_filing(accession_number: Union[str, int], cik: Union[str, int], company:
     ref: https://www.sec.gov/os/accessing-edgar-data"""
 
     session = _get_session(company, email)
-    return _get_filing(session, cik, accession_number)
+    return T.cast(str, _get_filing(session, cik, accession_number))
 
 
-@sleep_and_retry
-@limits(calls=10, period=1)
+@sleep_and_retry  # type: ignore[untyped-decorator]
+@limits(calls=10, period=1)  # type: ignore[untyped-decorator]
 def _get_filing(session: requests.Session, cik: Union[str, int], accession_number: Union[str, int]) -> str:
     """Wrapped so filings can be retrieved with an existing session."""
     url = archive_url(cik, accession_number)
@@ -53,8 +48,8 @@ def _get_filing(session: requests.Session, cik: Union[str, int], accession_numbe
     return response.text
 
 
-@sleep_and_retry
-@limits(calls=2, period=1)
+@sleep_and_retry  # type: ignore[untyped-decorator]
+@limits(calls=2, period=1)  # type: ignore[untyped-decorator]
 def get_cik_by_ticker(ticker: str) -> str:
     """Gets a CIK number from a stock ticker by running a search on the SEC website."""
     cik_re = re.compile(r".*CIK=(\d{10}).*")
@@ -84,9 +79,9 @@ def get_cik_by_ticker(ticker: str) -> str:
     return str(results[0])
 
 
-@sleep_and_retry
-@limits(calls=10, period=1)
-def get_forms_by_cik(session: requests.Session, cik: Union[str, int]) -> dict:
+@sleep_and_retry  # type: ignore[untyped-decorator]
+@limits(calls=10, period=1)  # type: ignore[untyped-decorator]
+def get_forms_by_cik(session: requests.Session, cik: Union[str, int]) -> Dict[str, str]:
     """Gets retrieves dict of recent SEC form filings for a given cik number."""
     json_name = f"CIK{cik}.json"
     response = session.get(f"{SEC_SUBMISSIONS_URL}/{json_name}")
@@ -140,13 +135,13 @@ def get_recent_cik_and_acc_by_ticker(
 def get_form_by_ticker(
     ticker: str,
     form_type: str,
-    allow_amended_filing: Optional[bool] = True,
+    allow_amended_filing: bool = True,
     company: Optional[str] = None,
     email: Optional[str] = None,
 ) -> str:
     """For a given ticker, gets the most recent form of a given form_type."""
     session = _get_session(company, email)
-    cik = get_cik_by_ticker(session, ticker)
+    cik = get_cik_by_ticker(ticker)
     return get_form_by_cik(
         cik,
         form_type,
@@ -156,7 +151,7 @@ def get_form_by_ticker(
     )
 
 
-def _form_types(form_type: str, allow_amended_filing: Optional[bool] = True):
+def _form_types(form_type: str, allow_amended_filing: bool = True) -> List[str]:
     """Potentialy expand to include amended filing, e.g.:
     "10-Q" -> "10-Q/A"
     """
@@ -170,7 +165,7 @@ def _form_types(form_type: str, allow_amended_filing: Optional[bool] = True):
 def get_form_by_cik(
     cik: str,
     form_type: str,
-    allow_amended_filing: Optional[bool] = True,
+    allow_amended_filing: bool = True,
     company: Optional[str] = None,
     email: Optional[str] = None,
 ) -> str:
@@ -181,10 +176,10 @@ def get_form_by_cik(
     session = _get_session(company, email)
     acc_num, _ = _get_recent_acc_num_by_cik(session, cik, _form_types(form_type, allow_amended_filing))
     text = _get_filing(session, cik, acc_num)
-    return text
+    return T.cast(str, text)
 
 
-def open_form(cik, acc_num):
+def open_form(cik: Union[str, int], acc_num: Union[str, int]) -> None:
     """For a given cik and accession number, opens the index page in default browser for the
     associated SEC form"""
     acc_num = _drop_dashes(acc_num)
@@ -194,14 +189,14 @@ def open_form(cik, acc_num):
 def open_form_by_ticker(
     ticker: str,
     form_type: str,
-    allow_amended_filing: Optional[bool] = True,
+    allow_amended_filing: bool = True,
     company: Optional[str] = None,
     email: Optional[str] = None,
-):
+) -> None:
     """For a given ticker, opens the index page in default browser for the most recent form of a
     given form_type."""
     session = _get_session(company, email)
-    cik = get_cik_by_ticker(session, ticker)
+    cik = get_cik_by_ticker(ticker)
     acc_num, _ = _get_recent_acc_num_by_cik(session, cik, _form_types(form_type, allow_amended_filing))
     open_form(cik, acc_num)
 

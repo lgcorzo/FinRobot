@@ -45,10 +45,10 @@ def test_sec_adapter_section_logic(tmp_path):
         sa.extractor_api = mock_e
 
         # Patch os.path.exists to avoid cache hits (Line 168)
-        with patch(
-            "finrobot.data_access.data_source.domains.filings.sec_adapter.os.path.exists", return_value=False
-        ), patch("finrobot.data_access.data_source.domains.filings.sec_adapter.os.makedirs"), patch(
-            "builtins.open", MagicMock()
+        with (
+            patch("finrobot.data_access.data_source.domains.filings.sec_adapter.os.path.exists", return_value=False),
+            patch("finrobot.data_access.data_source.domains.filings.sec_adapter.os.makedirs"),
+            patch("builtins.open", MagicMock()),
         ):
             with patch("finrobot.data_access.data_source.fmp_utils.FMPUtils.get_sec_report", return_value="Error info"):
                 res = sa.SECAdapter.get_10k_section("AAPL", "2023", 1)
@@ -76,11 +76,15 @@ def test_fetch_extra_logic():
 
     assert fetch._form_types("10-K", allow_amended_filing=True) == ["10-K", "10-K/A"]
 
-    with patch(
-        "finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch._get_recent_acc_num_by_cik",
-        return_value=("acc1", "10-K"),
-    ), patch(
-        "finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch._get_filing", return_value="Content"
+    with (
+        patch(
+            "finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch._get_recent_acc_num_by_cik",
+            return_value=("acc1", "10-K"),
+        ),
+        patch(
+            "finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch._get_filing",
+            return_value="Content",
+        ),
     ):
         res = fetch.get_form_by_cik("123", "10-K")
         assert res == "Content"

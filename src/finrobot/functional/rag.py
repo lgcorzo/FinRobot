@@ -1,3 +1,4 @@
+import typing as T
 from typing import Annotated
 
 try:
@@ -14,11 +15,11 @@ Retrieved context is: {input_context}
 """
 
 
-def get_rag_function(retrieve_config, description=""):
+def get_rag_function(retrieve_config: dict[str, T.Any], description: str = "") -> T.Tuple[T.Callable[..., str], T.Any]:
     if RetrieveUserProxyAgent is None:
         raise ImportError("AutoGen/RAG dependencies not installed. Install with 'gpu' group.")
 
-    def termination_msg(x):
+    def termination_msg(x: T.Any) -> bool:
         return isinstance(x, dict) and "TERMINATE" == str(x.get("content", ""))[-9:].upper()
 
     if "customized_prompt" not in retrieve_config:

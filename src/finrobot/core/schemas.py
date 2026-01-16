@@ -28,22 +28,22 @@ class Schema(pa.DataFrameModel):
 class MarketDataSchema(Schema):
     """Schema for market data."""
 
-    symbol: papd.Series[papd.String] = pa.Field()
-    date: papd.Series[papd.DateTime] = pa.Field()
-    open: papd.Series[papd.Float] = pa.Field()
-    high: papd.Series[papd.Float] = pa.Field()
-    low: papd.Series[papd.Float] = pa.Field()
-    close: papd.Series[papd.Float] = pa.Field()
-    volume: papd.Series[papd.Int] = pa.Field()
+    symbol: papd.Series[str] = pa.Field()
+    date: papd.Series[T.Any] = pa.Field()
+    open: papd.Series[float] = pa.Field()
+    high: papd.Series[float] = pa.Field()
+    low: papd.Series[float] = pa.Field()
+    close: papd.Series[float] = pa.Field()
+    volume: papd.Series[int] = pa.Field()
 
 
 class FinancialReportSchema(Schema):
     """Schema for generated financial reports."""
 
-    company: papd.Series[papd.String] = pa.Field()
-    report_type: papd.Series[papd.String] = pa.Field()
-    content: papd.Series[papd.String] = pa.Field()
-    timestamp: papd.Series[papd.DateTime] = pa.Field()
+    company: papd.Series[str] = pa.Field()
+    report_type: papd.Series[str] = pa.Field()
+    content: papd.Series[str] = pa.Field()
+    timestamp: papd.Series[T.Any] = pa.Field()
 
 
 MarketData = papd.DataFrame[MarketDataSchema]

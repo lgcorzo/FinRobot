@@ -1,5 +1,6 @@
 import os
-from typing import Annotated
+from typing import Annotated, Any, List, Optional, Union, Dict, Callable
+import typing as T
 
 from finnlp.data_sources.news.cnbc_streaming import CNBC_Streaming
 from finnlp.data_sources.news.finnhub_date_range import Finnhub_Date_Range
@@ -12,8 +13,9 @@ from finnlp.data_sources.social_media.stocktwits_streaming import Stocktwits_Str
 
 # from finnlp.data_sources.news.eastmoney_streaming import Eastmoney_Streaming
 from finnlp.data_sources.social_media.xueqiu_streaming import Xueqiu_Streaming
-from finrobot.infrastructure.io.files import SavePathType, save_output
 from pandas import DataFrame
+
+from finrobot.infrastructure.io.files import SavePathType, save_output
 
 US_Proxy = {
     "use_proxy": "us_free",
@@ -27,7 +29,15 @@ CN_Proxy = {
 }
 
 
-def streaming_download(streaming, config, tag, keyword, rounds, selected_columns, save_path):
+def streaming_download(
+    streaming: T.Type[Any],
+    config: Dict[str, Any],
+    tag: str,
+    keyword: str,
+    rounds: int,
+    selected_columns: List[str],
+    save_path: SavePathType,
+) -> DataFrame:
     downloader = streaming(config)
     if hasattr(downloader, "download_streaming_search"):
         downloader.download_streaming_search(keyword, rounds)
@@ -41,7 +51,16 @@ def streaming_download(streaming, config, tag, keyword, rounds, selected_columns
     return selected
 
 
-def date_range_download(date_range, config, tag, start_date, end_date, stock, selected_columns, save_path):
+def date_range_download(
+    date_range: T.Type[Any],
+    config: Dict[str, Any],
+    tag: str,
+    start_date: str,
+    end_date: str,
+    stock: Optional[str],
+    selected_columns: List[str],
+    save_path: SavePathType,
+) -> DataFrame:
     downloader = date_range(config)
     if hasattr(downloader, "download_date_range_stock"):
         downloader.download_date_range_stock(start_date, end_date, stock)
@@ -64,7 +83,7 @@ class FinNLPUtils:
         keyword: Annotated[str, "Keyword to search in news stream"],
         rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
         selected_columns: Annotated[
-            list[str],
+            List[str],
             "List of column names of news to return, should be chosen from 'description', 'cn:lastPubDate', 'dateModified', 'cn:dateline', 'cn:branding', 'section', 'cn:type', 'author', 'cn:source', 'cn:subtype', 'duration', 'summary', 'expires', 'cn:sectionSubType', 'cn:contentClassification', 'pubdateunix', 'url', 'datePublished', 'cn:promoImage', 'cn:title', 'cn:keyword', 'cn:liveURL', 'brand', 'hint', 'hint_detail'. Default to ['author', 'datePublished', 'description' ,'section', 'cn:title', 'summary']",
         ] = [
             "author",
@@ -90,7 +109,7 @@ class FinNLPUtils:
         keyword: Annotated[str, "Keyword to search in news stream"],
         rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
         selected_columns: Annotated[
-            list[str],
+            List[str],
             "List of column names of news to return, should be chosen from 'author','channelid','creationDate','desc','id','previewImage','source','tags','title','topics','typeo','url','weight'. Default to ['author', 'creationDate', 'desc' ,'source', 'title']",
         ] = ["author", "creationDate", "desc", "source", "title"],
         save_path: SavePathType = None,
@@ -109,7 +128,7 @@ class FinNLPUtils:
         keyword: Annotated[str, "Keyword to search in news stream"],
         rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
         selected_columns: Annotated[
-            list[str],
+            List[str],
             "List of column names of news to return, should be chosen from 'title', 'time', 'author', 'summary'. Default to ['title', 'time', 'author', 'summary']",
         ] = ["title", "time", "author", "summary"],
         save_path: SavePathType = None,
@@ -141,7 +160,7 @@ class FinNLPUtils:
         start_date: Annotated[str, "Start date of the news to retrieve, YYYY-mm-dd"],
         end_date: Annotated[str, "End date of the news to retrieve, YYYY-mm-dd"],
         selected_columns: Annotated[
-            list[str],
+            List[str],
             """
                 List of column names of news to return, should be chosen from 
                 'mediaid', 'productid', 'summary', 'ctime', 'url', 'author', 'stitle',
@@ -172,7 +191,7 @@ class FinNLPUtils:
         end_date: Annotated[str, "End date of the news to retrieve, YYYY-mm-dd"],
         stock: Annotated[str, "Stock symbol, e.g. AAPL"],
         selected_columns: Annotated[
-            list[str],
+            List[str],
             "List of column names of news to return, should be chosen from 'category', 'datetime', 'headline', 'id', 'image', 'related', 'source', 'summary', 'url', 'content'. Default to ['headline', 'datetime', 'source', 'summary']",
         ] = ["headline", "datetime", "source", "summary"],
         save_path: SavePathType = None,
@@ -196,7 +215,7 @@ class FinNLPUtils:
         stock: Annotated[str, "Stock symbol, e.g. 'AAPL'"],
         rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
         selected_columns: Annotated[
-            list[str],
+            List[str],
             """
                 List of column names of news to return, should be chosen from blocked', 
                 'blocking', 'canEdit', 'commentId', 'controversial',
@@ -228,7 +247,7 @@ class FinNLPUtils:
         stock: Annotated[str, "Stock symbol, e.g. 'AAPL'"],
         rounds: Annotated[int, "Number of rounds to search. Default to 1"] = 1,
         selected_columns: Annotated[
-            list[str],
+            List[str],
             """
                 List of column names of news to return, should be chosen from 'id', 
                 'body', 'created_at', 'user', 'source', 'symbols', 'prices',

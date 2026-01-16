@@ -2,6 +2,7 @@ import re
 import sys
 from functools import partial
 from typing import Any, Iterable, Iterator, List, Optional, Tuple
+import typing as T
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -12,11 +13,6 @@ from collections import defaultdict
 
 import numpy as np
 import numpy.typing as npt
-
-# from src.prepline_sec_filings.title import is_possible_title
-from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sections import (
-    SECSection,
-)
 from sklearn.cluster import DBSCAN
 from unstructured.cleaners.core import clean
 from unstructured.documents.elements import (
@@ -28,6 +24,11 @@ from unstructured.documents.elements import (
 )
 from unstructured.documents.html import HTMLDocument
 from unstructured.nlp.partition import is_possible_title
+
+# from src.prepline_sec_filings.title import is_possible_title
+from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sections import (
+    SECSection,
+)
 
 VALID_FILING_TYPES: Final[List[str]] = [
     "10-K",
@@ -47,7 +48,7 @@ ITEM_TITLE_RE = re.compile(r"(?i)item \d{1,3}(?:[a-z]|\([a-z]\))?(?:\.)?(?::)?")
 clean_sec_text = partial(clean, extra_whitespace=True, dashes=True, trailing_punctuation=True)
 
 
-def _raise_for_invalid_filing_type(filing_type: Optional[str]):
+def _raise_for_invalid_filing_type(filing_type: Optional[str]) -> None:
     if not filing_type:
         raise ValueError("Filing type is empty.")
     elif filing_type not in VALID_FILING_TYPES:
@@ -55,7 +56,7 @@ def _raise_for_invalid_filing_type(filing_type: Optional[str]):
 
 
 class SECDocument(HTMLDocument):
-    filing_type = None
+    filing_type: Optional[str] = None
 
     def _filter_table_of_contents(self, elements: List[Text]) -> List[Text]:
         """Filter out unnecessary elements in the table of contents using keyword search."""
@@ -142,7 +143,7 @@ class SECDocument(HTMLDocument):
 
         return section_elements
 
-    def _get_toc_sections(self, section: SECSection, toc: HTMLDocument) -> Tuple[Text, Text]:
+    def _get_toc_sections(self, section: SECSection, toc: HTMLDocument) -> Tuple[Optional[Text], Optional[Text]]:
         """Identifies section title and next section title in TOC under the given section heading"""
         # Note(yuming): The matching section and the section after the matching section
         # can be thought of as placeholders to look for matching content below the toc.
@@ -216,19 +217,24 @@ class SECDocument(HTMLDocument):
         """Identifies narrative text sections that fall under the "risk" heading"""
         return self.get_section_narrative(SECSection.RISK_FACTORS)
 
-    def doc_after_cleaners(self, skip_headers_and_footers=False, skip_table_text=False, inplace=False) -> HTMLDocument:
+    def doc_after_cleaners(
+        self,
+        skip_headers_and_footers: bool = False,
+        skip_table_text: bool = False,
+        inplace: bool = False,
+    ) -> HTMLDocument:
         new_doc = super().doc_after_cleaners(skip_headers_and_footers, skip_table_text, inplace)
         if not inplace:
             # NOTE(alan): Copy filing_type since this attribute isn't in the base class
             new_doc.filing_type = self.filing_type
         return new_doc
 
-    def _read_xml(self, content):
+    def _read_xml(self, content: T.Any) -> T.Any:
         super()._read_xml(content)
         # NOTE(alan): Get filing type from xml since this is not relevant to the base class.
         type_tag = self.document_tree.find(".//type")
         if type_tag is not None:
-            self.filing_type = type_tag.text.strip()
+            self.filing_type = type_tag.text.strip() if type_tag.text else None
         return self.document_tree
 
     def _is_last_section_in_report(self, section: SECSection, toc: HTMLDocument) -> bool:
@@ -274,7 +280,7 @@ def is_section_elem(section: SECSection, elem: Text, filing_type: Optional[str])
         return is_risk_title(elem.text, filing_type=filing_type)
     else:
 
-        def _is_matching_section_pattern(text):
+        def _is_matching_section_pattern(text: str) -> bool:
             return bool(re.search(section.pattern, clean_sec_text(text, lowercase=True)))
 
         if filing_type in REPORT_TYPES:
@@ -304,7 +310,7 @@ def is_risk_title(title: str, filing_type: Optional[str]) -> bool:
 def is_toc_title(title: str) -> bool:
     """Checks to see if the title matches the pattern for the table of contents."""
     clean_title = clean_sec_text(title, lowercase=True)
-    return (clean_title == "table of contents") or (clean_title == "index")
+    return bool((clean_title == "table of contents") or (clean_title == "index"))
 
 
 def is_10k_item_title(title: str) -> bool:
@@ -344,10 +350,10 @@ def cluster_num_to_indices(num: int, elem_idxs: npt.NDArray[np.float32], res: np
     members of the cluster with the given number.
     """
     idxs = elem_idxs[res == num].astype(int).flatten().tolist()
-    return idxs
+    return T.cast(List[int], idxs)
 
 
-def first(it: Iterable) -> Any:
+def first(it: Iterable[T.Any]) -> Any:
     """Grabs the first item in an iterator."""
     try:
         out = next(iter(it))

@@ -1,17 +1,19 @@
 from functools import wraps
-from typing import Annotated, Any, Callable, Optional
+from typing import Annotated, Any, Callable, Dict, List, Optional, Tuple, Union
+import typing as T
 
 import yfinance as yf
-from finrobot.infrastructure.io.files import SavePathType, save_output
-from finrobot.infrastructure.utils import decorate_all_methods
 from pandas import DataFrame
 
+from finrobot.infrastructure.io.files import SavePathType, save_output
+from finrobot.infrastructure.utils import decorate_all_methods
 
-def init_ticker(func: Callable) -> Callable:
+
+def init_ticker(func: T.Callable[..., Any]) -> T.Callable[..., Any]:
     """Decorator to initialize yf.Ticker and pass it to the function."""
 
     @wraps(func)
-    def wrapper(symbol: Annotated[str, "ticker symbol"], *args, **kwargs) -> Any:
+    def wrapper(symbol: Annotated[str, "ticker symbol"], *args: Any, **kwargs: Any) -> Any:
         ticker = yf.Ticker(symbol)
         return func(ticker, *args, **kwargs)
 
@@ -34,7 +36,7 @@ class YFinanceUtils:
 
     def get_stock_info(
         symbol: Annotated[str, "ticker symbol"],
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """Fetches and returns latest stock information."""
         ticker = symbol
         stock_info = ticker.info
@@ -90,7 +92,7 @@ class YFinanceUtils:
         cash_flow = ticker.cashflow
         return cash_flow
 
-    def get_analyst_recommendations(symbol: Annotated[str, "ticker symbol"]) -> tuple:
+    def get_analyst_recommendations(symbol: Annotated[str, "ticker symbol"]) -> Tuple[Optional[str], Union[int, float]]:
         """Fetches the latest analyst recommendations and returns the most common recommendation and its count."""
         ticker = symbol
         recommendations = ticker.recommendations

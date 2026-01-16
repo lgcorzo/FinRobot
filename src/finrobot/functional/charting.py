@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
-from typing import Annotated, List, Tuple
+from typing import Annotated, Any, Dict, List, Optional, Tuple, Union
+import typing as T
 
 import mplfinance as mpf
 import pandas as pd
@@ -16,7 +17,7 @@ class MplFinanceUtils:
         start_date: Annotated[str, "Start date of the historical data in 'YYYY-MM-DD' format"],
         end_date: Annotated[str, "End date of the historical data in 'YYYY-MM-DD' format"],
         save_path: Annotated[str, "File path where the plot should be saved"],
-        verbose: Annotated[str, "Whether to print stock data to console. Default to False."] = False,
+        verbose: Annotated[bool, "Whether to print stock data to console. Default to False."] = False,
         type: Annotated[
             str,
             "Type of the plot, should be one of 'candle','ohlc','line','renko','pnf','hollow_and_filled'. Default to 'candle'",
@@ -26,7 +27,7 @@ class MplFinanceUtils:
             "Style of the plot, should be one of 'default','classic','charles','yahoo','nightclouds','sas','blueskies','mike'. Default to 'default'.",
         ] = "default",
         mav: Annotated[
-            int | List[int] | Tuple[int, ...] | None,
+            Optional[Union[int, List[int], Tuple[int, ...]]],
             "Moving average window(s) to plot on the chart. Default to None.",
         ] = None,
         show_nontrading: Annotated[bool, "Whether to show non-trading days on the chart. Default to False."] = False,
@@ -70,7 +71,7 @@ class ReportChartUtils:
         if isinstance(filing_date, str):
             filing_date = datetime.strptime(filing_date, "%Y-%m-%d")
 
-        def fetch_stock_data(ticker):
+        def fetch_stock_data(ticker: str) -> pd.Series:
             start = (filing_date - timedelta(days=365)).strftime("%Y-%m-%d")
             end = filing_date.strftime("%Y-%m-%d")
             historical_data = YFinanceUtils.get_stock_data(ticker, start, end)
@@ -131,7 +132,7 @@ class ReportChartUtils:
         ticker_symbol: Annotated[str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"],
         filing_date: Annotated[str | datetime, "filing date in 'YYYY-MM-DD' format"],
         years: Annotated[int, "number of years to search from, default to 4"] = 4,
-        save_path: Annotated[str, "File path where the plot should be saved"] = None,
+        save_path: Annotated[Optional[str], "File path where the plot should be saved"] = None,
     ) -> str:
         """Plot the PE ratio and EPS performance of a company over the past n years."""
         if isinstance(filing_date, str):

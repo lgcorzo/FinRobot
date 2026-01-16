@@ -8,9 +8,11 @@ from finrobot.data_access.data_source.filings_src.sec_filings import SECExtracto
 def test_sec_extractor_10q_pipeline():
     extractor = SECExtractor(ticker="AAPL")
 
-    with patch("finrobot.data_access.data_source.filings_src.sec_filings.SECDocument") as mock_sec_document, patch(
-        "finrobot.data_access.data_source.filings_src.sec_filings.convert_to_isd"
-    ) as mock_convert, patch("finrobot.data_access.data_source.filings_src.sec_filings.validate_section_names"):
+    with (
+        patch("finrobot.data_access.data_source.filings_src.sec_filings.SECDocument") as mock_sec_document,
+        patch("finrobot.data_access.data_source.filings_src.sec_filings.convert_to_isd") as mock_convert,
+        patch("finrobot.data_access.data_source.filings_src.sec_filings.validate_section_names"),
+    ):
         mock_doc_instance = MagicMock()
         mock_doc_instance.filing_type = "10-Q"
         mock_doc_instance.get_section_narrative.return_value = []

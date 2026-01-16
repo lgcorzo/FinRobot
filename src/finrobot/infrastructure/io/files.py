@@ -4,7 +4,7 @@ import json
 import os
 import typing as T
 
-SavePathType = T.Union[str, os.PathLike, None]
+SavePathType = T.Union[str, os.PathLike[str], None]
 
 
 def save_output(

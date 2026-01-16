@@ -4,17 +4,21 @@ import os
 import random
 from datetime import datetime
 from functools import wraps
-from typing import Annotated
+from typing import Annotated, Any, Callable, Optional
+import typing as T
 
 import finnhub
 import pandas as pd
+
 from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
 
+finnhub_client: T.Any = None
 
-def init_finnhub_client(func):
+
+def init_finnhub_client(func: T.Callable[..., T.Any]) -> T.Callable[..., T.Any]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: T.Any, **kwargs: T.Any) -> T.Any:
         global finnhub_client
         if os.environ.get("FINNHUB_API_KEY") is None:
             print("Please set the environment variable FINNHUB_API_KEY to use the Finnhub API.")

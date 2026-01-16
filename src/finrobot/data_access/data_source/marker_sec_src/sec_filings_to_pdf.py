@@ -2,7 +2,8 @@ import json
 import os
 import re
 from datetime import datetime
-from typing import Final, List, Union
+from typing import Any, Dict, Final, List, Tuple, Union
+import typing as T
 
 import pandas as pd
 import pdfkit
@@ -56,8 +57,8 @@ def sec_save_pdfs(
     ticker: str,
     year: str,
     filing_types: List[str] = ["10-K", "10-Q"],
-    include_amends=True,
-):
+    include_amends: bool = True,
+) -> Tuple[List[List[str]], Dict[str, Any], str, str]:
     cik = get_cik_by_ticker(ticker)
     rgld_cik = int(cik.lstrip("0"))
     ticker_year_path = os.path.join(BASE_DIR, f"{ticker}-{year}")
@@ -79,16 +80,17 @@ def sec_save_pdfs(
         json_data = response.json()
     else:
         print(f"Error: Unable to fetch data. Status code: {response.status_code}")
+        return [], {}, "", ticker_year_path
 
-    form_lists = []
-    filings = json_data["filings"]
-    recent_filings = filings["recent"]
+    form_lists: List[List[str]] = []
+    filings = json_data.get("filings", {})
+    recent_filings = filings.get("recent", {})
     sec_form_names = []
     for acc_num, form_name, filing_date, report_date in zip(
-        recent_filings["accessionNumber"],
-        recent_filings["form"],
-        recent_filings["filingDate"],
-        recent_filings["reportDate"],
+        recent_filings.get("accessionNumber", []),
+        recent_filings.get("form", []),
+        recent_filings.get("filingDate", []),
+        recent_filings.get("reportDate", []),
     ):
         if form_name in forms and report_date.startswith(str(year)):
             if form_name == "10-Q":
@@ -119,7 +121,7 @@ def sec_save_pdfs(
     return html_urls, metadata_json, metadata_file_path, ticker_year_path
 
 
-def _convert_html_to_pdfs(html_urls, base_path: str):
+def _convert_html_to_pdfs(html_urls: List[List[str]], base_path: str) -> Dict[str, Any]:
     metadata_json = {}
     for html_url in html_urls:
         pdf_path = html_url[0].split("/")[-1]
