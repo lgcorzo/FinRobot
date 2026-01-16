@@ -1,10 +1,9 @@
 import os
 import re
 import signal
+import typing as T
 from datetime import date
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union, Callable
-import typing as T
 
 import requests
 from ratelimit import limits, sleep_and_retry
@@ -73,7 +72,12 @@ def get_regex_enum(section_regex: str) -> T.Any:
 
 
 class SECExtractor:
-    def __init__(self, ticker: str, sections: List[str] = ["_ALL"]):
+    def __init__(
+        self,
+        ticker: str,
+        sections: T.List[str] = ["_ALL"],
+        filing_type: T.Optional[str] = None,
+    ) -> None:
         """_summary_
 
         Args:
@@ -87,8 +91,9 @@ class SECExtractor:
 
         self.ticker = ticker
         self.sections = sections
+        self.filing_type = filing_type
 
-    def get_year(self, filing_details: str) -> str:
+    def get_year(self, filing_details: str) -> T.Optional[str]:
         """Get the year for 10-K and year,month for 10-Q
 
         Args:
@@ -108,7 +113,7 @@ class SECExtractor:
         else:
             return None  # In case no match is found
 
-    def get_all_text(self, section: str, all_narratives: Dict[str, List[Dict[str, Any]]]) -> str:
+    def get_all_text(self, section: str, all_narratives: T.Dict[str, T.List[T.Dict[str, T.Any]]]) -> str:
         """Join all the text from a section
 
         Args:
@@ -125,7 +130,7 @@ class SECExtractor:
                     all_texts.append(val)
         return " ".join(all_texts)
 
-    def get_section_texts_from_text(self, text: str) -> Dict[str, str]:
+    def get_section_texts_from_text(self, text: str) -> T.Dict[str, str]:
         """Get the text from filing document URL
 
         Args:
@@ -140,15 +145,14 @@ class SECExtractor:
         for section in all_narratives:
             all_narrative_dict[section] = self.get_all_text(section, all_narratives)
 
-        # return all_narrative_dict, filing_type
-        return all_narrative_dict
+        return T.cast(T.Dict[str, str], all_narrative_dict)
 
     def pipeline_api(
         self,
         text: str,
-        m_section: List[str] = [],
-        m_section_regex: List[str] = [],
-    ) -> Tuple[Dict[str, Any], str]:
+        m_section: T.List[str] = [],
+        m_section_regex: T.List[str] = [],
+    ) -> T.Tuple[T.Dict[str, T.Any], str]:
         """Unsturcured API to get the text
 
         Args:
@@ -210,7 +214,7 @@ class SECExtractor:
         response.raise_for_status()
         return response.text
 
-    def _get_session(self, company: Optional[str] = None, email: Optional[str] = None) -> requests.Session:
+    def _get_session(self, company: T.Optional[str] = None, email: T.Optional[str] = None) -> requests.Session:
         """Creates a requests sessions with the appropriate headers set. If these headers are not
         set, SEC will reject your request.
         ref: https://www.sec.gov/os/accessing-edgar-data"""
