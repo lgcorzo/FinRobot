@@ -1,21 +1,23 @@
 import importlib.machinery
 import sys
 import types
+import typing as T
+from typing import Any, Callable, Dict, List, Optional, Union
 from unittest.mock import MagicMock
 
 
 class MockModule(types.ModuleType):
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         super().__init__(name)
-        self.__path__ = []
+        self.__path__: List[str] = []
         if "chromadb" in name:
             self.__version__ = "0.5.0"
         elif "langchain" in name:
             self.__version__ = "0.1.0"
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         if name in ("__spec__", "__path__", "__name__", "__version__", "__file__"):
-            return super().__getattr__(name)
+            return super().__getattribute__(name)
         # Create a nested mock module or attribute on the fly
         # For simplicity, returning a MagicMock is usually enough once the module exists
         return MagicMock()
@@ -23,17 +25,22 @@ class MockModule(types.ModuleType):
 
 class MockLoader:
     @classmethod
-    def create_module(cls, spec):
+    def create_module(cls, spec: importlib.machinery.ModuleSpec) -> MockModule:
         return MockModule(spec.name)
 
     @classmethod
-    def exec_module(cls, module):
+    def exec_module(cls, module: types.ModuleType) -> None:
         pass
 
 
 class MockFinder:
     @classmethod
-    def find_spec(cls, fullname, path, target=None):
+    def find_spec(
+        cls,
+        fullname: str,
+        path: Optional[List[str]],
+        target: Optional[types.ModuleType] = None,
+    ) -> Optional[importlib.machinery.ModuleSpec]:
         mocked_prefixes = [
             "langchain",
             "langchain_community",
@@ -50,12 +57,16 @@ class MockFinder:
             "agent_framework",
         ]
         if any(fullname == p or fullname.startswith(p + ".") for p in mocked_prefixes):
-            return importlib.machinery.ModuleSpec(fullname, MockLoader, is_package=True)
+            return importlib.machinery.ModuleSpec(
+                fullname,
+                MockLoader,  # type: ignore[arg-type]
+                is_package=True,
+            )
         return None
 
 
 # Register the finder
-sys.meta_path.insert(0, MockFinder)
+sys.meta_path.insert(0, MockFinder)  # type: ignore[arg-type]
 
 # Also pre-populate some critical ones to avoid initial lookup issues
 for p in ["langchain", "chromadb", "unstructured", "backtrader", "pypdf"]:
@@ -74,19 +85,19 @@ sys.modules["backtrader.strategies"].SMA_CrossOver = MagicMock()
 
 
 class MockAnalyzer:
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.strategy = MagicMock()
 
-    def start(self):
+    def start(self) -> None:
         pass
 
-    def stop(self):
+    def stop(self) -> None:
         pass
 
-    def notify_order(self, order):
+    def notify_order(self, order: Any) -> None:
         pass
 
-    def get_analysis(self):
+    def get_analysis(self) -> Dict[str, Any]:
         return {}
 
 
@@ -95,52 +106,59 @@ sys.modules["backtrader"].Analyzer = MockAnalyzer
 
 # Enhance agent_framework mocks
 class ChatAgent:
-    def __init__(self, name, instructions=None, description=None, tools=None, **kwargs):
+    def __init__(
+        self,
+        name: str,
+        instructions: Optional[str] = None,
+        description: Optional[str] = None,
+        tools: Optional[List[Any]] = None,
+        **kwargs: Any,
+    ) -> None:
         self.name = name
         self._instructions = instructions
         self.description = description
         self.tools = tools
 
-    async def run(self, *args, **kwargs):
+    async def run(self, *args: Any, **kwargs: Any) -> None:
         pass
 
 
 class ChatMessage:
-    def __init__(self, text, role):
+    def __init__(self, text: str, role: str) -> None:
         self.text = text
         self.role = role
 
 
 # Define Dummy classes to replace unstructured classes
 class HTMLDocument:
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self.elements: List[Any] = []
+
+    def _read_xml(self, content: Any) -> None:
         pass
 
-    def _read_xml(self, content):
-        pass
-
-    def doc_after_cleaners(self, *args, **kwargs):
+    def doc_after_cleaners(self, *args: Any, **kwargs: Any) -> "HTMLDocument":
         return self
 
     @classmethod
-    def from_elements(cls, elements):
+    def from_elements(cls, elements: List[Any]) -> "HTMLDocument":
         doc = cls()
         doc.elements = elements
         return doc
 
-    def after_element(self, element):
+    def after_element(self, element: Any) -> "HTMLDocument":
         # Return a new doc or mock
         return self
 
-    def before_element(self, element):
+    def before_element(self, element: Any) -> "HTMLDocument":
         return self
 
 
 class Element:
-    def __init__(self, text=None):
+    def __init__(self, text: Optional[str] = None) -> None:
         self.text = text or ""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.text
 
 

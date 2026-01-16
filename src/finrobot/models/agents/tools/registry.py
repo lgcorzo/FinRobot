@@ -1,24 +1,25 @@
+import typing as T
 from functools import wraps
-from typing import Callable, List
 
-from finrobot.data_access.data_source import *
 from finrobot.functional.coding import CodingUtils
 from pandas import DataFrame
 
 
-def stringify_output(func):
+def stringify_output(func: T.Callable[..., T.Any]) -> T.Callable[..., str]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: T.Any, **kwargs: T.Any) -> str:
         result = func(*args, **kwargs)
         if isinstance(result, DataFrame):
-            return result.to_string()
+            return T.cast(str, result.to_string())
         else:
             return str(result)
 
     return wrapper
 
 
-def get_toolkits(config: List[dict | Callable | type], **kwargs) -> List[Callable]:
+def get_toolkits(
+    config: T.List[T.Union[T.Dict[str, T.Any], T.Callable[..., T.Any], type]], **kwargs: T.Any
+) -> T.List[T.Callable[..., str]]:
     """Get tools from a configuration list."""
     tools = []
 
@@ -42,7 +43,7 @@ def get_toolkits(config: List[dict | Callable | type], **kwargs) -> List[Callabl
     return tools
 
 
-def get_coding_tools():
+def get_coding_tools() -> T.List[T.Callable[..., str]]:
     """Get code writing tools."""
 
     return get_toolkits(
@@ -74,7 +75,7 @@ def get_coding_tools():
 def get_toolkits_from_cls(
     cls: type,
     include_private: bool = False,
-):
+) -> T.List[T.Callable[..., T.Any]]:
     """Get all methods of a class as tools."""
     if include_private:
         funcs = [func for func in dir(cls) if callable(getattr(cls, func)) and not func.startswith("__")]

@@ -1,8 +1,8 @@
 import concurrent.futures
 import re
+import typing as T
 from datetime import datetime
 from functools import partial
-from typing import List
 
 import pandas as pd
 import requests
@@ -17,9 +17,9 @@ from langchain.schema import Document
 def sec_main(
     ticker: str,
     year: str,
-    filing_types: List[str] = ["10-K", "10-Q"],
-    include_amends=True,
-):
+    filing_types: T.List[str] = ["10-K", "10-Q"],
+    include_amends: bool = True,
+) -> T.Tuple[T.List[Document], T.List[str]]:
     cik = get_cik_by_ticker(ticker)
     rgld_cik = int(cik.lstrip("0"))
 
@@ -90,7 +90,7 @@ def sec_main(
     print("Scraped")
     print("Started Extracting")
     with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
-        results = executor.map(sec_extractor.get_section_texts_from_text, results_texts)
+        results = executor.map(sec_extractor.get_section_texts_from_text, results_texts)  # type: ignore[arg-type]
     section_texts = []
     for res in results:
         section_texts.append(res)

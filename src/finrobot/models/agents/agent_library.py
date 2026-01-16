@@ -1,9 +1,11 @@
+import typing as T
 from textwrap import dedent
+from typing import Any, Dict, List, Union
 
-from finrobot.data_access.data_source import *
-from finrobot.functional import *
+from finrobot.data_access.data_source import FinnHubUtils, FMPUtils, YFinanceUtils
+from finrobot.functional import IPythonUtils, ReportAnalysisUtils, ReportChartUtils, ReportLabUtils, TextUtils
 
-library = [
+library_list = [
     {
         "name": "Software_Developer",
         "profile": "As a Software Developer for this position, you must be able to work collaboratively in a group chat environment to complete tasks assigned by a leader or colleague, primarily using Python programming expertise, excluding the need for code interpretation skills.",
@@ -79,4 +81,4 @@ library = [
         ],
     },
 ]
-library = {d["name"]: d for d in library}
+library: Dict[str, Dict[str, Any]] = {T.cast(str, d["name"]): d for d in T.cast(List[Dict[str, Any]], library_list)}

@@ -8,14 +8,14 @@ from finrobot.data_access.data_source.domains.social.reddit_adapter import Reddi
 
 
 @pytest.fixture
-def reddit_creds():
+def reddit_creds() -> None:
     with patch.dict(os.environ, {"REDDIT_CLIENT_ID": "test_id", "REDDIT_CLIENT_SECRET": "test_secret"}):
         yield
 
 
 class TestRedditAdapter:
     @patch("finrobot.data_access.data_source.domains.social.reddit_adapter.praw.Reddit")
-    def test_get_reddit_posts(self, mock_reddit_cls, reddit_creds):
+    def test_get_reddit_posts(self, mock_reddit_cls, reddit_creds) -> None:  # type: ignore[no-untyped-def]
         mock_reddit = MagicMock()
         mock_reddit_cls.return_value = mock_reddit
 

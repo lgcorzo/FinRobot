@@ -1,24 +1,26 @@
 import os
-import pytest
+from typing import Any, Generator
 from unittest.mock import MagicMock, patch
+
 import pandas as pd
+import pytest
 from finrobot.data_access.data_source.fmp_utils import FMPUtils
 
 
 @pytest.fixture(autouse=True)
-def setup_fmp_env():
+def setup_fmp_env() -> Generator[None, None, None]:
     with patch.dict(os.environ, {"FMP_API_KEY": "test"}):
         yield
 
 
-def test_fmp_utils_bvps_empty():
+def test_fmp_utils_bvps_empty() -> None:
     with patch("requests.get") as mock_get:
         mock_get.return_value.json.return_value = []
         res = FMPUtils.get_historical_bvps("AAPL", "2023-01-01")
         assert res == "No data available"
 
 
-def test_fmp_utils_bvps_no_match():
+def test_fmp_utils_bvps_no_match() -> None:
     with patch("requests.get") as mock_get:
         mock_get.return_value.json.return_value = [{"date": "1990-01-01", "bookValuePerShare": 10}]
         # It should still find the closest one unless min_date_diff is not updated
@@ -27,7 +29,7 @@ def test_fmp_utils_bvps_no_match():
         assert res == 10
 
 
-def test_fmp_utils_financial_metrics_logic():
+def test_fmp_utils_financial_metrics_logic() -> None:
     with patch("requests.get") as mock_get:
         # Mocking 3 calls per year: income, ratios, key_metrics
         mock_income = [
@@ -44,7 +46,7 @@ def test_fmp_utils_financial_metrics_logic():
         mock_income_prev = [{"revenue": 80000000}]
 
         # We need to return them in sequence
-        def side_effect(*args, **kwargs):
+        def side_effect(*args: Any, **kwargs: Any) -> MagicMock:
             m = MagicMock()
             if "income-statement" in args[0]:
                 m.json.return_value = mock_income + mock_income_prev
@@ -68,10 +70,10 @@ def test_fmp_utils_financial_metrics_logic():
         assert df["2023"]["Revenue"] == 100
 
 
-def test_fmp_utils_competitors():
+def test_fmp_utils_competitors() -> None:
     with patch("requests.get") as mock_get:
 
-        def side_effect(*args, **kwargs):
+        def side_effect(*args: Any, **kwargs: Any) -> MagicMock:
             m = MagicMock()
             m.json.return_value = [
                 {

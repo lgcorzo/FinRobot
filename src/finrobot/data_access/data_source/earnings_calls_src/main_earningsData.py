@@ -1,4 +1,5 @@
 import re
+import typing as T
 
 from finrobot.data_access.data_source.earnings_calls_src.earningsData import (
     get_earnings_transcript,
@@ -7,13 +8,13 @@ from langchain.schema import Document
 from tenacity import RetryError
 
 
-def clean_speakers(speaker):
+def clean_speakers(speaker: str) -> str:
     speaker = re.sub("\n", "", speaker)
     speaker = re.sub(":", "", speaker)
     return speaker
 
 
-def get_earnings_all_quarters_data(quarter: str, ticker: str, year: int):
+def get_earnings_all_quarters_data(quarter: str, ticker: str, year: int) -> T.Tuple[T.List[Document], T.List[str]]:
     docs = []
     resp_dict = get_earnings_transcript(quarter, ticker, year)
 
@@ -53,7 +54,16 @@ def get_earnings_all_quarters_data(quarter: str, ticker: str, year: int):
     return docs, speakers_list
 
 
-def get_earnings_all_docs(ticker: str, year: int):
+def get_earnings_all_docs(
+    ticker: str, year: int
+) -> T.Tuple[
+    T.List[Document],
+    T.List[str],
+    T.List[str],
+    T.List[str],
+    T.List[str],
+    T.List[str],
+]:
     earnings_docs = []
     earnings_call_quarter_vals = []
     print("Earnings Call Q1")

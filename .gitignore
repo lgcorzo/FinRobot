@@ -14,7 +14,7 @@ coding/
 projects/
 dist/
 tmp/
-filings/
+/filings/
 config_api_keys
 .venv/
 .env

@@ -1,12 +1,13 @@
 import importlib
 import sys
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 
 # Helpers
-def mock_clean_sec_text(text, lowercase=False):
+def mock_clean_sec_text(text: Any, lowercase: bool = False) -> str:
     t = str(text).strip()
     if lowercase:
         t = t.lower()
@@ -22,21 +23,21 @@ from unstructured.documents.html import HTMLDocument
 
 
 class TestSECDocument:
-    def setup_method(self):
+    def setup_method(self) -> None:
         self.clean_patcher = patch(
             "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.clean_sec_text",
             side_effect=mock_clean_sec_text,
         )
         self.mock_clean = self.clean_patcher.start()
 
-    def teardown_method(self):
+    def teardown_method(self) -> None:
         self.clean_patcher.stop()
 
-    def test_init(self):
+    def test_init(self) -> None:
         doc = SECDocument()
         assert isinstance(doc, HTMLDocument)
 
-    def test_raise_invalid_filing_type(self):
+    def test_raise_invalid_filing_type(self) -> None:
         doc = SECDocument()
         doc.filing_type = "INVALID"
 
@@ -47,7 +48,7 @@ class TestSECDocument:
         with pytest.raises(ValueError, match="Filing type is empty"):
             doc.get_table_of_contents()
 
-    def test_filter_toc_10k(self):
+    def test_filter_toc_10k(self) -> None:
         SECDocument = sec_doc_module.SECDocument
         doc = SECDocument()
         doc.filing_type = "10-K"
@@ -71,7 +72,7 @@ class TestSECDocument:
         assert res[0].text == "Part I"
         assert res[1].text == "Item 1"
 
-    def test_filter_toc_s1(self):
+    def test_filter_toc_s1(self) -> None:
         SECDocument = sec_doc_module.SECDocument
         doc = SECDocument()
         doc.filing_type = "S-1"
@@ -93,17 +94,17 @@ class TestSECDocument:
         assert res[0].text == "Prospectus Summary"
         assert res[1].text == "Risk Factors"
 
-    def test_is_risk_title(self):
+    def test_is_risk_title(self) -> None:
         assert sec_doc_module.is_risk_title("Item 1A. Risk Factors", "10-K")
         assert sec_doc_module.is_risk_title("Risk Factors", "S-1")
         assert not sec_doc_module.is_risk_title("Summary", "10-K")
 
-    def test_is_toc_title(self):
+    def test_is_toc_title(self) -> None:
         assert sec_doc_module.is_toc_title("Table of Contents")
         assert sec_doc_module.is_toc_title("INDEX")
         assert not sec_doc_module.is_toc_title("Intro")
 
-    def test_get_section_narrative_no_toc(self):
+    def test_get_section_narrative_no_toc(self) -> None:
         SECDocument = sec_doc_module.SECDocument
         doc = SECDocument()
         doc.filing_type = "10-K"
@@ -123,7 +124,7 @@ class TestSECDocument:
             assert len(res) == 1
             assert res[0] == n1
 
-    def test_read_xml(self):
+    def test_read_xml(self) -> None:
         SECDocument = sec_doc_module.SECDocument
         doc = SECDocument()
         doc.document_tree = MagicMock()
@@ -136,12 +137,12 @@ class TestSECDocument:
 
         assert doc.filing_type == "10-K"
 
-    def test_is_item_title(self):
+    def test_is_item_title(self) -> None:
         assert sec_doc_module.is_item_title("Item 1. Business", "10-K")
         assert not sec_doc_module.is_item_title("Business", "10-K")
         assert sec_doc_module.is_item_title("PROSPECTUS", "S-1")
 
-    def test_get_table_of_contents_success(self):
+    def test_get_table_of_contents_success(self) -> None:
         # Mock dependencies for clustering logic
         with patch(
             "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.to_sklearn_format"
@@ -189,7 +190,7 @@ class TestSECDocument:
                         assert toc.elements == [e3, e4]
                         mock_filter.assert_called()
 
-    def test_get_section_narrative_with_toc(self):
+    def test_get_section_narrative_with_toc(self) -> None:
         SECDocument = sec_doc_module.SECDocument
         doc = SECDocument()
         doc.filing_type = "10-K"

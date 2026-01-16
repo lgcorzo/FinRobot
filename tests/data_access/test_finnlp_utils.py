@@ -7,7 +7,7 @@ from finrobot.data_access.data_source.finnlp_utils import FinNLPUtils
 
 
 @pytest.fixture
-def finnhub_api_key():
+def finnhub_api_key() -> None:
     with patch.dict(os.environ, {"FINNHUB_API_KEY": "test_key"}):
         yield "test_key"
 
@@ -15,7 +15,7 @@ def finnhub_api_key():
 class TestFinNLPUtils:
     @patch("finrobot.data_access.data_source.finnlp_utils.CNBC_Streaming")
     @patch("finrobot.data_access.data_source.finnlp_utils.streaming_download")
-    def test_cnbc_news_download(self, mock_download, mock_streaming_cls):
+    def test_cnbc_news_download(self, mock_download, mock_streaming_cls) -> None:  # type: ignore[no-untyped-def]
         mock_streaming = MagicMock()
         mock_streaming_cls.return_value = mock_streaming
         mock_download.return_value = pd.DataFrame({"title": ["News 1"]})
@@ -26,7 +26,7 @@ class TestFinNLPUtils:
 
     @patch("finrobot.data_access.data_source.finnlp_utils.Finnhub_Date_Range")
     @patch("finrobot.data_access.data_source.finnlp_utils.date_range_download")
-    def test_finnhub_news_download(self, mock_download, mock_date_range_cls, finnhub_api_key):
+    def test_finnhub_news_download(self, mock_download, mock_date_range_cls, finnhub_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_date_range = MagicMock()
         mock_date_range_cls.return_value = mock_date_range
         mock_download.return_value = pd.DataFrame({"headline": ["Headline 1"]})
@@ -37,7 +37,7 @@ class TestFinNLPUtils:
 
     @patch("finrobot.data_access.data_source.finnlp_utils.Xueqiu_Streaming")
     @patch("finrobot.data_access.data_source.finnlp_utils.streaming_download")
-    def test_xueqiu_social_media_download(self, mock_download, mock_streaming_cls):
+    def test_xueqiu_social_media_download(self, mock_download, mock_streaming_cls) -> None:  # type: ignore[no-untyped-def]
         mock_streaming = MagicMock()
         mock_streaming_cls.return_value = mock_streaming
         mock_download.return_value = pd.DataFrame({"text": ["Social Post 1"]})
@@ -48,7 +48,7 @@ class TestFinNLPUtils:
 
     @patch("finrobot.data_access.data_source.finnlp_utils.Yicai_Streaming")
     @patch("finrobot.data_access.data_source.finnlp_utils.streaming_download")
-    def test_yicai_news_download(self, mock_download, mock_streaming_cls):
+    def test_yicai_news_download(self, mock_download, mock_streaming_cls) -> None:  # type: ignore[no-untyped-def]
         # Mock class instantiation
         mock_streaming = MagicMock()
         mock_streaming_cls.return_value = mock_streaming
@@ -70,7 +70,7 @@ class TestFinNLPUtils:
 
     @patch("finrobot.data_access.data_source.finnlp_utils.InvestorPlace_Streaming")
     @patch("finrobot.data_access.data_source.finnlp_utils.streaming_download")
-    def test_investor_place_news_download(self, mock_download, mock_streaming_cls):
+    def test_investor_place_news_download(self, mock_download, mock_streaming_cls) -> None:  # type: ignore[no-untyped-def]
         mock_streaming = MagicMock()
         mock_streaming_cls.return_value = mock_streaming
         mock_download.return_value = pd.DataFrame({"title": ["InvestorPlace"]})
@@ -81,7 +81,7 @@ class TestFinNLPUtils:
 
     @patch("finrobot.data_access.data_source.finnlp_utils.Sina_Finance_Date_Range")
     @patch("finrobot.data_access.data_source.finnlp_utils.date_range_download")
-    def test_sina_finance_news_download(self, mock_download, mock_date_range_cls):
+    def test_sina_finance_news_download(self, mock_download, mock_date_range_cls) -> None:  # type: ignore[no-untyped-def]
         mock_date_range = MagicMock()
         mock_date_range_cls.return_value = mock_date_range
         mock_download.return_value = pd.DataFrame({"title": ["Sina News"]})
@@ -94,7 +94,7 @@ class TestFinNLPUtils:
 
     @patch("finrobot.data_access.data_source.finnlp_utils.Stocktwits_Streaming")
     @patch("finrobot.data_access.data_source.finnlp_utils.streaming_download")
-    def test_stocktwits_social_media_download(self, mock_download, mock_streaming_cls):
+    def test_stocktwits_social_media_download(self, mock_download, mock_streaming_cls) -> None:  # type: ignore[no-untyped-def]
         mock_streaming = MagicMock()
         mock_streaming_cls.return_value = mock_streaming
         mock_download.return_value = pd.DataFrame({"body": ["Tweet"]})
@@ -104,7 +104,7 @@ class TestFinNLPUtils:
         assert result.iloc[0]["body"] == "Tweet"
 
     # Test internal helper functions logic via imports
-    def test_streaming_download_logic(self):
+    def test_streaming_download_logic(self) -> None:
         from finrobot.data_access.data_source.finnlp_utils import streaming_download
 
         # Case 1: has download_streaming_search
@@ -142,7 +142,7 @@ class TestFinNLPUtils:
         streaming_download(mock_cls_all, {}, "Tag", "Key", 1, ["col1"], None)
         mock_inst_all.download_streaming_all.assert_called_with(1)
 
-    def test_date_range_download_logic(self):
+    def test_date_range_download_logic(self) -> None:
         from finrobot.data_access.data_source.finnlp_utils import date_range_download
 
         # Case 1: has download_date_range_stock

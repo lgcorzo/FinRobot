@@ -1,8 +1,8 @@
 import importlib
 import json
 import os
+import typing as T
 from pprint import pformat
-from typing import Annotated
 
 import backtrader as bt
 import yfinance as yf
@@ -11,62 +11,48 @@ from matplotlib import pyplot as plt
 
 
 class DeployedCapitalAnalyzer(bt.Analyzer):
-    def start(self):
-        self.deployed_capital = []
+    def start(self) -> None:
+        self.deployed_capital: T.List[float] = []
         self.initial_cash = self.strategy.broker.get_cash()  # Initial cash in account
 
-    def notify_order(self, order):
+    def notify_order(self, order: T.Any) -> None:
         if order.status in [order.Completed]:
             if order.isbuy():
-                self.deployed_capital.append(order.executed.price * order.executed.size)
+                price = getattr(order.executed, "price", 0.0)
+                size = getattr(order.executed, "size", 0.0)
+                self.deployed_capital.append(price * size)
             elif order.issell():
-                self.deployed_capital.append(order.executed.price * order.executed.size)
+                price = getattr(order.executed, "price", 0.0)
+                size = getattr(order.executed, "size", 0.0)
+                self.deployed_capital.append(price * size)
 
-    def stop(self):
+    def stop(self) -> None:
         total_deployed = sum(self.deployed_capital)
         final_cash = self.strategy.broker.get_value()
         net_profit = final_cash - self.initial_cash
         if total_deployed > 0:
             self.retn = net_profit / total_deployed
         else:
-            self.retn = 0
+            self.retn = 0.0
 
-    def get_analysis(self):
+    def get_analysis(self) -> T.Dict[str, float]:
         return {"return_on_deployed_capital": self.retn}
 
 
 class BackTraderUtils:
     @staticmethod
     def back_test(
-        ticker_symbol: Annotated[str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"],
-        start_date: Annotated[str, "Start date of the historical data in 'YYYY-MM-DD' format"],
-        end_date: Annotated[str, "End date of the historical data in 'YYYY-MM-DD' format"],
-        strategy: Annotated[
-            str,
-            "BackTrader Strategy class to be backtested. Can be pre-defined or custom. Pre-defined options: 'SMA_CrossOver'. If custom, provide module path and class name as a string like 'my_module:TestStrategy'.",
-        ],
-        strategy_params: Annotated[
-            str,
-            "Additional parameters to be passed to the strategy class formatted as json string. E.g. {'fast': 10, 'slow': 30} for SMACross.",
-        ] = "",
-        sizer: Annotated[
-            int | str | None,
-            "Sizer used for backtesting. Can be a fixed number or a custom Sizer class. If input is integer, a corresponding fixed sizer will be applied. If custom, provide module path and class name as a string like 'my_module:TestSizer'.",
-        ] = None,
-        sizer_params: Annotated[
-            str,
-            "Additional parameters to be passed to the sizer class formatted as json string.",
-        ] = "",
-        indicator: Annotated[
-            str | None,
-            "Custom indicator class added to strategy. Provide module path and class name as a string like 'my_module:TestIndicator'.",
-        ] = None,
-        indicator_params: Annotated[
-            str,
-            "Additional parameters to be passed to the indicator class formatted as json string.",
-        ] = "",
-        cash: Annotated[float, "Initial cash amount for the backtest. Default to 10000.0"] = 10000.0,
-        save_fig: Annotated[str | None, "Path to save the plot of backtest results. Default to None."] = None,
+        ticker_symbol: str,
+        start_date: str,
+        end_date: str,
+        strategy: str,
+        strategy_params: str = "",
+        sizer: T.Optional[T.Union[int, str]] = None,
+        sizer_params: str = "",
+        indicator: T.Optional[str] = None,
+        indicator_params: str = "",
+        cash: float = 10000.0,
+        save_fig: T.Optional[str] = None,
     ) -> str:
         """
         Use the Backtrader library to backtest a trading strategy on historical stock data.
@@ -81,8 +67,11 @@ class BackTraderUtils:
             module = importlib.import_module(module_path)
             strategy_class = getattr(module, class_name)
 
-        strategy_params = json.loads(strategy_params) if strategy_params else {}
-        cerebro.addstrategy(strategy_class, **strategy_params)
+        if isinstance(strategy_params, str):
+            parsed_strategy_params: T.Dict[str, T.Any] = json.loads(strategy_params) if strategy_params else {}
+        else:
+            parsed_strategy_params = strategy_params
+        cerebro.addstrategy(strategy_class, **parsed_strategy_params)
         dataname_yf = yf.download(ticker_symbol, start_date, end_date, auto_adjust=True)
         dataname_yf.columns = [col[0] if isinstance(col, tuple) else col for col in dataname_yf.columns.values]
         # Create a data feed
@@ -100,8 +89,8 @@ class BackTraderUtils:
                 module_path, class_name = sizer.split(":")
                 module = importlib.import_module(module_path)
                 sizer_class = getattr(module, class_name)
-                sizer_params = json.loads(sizer_params) if sizer_params else {}
-                cerebro.addsizer(sizer_class, **sizer_params)
+                parsed_sizer_params: T.Dict[str, T.Any] = json.loads(sizer_params) if sizer_params else {}
+                cerebro.addsizer(sizer_class, **parsed_sizer_params)
 
         # Set additional indicator
         if indicator is not None:
@@ -109,8 +98,8 @@ class BackTraderUtils:
             module_path, class_name = indicator.split(":")
             module = importlib.import_module(module_path)
             indicator_class = getattr(module, class_name)
-            indicator_params = json.loads(indicator_params) if indicator_params else {}
-            cerebro.addindicator(indicator_class, **indicator_params)
+            parsed_indicator_params: T.Dict[str, T.Any] = json.loads(indicator_params) if indicator_params else {}
+            cerebro.addindicator(indicator_class, **parsed_indicator_params)
 
         # Attach analyzers
         cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name="sharpe_ratio")
@@ -159,5 +148,5 @@ if __name__ == "__main__":
         start_date,
         end_date,
         "test_module:TestStrategy",
-        {"exitbars": 5},
+        '{"exitbars": 5}',
     )

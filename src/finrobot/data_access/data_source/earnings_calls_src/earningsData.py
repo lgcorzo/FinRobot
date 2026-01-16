@@ -1,13 +1,13 @@
 import json
 import re
+import typing as T
 from datetime import datetime
-from typing import List
 
 import requests
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 
-def correct_date(yr, dt):
+def correct_date(yr: int, dt: str) -> str:
     """Some transcripts have incorrect date, correcting it
 
     Args:
@@ -17,13 +17,13 @@ def correct_date(yr, dt):
     Returns:
         datetime: corrected date
     """
-    dt = datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
-    if dt.year != yr:
-        dt = dt.replace(year=yr)
-    return dt.strftime("%Y-%m-%d %H:%M:%S")
+    parsed_dt = datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
+    if parsed_dt.year != yr:
+        parsed_dt = parsed_dt.replace(year=yr)
+    return parsed_dt.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def extract_speakers(cont: str) -> List[str]:
+def extract_speakers(cont: str) -> T.List[str]:
     """Extract the list of speakers
 
     Args:
@@ -39,7 +39,7 @@ def extract_speakers(cont: str) -> List[str]:
 
 
 @retry(wait=wait_random_exponential(min=1, max=5), stop=stop_after_attempt(2))
-def get_earnings_transcript(quarter: str, ticker: str, year: int):
+def get_earnings_transcript(quarter: str, ticker: str, year: int) -> T.Any:
     """Get the earnings transcripts
 
     Args:

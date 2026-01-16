@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -5,7 +6,7 @@ from finrobot.functional.rag import PROMPT_RAG_FUNC, get_rag_function
 
 
 @patch("finrobot.functional.rag.RetrieveUserProxyAgent")
-def test_get_rag_function(mock_agent_cls):
+def test_get_rag_function(mock_agent_cls) -> None:  # type: ignore[no-untyped-def]
     # Mock instance
     mock_agent = MagicMock()
     mock_agent_cls.return_value = mock_agent
@@ -16,7 +17,7 @@ def test_get_rag_function(mock_agent_cls):
     mock_agent.message_generator.return_value = "Retrieved Content"
 
     # Test initialization
-    retrieve_config = {"docs_path": ["/tmp/doc.txt"]}
+    retrieve_config: dict[str, Any] = {"docs_path": ["/tmp/doc.txt"]}
     retrieve_content, agent_instance = get_rag_function(retrieve_config)
 
     assert agent_instance == mock_agent
@@ -38,8 +39,9 @@ def test_get_rag_function(mock_agent_cls):
 
 
 @patch("finrobot.functional.rag.RetrieveUserProxyAgent")
-def test_get_rag_function_docstring(mock_agent_cls):
+def test_get_rag_function_docstring(mock_agent_cls) -> None:  # type: ignore[no-untyped-def]
     retrieve_config = {"docs_path": ["doc1", "doc2"]}
     retrieve_content, _ = get_rag_function(retrieve_config)
+    assert retrieve_content.__doc__ is not None
     assert "Availale Documents" in retrieve_content.__doc__
     assert "doc1" in retrieve_content.__doc__

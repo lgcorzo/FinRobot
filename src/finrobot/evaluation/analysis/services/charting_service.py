@@ -1,6 +1,6 @@
 import os
+import typing as T
 from datetime import datetime, timedelta
-from typing import Annotated, List, Tuple
 
 import mplfinance as mpf
 import pandas as pd
@@ -11,24 +11,15 @@ from pandas import DateOffset
 
 class MplFinanceUtils:
     def plot_stock_price_chart(
-        ticker_symbol: Annotated[str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"],
-        start_date: Annotated[str, "Start date of the historical data in 'YYYY-MM-DD' format"],
-        end_date: Annotated[str, "End date of the historical data in 'YYYY-MM-DD' format"],
-        save_path: Annotated[str, "File path where the plot should be saved"],
-        verbose: Annotated[str, "Whether to print stock data to console. Default to False."] = False,
-        type: Annotated[
-            str,
-            "Type of the plot, should be one of 'candle','ohlc','line','renko','pnf','hollow_and_filled'. Default to 'candle'",
-        ] = "candle",
-        style: Annotated[
-            str,
-            "Style of the plot, should be one of 'default','classic','charles','yahoo','nightclouds','sas','blueskies','mike'. Default to 'default'.",
-        ] = "default",
-        mav: Annotated[
-            int | List[int] | Tuple[int, ...] | None,
-            "Moving average window(s) to plot on the chart. Default to None.",
-        ] = None,
-        show_nontrading: Annotated[bool, "Whether to show non-trading days on the chart. Default to False."] = False,
+        ticker_symbol: str,
+        start_date: str,
+        end_date: str,
+        save_path: str,
+        verbose: bool = False,
+        type: str = "candle",
+        style: str = "default",
+        mav: T.Optional[T.Union[int, T.List[int], T.Tuple[int, ...]]] = None,
+        show_nontrading: bool = False,
     ) -> str:
         """
         Plot a stock price chart using mplfinance for the specified stock and time period,
@@ -61,15 +52,15 @@ class MplFinanceUtils:
 
 class ReportChartUtils:
     def get_share_performance(
-        ticker_symbol: Annotated[str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"],
-        filing_date: Annotated[str | datetime, "filing date in 'YYYY-MM-DD' format"],
-        save_path: Annotated[str, "File path where the plot should be saved"],
+        ticker_symbol: str,
+        filing_date: T.Union[str, datetime],
+        save_path: str,
     ) -> str:
         """Plot the stock performance of a company compared to the S&P 500 over the past year."""
         if isinstance(filing_date, str):
             filing_date = datetime.strptime(filing_date, "%Y-%m-%d")
 
-        def fetch_stock_data(ticker):
+        def fetch_stock_data(ticker: str) -> pd.Series:
             start = (filing_date - timedelta(days=365)).strftime("%Y-%m-%d")
             end = filing_date.strftime("%Y-%m-%d")
             historical_data = YFinanceUtils.get_stock_data(ticker, start, end)
@@ -127,10 +118,10 @@ class ReportChartUtils:
         return f"last year stock performance chart saved to <img {plot_path}>"
 
     def get_pe_eps_performance(
-        ticker_symbol: Annotated[str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"],
-        filing_date: Annotated[str | datetime, "filing date in 'YYYY-MM-DD' format"],
-        years: Annotated[int, "number of years to search from, default to 4"] = 4,
-        save_path: Annotated[str, "File path where the plot should be saved"] = None,
+        ticker_symbol: str,
+        filing_date: T.Union[str, datetime],
+        years: int = 4,
+        save_path: T.Optional[str] = None,
     ) -> str:
         """Plot the PE ratio and EPS performance of a company over the past n years."""
         if isinstance(filing_date, str):
@@ -194,6 +185,7 @@ class ReportChartUtils:
 
         plt.tight_layout()
         # plt.show()
+        assert save_path is not None, "save_path must not be None"
         plot_path = f"{save_path}/pe_performance.png" if os.path.isdir(save_path) else save_path
         plt.savefig(plot_path)
         plt.close()

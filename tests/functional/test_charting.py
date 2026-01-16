@@ -9,7 +9,7 @@ from finrobot.functional.charting import MplFinanceUtils, ReportChartUtils
 
 @patch("finrobot.functional.charting.YFinanceUtils")
 @patch("finrobot.functional.charting.mpf.plot")
-def test_plot_stock_price_chart(mock_mpf_plot, mock_yf):
+def test_plot_stock_price_chart(mock_mpf_plot, mock_yf) -> None:  # type: ignore[no-untyped-def]
     mock_yf.get_stock_data.return_value = pd.DataFrame({"Close": [100]})
 
     # Test with verbose=True
@@ -23,7 +23,7 @@ def test_plot_stock_price_chart(mock_mpf_plot, mock_yf):
 @patch("finrobot.functional.charting.YFinanceUtils")
 @patch("finrobot.functional.charting.plt")
 @patch("os.path.isdir")
-def test_get_share_performance(mock_isdir, mock_plt, mock_yf):
+def test_get_share_performance(mock_isdir, mock_plt, mock_yf) -> None:  # type: ignore[no-untyped-def]
     mock_plt.subplots.return_value = (MagicMock(), MagicMock())
     mock_plt.figure.return_value = MagicMock()
 
@@ -42,7 +42,7 @@ def test_get_share_performance(mock_isdir, mock_plt, mock_yf):
 @patch("finrobot.functional.charting.YFinanceUtils")
 @patch("finrobot.functional.charting.plt")
 @patch("os.path.isdir")
-def test_get_pe_eps_performance(mock_isdir, mock_plt, mock_yf):
+def test_get_pe_eps_performance(mock_isdir, mock_plt, mock_yf) -> None:  # type: ignore[no-untyped-def]
     mock_plt.subplots.return_value = (MagicMock(), MagicMock())
 
     mock_isdir.return_value = False

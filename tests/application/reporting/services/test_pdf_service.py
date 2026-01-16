@@ -9,7 +9,7 @@ from PIL import Image
 
 
 @pytest.fixture
-def dummy_image():
+def dummy_image() -> None:
     fd, path = tempfile.mkstemp(suffix=".png")
     try:
         with os.fdopen(fd, "wb") as tmp:
@@ -24,7 +24,7 @@ def dummy_image():
 @patch("finrobot.application.reporting.services.pdf_service.YFinanceUtils")
 @patch("finrobot.application.reporting.services.pdf_service.FMPUtils")
 @patch("finrobot.application.reporting.services.pdf_service.ReportAnalysisUtils")
-def test_pdf_service_build_report_success(mock_analyzer, mock_fmp, mock_yf, dummy_image):
+def test_pdf_service_build_report_success(mock_analyzer, mock_fmp, mock_yf, dummy_image) -> None:  # type: ignore[no-untyped-def]
     mock_yf.get_stock_info.return_value = {"shortName": "Apple Inc.", "currency": "USD"}
     mock_fmp.get_financial_metrics.return_value = pd.DataFrame(
         {"Metric": ["Revenue", "Net Income"], "2023": [1000, 200], "2022": [900, 180]}

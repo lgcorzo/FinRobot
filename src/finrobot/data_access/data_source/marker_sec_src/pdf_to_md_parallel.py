@@ -7,7 +7,8 @@ SAVE_DIR = "output/SEC_EDGAR_FILINGS_MD"
 import json
 import math
 import traceback
-from typing import Optional
+import typing as T
+from typing import Any, Optional
 
 import torch.multiprocessing as mp
 from marker.convert import convert_single_pdf
@@ -22,18 +23,20 @@ from tqdm import tqdm
 configure_logging()
 SAVE_DIR = "output/SEC_EDGAR_FILINGS_MD"
 
+model_refs: list[T.Any] = []
 
-def worker_init(shared_model):
+
+def worker_init(shared_model: list[T.Any]) -> None:
     global model_refs
     model_refs = shared_model
 
 
-def worker_exit():
+def worker_exit() -> None:
     global model_refs
     del model_refs
 
 
-def process_single_pdf(args):
+def process_single_pdf(args: tuple[str, str, dict[str, Any], int | None]) -> None:
     filepath, out_folder, metadata, min_length = args
 
     fname = os.path.basename(filepath)
@@ -48,7 +51,7 @@ def process_single_pdf(args):
         if min_length:
             filetype = find_filetype(filepath)
             if filetype == "other":
-                return 0
+                return
 
             length = get_length_of_text(filepath)
             if length < min_length:
@@ -65,17 +68,17 @@ def process_single_pdf(args):
 
 
 def run_marker_mp(
-    in_folder,
-    out_folder,
-    chunk_idx=0,
-    num_chunks=1,
-    max_files=None,
-    workers=5,
-    metadata_file=None,
-    min_length=None,
+    in_folder: str,
+    out_folder: str,
+    chunk_idx: int = 0,
+    num_chunks: int = 1,
+    max_files: Optional[int] = None,
+    workers: int = 5,
+    metadata_file: Optional[str] = None,
+    min_length: Optional[int] = None,
     inference_ram: Optional[int] = None,
     vram_per_task: Optional[int] = None,
-):
+) -> None:
     """
     Convert multiple PDFs to markdown using the provided parameters.
 

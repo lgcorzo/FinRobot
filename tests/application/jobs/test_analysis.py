@@ -1,12 +1,13 @@
 """Tests for analysis job."""
 
+import typing as T
 from unittest.mock import MagicMock, patch
 
 from finrobot.application.jobs.analysis import FinancialAnalysisJob
 
 
 @patch("finrobot.application.jobs.analysis.SingleAssistant")
-def test_financial_analysis_job(mock_assistant_cls):
+def test_financial_analysis_job(mock_assistant_cls: MagicMock) -> None:
     """Test job execution."""
     mock_assistant = MagicMock()
     mock_assistant_cls.return_value = mock_assistant

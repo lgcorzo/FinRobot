@@ -36,7 +36,7 @@ def get_next_weekday(date: datetime | None = None) -> datetime:
     return date
 
 
-def decorate_all_methods(decorator: T.Callable) -> T.Callable:
+def decorate_all_methods(decorator: T.Callable[..., T.Any]) -> T.Callable[[T.Type[T.Any]], T.Type[T.Any]]:
     """Decorate all methods of a class.
 
     Parameters:
@@ -46,7 +46,7 @@ def decorate_all_methods(decorator: T.Callable) -> T.Callable:
         Callable: class decorator.
     """
 
-    def dectheclass(cls: T.Type) -> T.Type:
+    def dectheclass(cls: T.Type[T.Any]) -> T.Type[T.Any]:
         for name, m in vars(cls).items():
             if callable(m) and not name.startswith("__"):
                 setattr(cls, name, decorator(m))

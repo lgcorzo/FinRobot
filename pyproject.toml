@@ -1,101 +1,126 @@
 [tool.poetry]
 name = "finrobot"
 version = "0.1.0"
-description = "Financial Analyst Agent similar to FinRobot but using Microsoft Agent Framework"
-authors = ["Your Name <you@example.com>"]
+description = "Financial Analyst Agent using Microsoft Agent Framework"
+authors = ["Admin <admin@example.com>"]
+license = "MIT"
+readme = "README.md"
 packages = [{ include = "finrobot", from = "src" }]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-loguru = "^0.7.2"
+loguru = "^0.7.3"
+pandas = "^2.2.3"
+pydantic = "^2.12.5"
+pydantic-settings = "^2.12.0"
+agent-framework = "^1.0.0b260114"
 mlflow = "3.5.0"
+confluent-kafka = "^2.13.0"
+opentelemetry-instrumentation = "^0.60b1"
+opentelemetry-exporter-otlp-proto-http = "^1.39.1"
+opentelemetry-exporter-otlp = "^1.39.1"
+pyarrow = "^21.0.0"
 omegaconf = "^2.3.0"
-pandas = "^2.2.2"
-pydantic = "^2.7.4"
-pydantic-settings = "^2.3.4"
-confluent-kafka = "^2.8.2"
-boto3 = "^1.42.24"
-# agent-framework-core = { git = "https://github.com/microsoft/agent-framework.git", subdirectory = "python/packages/core" }
-# Using the exact dependency from llmops
-agent-framework-core = { git = "https://github.com/microsoft/agent-framework.git", subdirectory = "python/packages/core" }
-litellm = "^1.60.8"
-pytest-asyncio = "^0.25.3"
-autogenstudio = "^0.4.1.11"
-# FinRobot specific dependencies
-yfinance = "*"
-finnhub-python = "*"
-mplfinance = "*"
-# backtrader = "*" # Optional
-# sec_api = "*" # Optional
+numpy = "^2.2.6"
+plotly = "^5.24.1"
 plyer = "^2.1.0"
-psutil = "^6.0.0"
-pyarrow = "^15.0.2"
-pynvml = "^11.5.0"
-opentelemetry-instrumentation = ">=0.51b0"
-opentelemetry-exporter-otlp-proto-http = ">=1.30.0"
-opentelemetry-exporter-otlp = ">=1.30.0"
+psutil = "^6.1.1"
+fastapi = "^0.128.0"
+fastmcp = "^2.14.3"
+uvicorn = "^0.40.0"
+# Financial data sources
+yfinance = "^1.0"
+finnhub-python = "^2.4.26"
+sec-api = "^1.0.32"
+tushare = "^1.4.24"
+mplfinance = "^0.12.10b0"
+reportlab = "^4.4.9"
+html2text = "^2025.4.15"
+langdetect = "^1.0.9"
+praw = "^7.8.1"
+ratelimit = "^2.2.1"
+pdfkit = "^1.0.0"
+pandera = "^0.28.1"
+backtrader = "^1.9.78.123"
+ipython = "^8.30.0"
+
+[tool.poetry.group.checks]
+optional = true
 
 [tool.poetry.group.checks.dependencies]
-bandit = "^1.7.9"
-coverage = "^7.5.4"
-mypy = "^1.10.1"
-pytest = "^8.2.2"
+bandit = "^1.9.2"
+coverage = "^7.13.1"
+mypy = "^1.19.1"
+pytest = "^8.4.2"
 pytest-cov = "^5.0.0"
-pytest-xdist = "^3.6.1"
-pytest-mock = "^3.14.0"
-ruff = "^0.4.0"
-types-requests = "^2.32.0"
-pandas-stubs = "^2.2.0"
-types-tqdm = "^4.66.0"
+pytest-xdist = "^3.8.0"
+pytest-mock = "^3.15.1"
+pytest-asyncio = "^0.25.3"
+ruff = "^0.5.7"
+types-requests = "^2.32.4.20260107"
+commitizen = "^3.31.0"
+pre-commit = "^3.8.0"
 
 [tool.poetry.group.dev.dependencies]
-invoke = "^2.2.0"
+invoke = "^2.2.1"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.poetry.group.gpu]
+optional = true
+
+[tool.poetry.group.gpu.dependencies]
+chromadb = "^1.4.1"
+sentence-transformers = "^5.2.0"
+langchain = "^1.2.4"
+litellm = "^1.60.8"
+transformers = "^4.48.3"
+
+# CONFIGURATIONS
+
+[tool.bandit]
+targets = ["src"]
+skips = ["B101", "B113", "B311"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version_scheme = "pep440"
+version_provider = "poetry"
+changelog_start_rev = "v1.0.0"
+update_changelog_on_bump = true
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+omit = ["__main__.py"]
 
 [tool.mypy]
+pretty = true
+strict = true
 python_version = "3.12"
+check_untyped_defs = true
 ignore_missing_imports = true
-disable_error_code = [
-    "misc",
-    "import-untyped",
-    "name-defined",
-    "attr-defined",
-    "union-attr",
-    "call-overload",
-    "arg-type",
-    "assignment",
-    "operator",
-    "index",
-    "return-value",
-    "var-annotated",
-    "override",
-    "call-arg",
-    "str-format",
-    "truthy-function",
-    "return",
-    "used-before-def",
-]
+disable_error_code = ["attr-defined","method-assign","union-attr", "misc", "redundant-cast", "no-untyped-call"]
+plugins = ["pandera.mypy", "pydantic.mypy"]
 
-
+[tool.pytest.ini_options]
+addopts = "--verbosity=2"
+pythonpath = ["src"]
+testpaths = ["tests"]
+asyncio_mode = "auto"
 
 [tool.ruff]
+fix = true
+indent-width = 4
 line-length = 120
-extend-exclude = ["__pycache__", ".venv", "build", "dist"]
+target-version = "py312"
+
+[tool.ruff.format]
+docstring-code-format = true
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]
 ignore = ["E501", "E402", "E722", "E731", "F401", "F403", "F405", "F841", "W291", "W293"]
 
-
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-asyncio_mode = "auto"
-
-[tool.bandit]
-exclude_dirs = ["tests", ".venv"]
-skips = ["B101", "B113", "B311"]
-
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

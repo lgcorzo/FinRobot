@@ -11,7 +11,7 @@ from invoke.tasks import task
 @task
 def poetry(ctx: Context) -> None:
     """Install poetry packages."""
-    ctx.run("pip install -e .")
+    ctx.run("poetry install")
 
 
 @task

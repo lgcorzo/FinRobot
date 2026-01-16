@@ -2,6 +2,9 @@ import os
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
+
+pytest.importorskip("torch")
+
 from finrobot.functional.ragquery import rag_database_earnings_call, rag_database_sec
 
 
@@ -9,7 +12,7 @@ from finrobot.functional.ragquery import rag_database_earnings_call, rag_databas
 @patch("finrobot.functional.ragquery.SentenceTransformerEmbeddings")
 @patch("finrobot.functional.ragquery.Chroma")
 @patch("finrobot.functional.ragquery.RecursiveCharacterTextSplitter")
-def test_rag_database_earnings_call(mock_splitter_cls, mock_chroma, mock_emb, mock_get_data):
+def test_rag_database_earnings_call(mock_splitter_cls, mock_chroma, mock_emb, mock_get_data) -> None:  # type: ignore[no-untyped-def]
     # Setup mocks
     mock_docs = [MagicMock()]
     mock_get_data.return_value = (
@@ -54,7 +57,7 @@ def test_rag_database_earnings_call(mock_splitter_cls, mock_chroma, mock_emb, mo
 @patch("finrobot.functional.ragquery.SentenceTransformerEmbeddings")
 @patch("finrobot.functional.ragquery.Chroma")
 @patch("finrobot.functional.ragquery.RecursiveCharacterTextSplitter")
-def test_rag_database_sec_unstructured(mock_splitter_cls, mock_chroma, mock_emb, mock_get_data):
+def test_rag_database_sec_unstructured(mock_splitter_cls, mock_chroma, mock_emb, mock_get_data) -> None:  # type: ignore[no-untyped-def]
     mock_get_data.return_value = ([MagicMock()], ["10-K", "10-Q"])
 
     mock_db = MagicMock()
@@ -80,7 +83,14 @@ def test_rag_database_sec_unstructured(mock_splitter_cls, mock_chroma, mock_emb,
 @patch("finrobot.functional.ragquery.MarkdownHeaderTextSplitter")
 @patch("os.listdir")
 @patch("builtins.open")
-def test_rag_database_sec_markdown(mock_open, mock_listdir, mock_splitter_cls, mock_chroma, mock_emb, mock_get_data):
+def test_rag_database_sec_markdown(
+    mock_open: MagicMock,
+    mock_listdir: MagicMock,
+    mock_splitter_cls: MagicMock,
+    mock_chroma: MagicMock,
+    mock_emb: MagicMock,
+    mock_get_data: MagicMock,
+) -> None:
     # Setup mocks for markdown path
     mock_get_data.return_value = ([], ["10-K"])  # Dummy return for first call
 

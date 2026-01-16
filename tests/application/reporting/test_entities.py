@@ -3,7 +3,7 @@ from datetime import datetime
 from finrobot.application.reporting.entities import PDFDocument, Report, Section
 
 
-def test_section_creation():
+def test_section_creation() -> None:
     section = Section(title="Business Overview", content="Overview content", section_type="text", order=1)
     assert section.title == "Business Overview"
     assert section.content == "Overview content"
@@ -11,7 +11,7 @@ def test_section_creation():
     assert section.order == 1
 
 
-def test_report_creation():
+def test_report_creation() -> None:
     now = datetime.now()
     section = Section(title="Test Section", content="Test Content")
     report = Report(
@@ -25,7 +25,7 @@ def test_report_creation():
     assert report.summary == "Summary"
 
 
-def test_pdf_document_creation():
+def test_pdf_document_creation() -> None:
     now = datetime.now()
     report = Report(title="Test Report", symbol="TSLA", created_at=now)
     pdf = PDFDocument(filename="tsla_report.pdf", report=report, template="standard", output_path="/tmp/")

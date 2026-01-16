@@ -1,20 +1,20 @@
-"""FinnHub Adapter - Market Data Repository Implementation."""
-
 import json
 import os
+import typing as T
 from collections import defaultdict
 from functools import wraps
-from typing import Annotated
 
 import finnhub
 import pandas as pd
 from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
 
+finnhub_client: T.Any = None
 
-def init_finnhub_client(func):
+
+def init_finnhub_client(func: T.Callable[..., T.Any]) -> T.Callable[..., T.Any]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: T.Any, **kwargs: T.Any) -> T.Any:
         global finnhub_client
         if os.environ.get("FINNHUB_API_KEY") is None:
             print("Please set the environment variable FINNHUB_API_KEY to use the Finnhub API.")
@@ -31,7 +31,7 @@ def init_finnhub_client(func):
 class FinnHubMarketAdapter:
     """FinnHub implementation for market data (company profiles, financials)."""
 
-    def get_company_profile(symbol: Annotated[str, "ticker symbol"]) -> str:
+    def get_company_profile(symbol: str) -> str:
         """Get a company's profile information."""
         profile = finnhub_client.company_profile2(symbol=symbol)
         if not profile:
@@ -50,13 +50,13 @@ class FinnHubMarketAdapter:
         return formatted_str
 
     def get_basic_financials_history(
-        symbol: Annotated[str, "ticker symbol"],
-        freq: Annotated[str, "reporting frequency: annual / quarterly"],
-        start_date: Annotated[str, "start date yyyy-mm-dd"],
-        end_date: Annotated[str, "end date yyyy-mm-dd"],
-        selected_columns: Annotated[list[str] | None, "columns to return"] = None,
+        symbol: str,
+        freq: str,
+        start_date: str,
+        end_date: str,
+        selected_columns: T.Optional[T.List[str]] = None,
         save_path: SavePathType = None,
-    ) -> pd.DataFrame:
+    ) -> T.Union[pd.DataFrame, str]:
         """Get historical basic financials."""
         if freq not in ["annual", "quarterly"]:
             return f"Invalid reporting frequency {freq}."
@@ -65,7 +65,7 @@ class FinnHubMarketAdapter:
         if not basic_financials["series"]:
             return f"Failed to find basic financials for symbol {symbol}!"
 
-        output_dict = defaultdict(dict)
+        output_dict: T.Dict[str, T.Dict[str, T.Any]] = defaultdict(dict)
         for metric, value_list in basic_financials["series"][freq].items():
             if selected_columns and metric not in selected_columns:
                 continue
@@ -80,8 +80,8 @@ class FinnHubMarketAdapter:
         return financials_output
 
     def get_basic_financials(
-        symbol: Annotated[str, "ticker symbol"],
-        selected_columns: Annotated[list[str] | None, "columns to return"] = None,
+        symbol: str,
+        selected_columns: T.Optional[T.List[str]] = None,
     ) -> str:
         """Get latest basic financials."""
         basic_financials = finnhub_client.company_basic_financials(symbol, "all")

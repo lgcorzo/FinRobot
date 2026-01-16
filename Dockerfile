@@ -3,5 +3,5 @@
 FROM python:3.12
 COPY dist/*.whl .
 RUN pip install *.whl
-# Run the FinRobot main module
-CMD ["python", "-m", "finrobot"]
+# Run the main function of the finrobot.infrastructure.messaging.kafka_app module
+CMD ["python", "-m", "finrobot.infrastructure.messaging.kafka_app"]

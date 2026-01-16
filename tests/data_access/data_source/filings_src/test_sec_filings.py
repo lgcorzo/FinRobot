@@ -1,4 +1,4 @@
-from enum import Enum
+import typing as T
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -17,19 +17,19 @@ from finrobot.data_access.data_source.filings_src.sec_filings import (
 
 # Mock dependencies that might not be installed or heavy
 @pytest.fixture
-def mock_sec_document():
+def mock_sec_document() -> T.Generator[MagicMock, None, None]:
     with patch("finrobot.data_access.data_source.filings_src.sec_filings.SECDocument") as mock:
         yield mock
 
 
 @pytest.fixture
-def mock_convert_to_isd():
+def mock_convert_to_isd() -> T.Generator[MagicMock, None, None]:
     with patch("finrobot.data_access.data_source.filings_src.sec_filings.convert_to_isd") as mock:
         yield mock
 
 
 class TestTimeout:
-    def test_timeout_context_manager(self):
+    def test_timeout_context_manager(self) -> None:
         """Test that timeout context manager works correctly."""
         # Simple test to ensure it doesn't break basic flows
         # Simulating alarm signal is tricky in threads/some envs,
@@ -41,47 +41,47 @@ class TestTimeout:
 
 class TestSECExtractor:
     @pytest.fixture
-    def extractor(self):
+    def extractor(self) -> SECExtractor:
         return SECExtractor(ticker="AAPL")
 
-    def test_init(self, extractor):
+    def test_init(self, extractor: SECExtractor) -> None:
         assert extractor.ticker == "AAPL"
         assert extractor.sections == ["_ALL"]
 
-    def test_get_year_10k(self, extractor):
+    def test_get_year_10k(self, extractor: SECExtractor) -> None:
         extractor.filing_type = "10-K"
         details = "http://sec.gov/Archives/edgar/data/320193/000032019321000010/aapl-20210925.htm"
         assert extractor.get_year(details) == "2021"
 
-    def test_get_year_10q(self, extractor):
+    def test_get_year_10q(self, extractor: SECExtractor) -> None:
         extractor.filing_type = "10-Q"
         details = "http://sec.gov/Archives/edgar/data/320193/000032019321000065/aapl-20210626.htm"
         # 10-Q regex is 20\d{4}, so it captures YYYYMM
         assert extractor.get_year(details) == "202106"
 
-    def test_get_year_no_match(self, extractor):
+    def test_get_year_no_match(self, extractor: SECExtractor) -> None:
         extractor.filing_type = "10-K"
         details = "invalid_url"
         assert extractor.get_year(details) is None
 
-    def test_get_all_text(self, extractor):
+    def test_get_all_text(self, extractor: SECExtractor) -> None:
         all_narratives = {"Item 1": [{"text": "Part 1"}, {"other": "value"}, {"text": "Part 2"}]}
         text = extractor.get_all_text("Item 1", all_narratives)
         assert text == "Part 1 Part 2"
 
-    def test_get_session_defaults(self, extractor):
+    def test_get_session_defaults(self, extractor: SECExtractor) -> None:
         with patch("os.environ.get") as mock_env:
             mock_env.return_value = "TestValue"
             session = extractor._get_session()
             assert isinstance(session, requests.Session)
             assert "TestValue" in session.headers["User-Agent"]
 
-    def test_get_session_custom(self, extractor):
+    def test_get_session_custom(self, extractor: SECExtractor) -> None:
         session = extractor._get_session(company="MyComp", email="me@test.com")
         assert "MyComp me@test.com" in session.headers["User-Agent"]
 
     @patch("requests.Session.get")
-    def test_get_filing(self, mock_get, extractor):
+    def test_get_filing(self, mock_get: MagicMock, extractor: SECExtractor) -> None:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.text = "Filing Content"
@@ -91,7 +91,12 @@ class TestSECExtractor:
         assert content == "Filing Content"
         mock_get.assert_called_with("http://test.url")
 
-    def test_pipeline_api_valid(self, extractor, mock_sec_document, mock_convert_to_isd):
+    def test_pipeline_api_valid(
+        self,
+        extractor: SECExtractor,
+        mock_sec_document: MagicMock,
+        mock_convert_to_isd: MagicMock,
+    ) -> None:
         # Setup mocks
         mock_doc_instance = MagicMock()
         mock_doc_instance.filing_type = "10-K"
@@ -105,8 +110,12 @@ class TestSECExtractor:
         # Since it's imported, mocking generic dictionary might be needed if values are strict
         # For now assume "Item 1" maps to something if we mock validate_section_names
 
-        with patch("finrobot.data_access.data_source.filings_src.sec_filings.validate_section_names"), patch(
-            "finrobot.data_access.data_source.filings_src.sec_filings.section_string_to_enum", {"Item 1": "ENUM_VAL"}
+        with (
+            patch("finrobot.data_access.data_source.filings_src.sec_filings.validate_section_names"),
+            patch(
+                "finrobot.data_access.data_source.filings_src.sec_filings.section_string_to_enum",
+                {"Item 1": "ENUM_VAL"},
+            ),
         ):
             result, filing_type = extractor.pipeline_api("Raw Text", m_section=["Item 1"])
 
@@ -114,7 +123,7 @@ class TestSECExtractor:
             assert "Item 1" in result
             assert result["Item 1"] == [{"text": "Element1"}]
 
-    def test_pipeline_api_invalid_type(self, extractor, mock_sec_document):
+    def test_pipeline_api_invalid_type(self, extractor: SECExtractor, mock_sec_document: MagicMock) -> None:
         mock_doc_instance = MagicMock()
         mock_doc_instance.filing_type = "INVALID"
         mock_sec_document.from_string.return_value = mock_doc_instance
@@ -123,7 +132,12 @@ class TestSECExtractor:
             with pytest.raises(ValueError, match="is not supported"):
                 extractor.pipeline_api("Raw Text")
 
-    def test_pipeline_api_all_sections_10k(self, extractor, mock_sec_document, mock_convert_to_isd):
+    def test_pipeline_api_all_sections_10k(
+        self,
+        extractor: SECExtractor,
+        mock_sec_document: MagicMock,
+        mock_convert_to_isd: MagicMock,
+    ) -> None:
         mock_doc_instance = MagicMock()
         mock_doc_instance.filing_type = "10-K"
         mock_sec_document.from_string.return_value = mock_doc_instance
@@ -143,7 +157,12 @@ class TestSECExtractor:
             for sec in SECTIONS_10K:
                 assert sec.name in result
 
-    def test_pipeline_api_regex(self, extractor, mock_sec_document, mock_convert_to_isd):
+    def test_pipeline_api_regex(
+        self,
+        extractor: SECExtractor,
+        mock_sec_document: MagicMock,
+        mock_convert_to_isd: MagicMock,
+    ) -> None:
         mock_doc_instance = MagicMock()
         mock_doc_instance.filing_type = "10-K"
         mock_sec_document.from_string.return_value = mock_doc_instance

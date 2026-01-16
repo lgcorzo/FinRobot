@@ -3,6 +3,9 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
+
+pytest.importorskip("torch")
+
 from finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf import (
     _convert_html_to_pdfs,
     _search_url,
@@ -11,11 +14,11 @@ from finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf import (
 )
 
 
-def test_search_url():
+def test_search_url() -> None:
     assert "CIK=123" in _search_url("123")
 
 
-def test_get_cik_by_ticker():
+def test_get_cik_by_ticker() -> None:
     with patch("requests.get") as mock_get:
         mock_response = MagicMock()
         mock_response.text = "CIK=0000320193"
@@ -26,7 +29,7 @@ def test_get_cik_by_ticker():
         assert cik == "0000320193"
 
 
-def test_sec_save_pdfs(tmp_path):
+def test_sec_save_pdfs(tmp_path) -> None:  # type: ignore[no-untyped-def]
     with patch("finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf.get_cik_by_ticker") as mock_get_cik:
         with patch("requests.get") as mock_get:
             with patch(
@@ -59,7 +62,7 @@ def test_sec_save_pdfs(tmp_path):
                     assert "file.pdf" in res[1]  # metadata
 
 
-def test_convert_html_to_pdfs(tmp_path):
+def test_convert_html_to_pdfs(tmp_path) -> None:  # type: ignore[no-untyped-def]
     with patch("pdfkit.from_url") as mock_pdfkit:
         html_urls = [["http://example.com/file.htm", "10-K"]]
         res = _convert_html_to_pdfs(html_urls, str(tmp_path))

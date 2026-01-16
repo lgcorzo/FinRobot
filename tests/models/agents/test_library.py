@@ -3,7 +3,7 @@
 from finrobot.models.agents.agent_library import library
 
 
-def test_library_structure():
+def test_library_structure() -> None:
     """Test library contains valid agent configs."""
     assert isinstance(library, dict)
     assert "Financial_Analyst" in library
@@ -13,7 +13,7 @@ def test_library_structure():
     assert "profile" in config
 
 
-def test_market_analyst_tools():
+def test_market_analyst_tools() -> None:
     """Test agents with toolkits defined."""
     config = library["Market_Analyst"]
     assert "toolkits" in config

@@ -8,7 +8,7 @@ from finrobot.infrastructure.io.files import register_keys_from_json, save_outpu
 
 
 class TestFiles:
-    def test_save_output_csv(self, tmp_path):
+    def test_save_output_csv(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
         df = pd.DataFrame({"a": [1]})
         save_path = tmp_path / "test.csv"
         save_output(df, "test_data", str(save_path))
@@ -16,7 +16,7 @@ class TestFiles:
         loaded_df = pd.read_csv(save_path)
         assert loaded_df["a"].iloc[0] == 1
 
-    def test_save_output_json(self, tmp_path):
+    def test_save_output_json(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
         data = {"key": "value"}
         save_path = tmp_path / "test.json"
         save_output(data, "test_data", str(save_path))
@@ -25,7 +25,7 @@ class TestFiles:
             loaded_data = json.load(f)
         assert loaded_data["key"] == "value"
 
-    def test_save_output_text(self, tmp_path):
+    def test_save_output_text(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
         data = "hello world"
         save_path = tmp_path / "test.txt"
         save_output(data, "test_data", str(save_path))
@@ -34,7 +34,7 @@ class TestFiles:
             loaded_data = f.read()
         assert loaded_data == "hello world"
 
-    def test_register_keys_from_json(self, tmp_path):
+    def test_register_keys_from_json(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
         keys = {"API_KEY": "12345"}
         config_path = tmp_path / "config.json"
         with open(config_path, "w") as f:

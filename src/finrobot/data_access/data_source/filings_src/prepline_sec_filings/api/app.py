@@ -43,5 +43,5 @@ logging.getLogger("uvicorn.access").addFilter(HealthCheckFilter())
 
 
 @app.get("/healthcheck", status_code=status.HTTP_200_OK, include_in_schema=False)
-def healthcheck(request: Request):
+def healthcheck(request: Request) -> dict[str, str]:
     return {"healthcheck": "HEALTHCHECK STATUS: EVERYTHING OK!"}

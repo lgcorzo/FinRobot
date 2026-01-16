@@ -26,7 +26,7 @@ class IPythonUtils:
         """
         Display image in Jupyter Notebook.
         """
-        log = __class__.exec_python(
+        log = IPythonUtils.exec_python(
             f"from IPython.display import Image, display\n\ndisplay(Image(filename='{image_path}'))"
         )
         if not log:

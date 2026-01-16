@@ -1,7 +1,8 @@
 """Tests for IO osvariables module."""
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 from finrobot.infrastructure.io.osvariables import Env
 
 
@@ -9,7 +10,7 @@ class TestEnv:
     """Test suite for Env environment variable class."""
 
     @pytest.fixture(autouse=True)
-    def clear_singleton(self):
+    def clear_singleton(self) -> None:
         """Clear the Singleton instance before and after each test."""
         from finrobot.infrastructure.io.osvariables import Singleton
 
@@ -17,18 +18,18 @@ class TestEnv:
         yield
         Singleton._instances = {}
 
-    def test_env_instantiation(self):
+    def test_env_instantiation(self) -> None:
         """Test that Env can be instantiated."""
         env = Env()
         assert env is not None
 
-    def test_env_singleton(self):
+    def test_env_singleton(self) -> None:
         """Test that Env is a singleton."""
         env1 = Env()
         env2 = Env()
         assert env1 is env2
 
-    def test_env_default_values(self):
+    def test_env_default_values(self) -> None:
         """Test that Env has expected default values."""
         with patch.dict("os.environ", {}, clear=True):
             # Also need to make sure we don't load from .env file during tests
@@ -41,7 +42,7 @@ class TestEnv:
                 assert env.mlflow_experiment_name == "finrobot"
                 assert env.mlflow_registered_model_name == "finrobot"
 
-    def test_env_aws_defaults(self):
+    def test_env_aws_defaults(self) -> None:
         """Test that AWS-related fields have defaults."""
         with patch.dict("os.environ", {}, clear=True):
             with patch.object(Env, "model_config", {"case_sensitive": False}):

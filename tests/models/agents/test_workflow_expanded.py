@@ -1,4 +1,5 @@
 import asyncio
+from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -7,7 +8,7 @@ from finrobot.models.agents.workflow import FinRobot, SingleAssistant, SingleAss
 
 
 @pytest.fixture
-def mock_agent_config():
+def mock_agent_config() -> Dict[str, Any]:
     return {
         "name": "TestAnalyst",
         "description": "Test analyst description",
@@ -20,7 +21,7 @@ def mock_agent_config():
 class TestFinRobotExpanded:
     @patch("finrobot.models.agents.workflow.get_toolkits")
     @patch("finrobot.models.agents.workflow.OpenAIChatClient")
-    def test_preprocess_config(self, mock_client_cls, mock_get_toolkits, mock_agent_config):
+    def test_preprocess_config(self, mock_client_cls, mock_get_toolkits, mock_agent_config) -> None:  # type: ignore[no-untyped-def]
         mock_get_toolkits.return_value = []
         agent = FinRobot(agent_config=mock_agent_config)
 
@@ -34,14 +35,14 @@ class TestFinRobotExpanded:
 
     @patch("finrobot.models.agents.workflow.get_toolkits")
     @patch("finrobot.models.agents.workflow.OpenAIChatClient")
-    def test_preprocess_config_title_no_name(self, mock_client_cls, mock_get_toolkits):
+    def test_preprocess_config_title_no_name(self, mock_client_cls, mock_get_toolkits) -> None:  # type: ignore[no-untyped-def]
         # Line 75 coverage
         mock_get_toolkits.return_value = []
         config = {"title": "Manager", "description": "test", "responsibilities": ["manage"]}
         agent = FinRobot(agent_config=config)
         assert agent.name == "Manager"
 
-    def test_register_proxy(self):
+    def test_register_proxy(self) -> None:
         # Line 104 coverage
         agent_mock = MagicMock(spec=FinRobot)
         FinRobot.register_proxy(agent_mock, "proxy")  # Should just pass
@@ -49,11 +50,11 @@ class TestFinRobotExpanded:
 
 class TestSingleAssistantExpanded:
     @patch("finrobot.models.agents.workflow.FinRobot")
-    def test_chat_loop_logic(self, mock_finrobot_cls):
+    def test_chat_loop_logic(self, mock_finrobot_cls) -> None:  # type: ignore[no-untyped-def]
         mock_assistant = MagicMock()
         mock_finrobot_cls.return_value = mock_assistant
 
-        async def mock_run(msg):
+        async def mock_run(msg: Any) -> None:
             pass
 
         mock_assistant.run = mock_run
@@ -74,9 +75,9 @@ class TestSingleAssistantExpanded:
         with patch("asyncio.get_event_loop", side_effect=RuntimeError):
             with patch("asyncio.new_event_loop") as mock_new_loop:
                 with patch("asyncio.set_event_loop"):
-                    l = MagicMock()
-                    mock_new_loop.return_value = l
-                    l.is_running.return_value = False
+                    loop = MagicMock()
+                    mock_new_loop.return_value = loop
+                    loop.is_running.return_value = False
                     assistant.chat("hello")
                     mock_new_loop.assert_called_once()
 
@@ -88,7 +89,7 @@ class TestSingleAssistantExpanded:
         # Test reset (Line 168)
         assistant.reset()  # Should just pass
 
-    def test_rag_init(self):
+    def test_rag_init(self) -> None:
         # Line 181
         with patch("finrobot.models.agents.workflow.FinRobot") as mock_finrobot_cls:
             rag = SingleAssistantRAG(agent_config={"name": "rag", "description": "rag"})
@@ -96,7 +97,7 @@ class TestSingleAssistantExpanded:
 
 
 @pytest.mark.asyncio
-async def test_chat_async():
+async def test_chat_async() -> None:
     # Line 159 implementation coverage
     with patch("finrobot.models.agents.workflow.FinRobot") as mock_finrobot_cls:
         mock_agent = MagicMock()

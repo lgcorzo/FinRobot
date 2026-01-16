@@ -1,6 +1,10 @@
+import typing as T
 from typing import Annotated
 
-from autogen.agentchat.contrib.retrieve_user_proxy_agent import RetrieveUserProxyAgent
+try:
+    from autogen.agentchat.contrib.retrieve_user_proxy_agent import RetrieveUserProxyAgent
+except ImportError:
+    RetrieveUserProxyAgent = None
 
 PROMPT_RAG_FUNC = """Below is the context retrieved from the required file based on your query.
 If you can't answer the question with or without the current context, you should try using a more refined search query according to your requirements, or ask for more contexts.
@@ -11,8 +15,11 @@ Retrieved context is: {input_context}
 """
 
 
-def get_rag_function(retrieve_config, description=""):
-    def termination_msg(x):
+def get_rag_function(retrieve_config: dict[str, T.Any], description: str = "") -> T.Tuple[T.Callable[..., str], T.Any]:
+    if RetrieveUserProxyAgent is None:
+        raise ImportError("AutoGen/RAG dependencies not installed. Install with 'gpu' group.")
+
+    def termination_msg(x: T.Any) -> bool:
         return isinstance(x, dict) and "TERMINATE" == str(x.get("content", ""))[-9:].upper()
 
     if "customized_prompt" not in retrieve_config:

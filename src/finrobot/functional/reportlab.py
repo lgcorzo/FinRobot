@@ -1,6 +1,7 @@
 import os
 import traceback
-from typing import Annotated
+import typing as T
+from typing import Annotated, Any, Dict, List, Optional, Union
 
 from reportlab.lib import colors, pagesizes
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT
@@ -182,7 +183,8 @@ class ReportLabUtils:
                 ]
             )
 
-            name = YFinanceUtils.get_stock_info(ticker_symbol)["shortName"]
+            info = YFinanceUtils.get_stock_info(ticker_symbol)
+            name = T.cast(str, info.get("shortName", ticker_symbol))
 
             # 准备左栏和右栏内容
             content = []
@@ -207,7 +209,7 @@ class ReportLabUtils:
             # content.append(Paragraph("Summarization", subtitle_style))
             df = FMPUtils.get_financial_metrics(ticker_symbol, years=5)
             df.reset_index(inplace=True)
-            currency = YFinanceUtils.get_stock_info(ticker_symbol)["currency"]
+            currency = T.cast(str, info.get("currency", "USD"))
             df.rename(columns={"index": f"FY ({currency} mn)"}, inplace=True)
             table_data = [["Financial Metrics"]]
             table_data += [df.columns.to_list()] + df.values.tolist()

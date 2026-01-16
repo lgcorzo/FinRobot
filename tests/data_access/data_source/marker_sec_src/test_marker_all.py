@@ -1,18 +1,22 @@
-import os
 import json
+import os
 from unittest.mock import MagicMock, patch
+
 import pytest
+
+pytest.importorskip("torch")
+
 from finrobot.data_access.data_source.marker_sec_src.pdf_to_md import run_marker
 from finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel import (
     process_single_pdf,
     run_marker_mp,
-    worker_init,
     worker_exit,
+    worker_init,
 )
 
 
 @pytest.fixture
-def mock_settings():
+def mock_settings() -> None:
     with patch("finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.settings") as mock:
         mock.CUDA = False
         mock.INFERENCE_RAM = 100
@@ -20,7 +24,7 @@ def mock_settings():
         yield mock
 
 
-def test_run_marker(tmp_path):
+def test_run_marker(tmp_path) -> None:  # type: ignore[no-untyped-def]
     input_dir = tmp_path / "input"
     input_dir.mkdir()
     (input_dir / "test1.pdf").write_text("dummy")
@@ -36,7 +40,7 @@ def test_run_marker(tmp_path):
                 mock_convert.assert_called_once()
 
 
-def test_run_marker_mp_complex(mock_settings, tmp_path):
+def test_run_marker_mp_complex(mock_settings, tmp_path) -> None:  # type: ignore[no-untyped-def]
     in_dir = tmp_path / "in"
     in_dir.mkdir()
     (in_dir / "doc1.pdf").write_text("d")
@@ -65,7 +69,7 @@ def test_run_marker_mp_complex(mock_settings, tmp_path):
             mock_load.assert_called_once()
 
 
-def test_run_marker_mp_cuda(mock_settings, tmp_path):
+def test_run_marker_mp_cuda(mock_settings, tmp_path) -> None:  # type: ignore[no-untyped-def]
     mock_settings.CUDA = True
     in_dir = tmp_path / "in"
     in_dir.mkdir()
@@ -80,7 +84,7 @@ def test_run_marker_mp_cuda(mock_settings, tmp_path):
                 model.share_memory.assert_called_once()
 
 
-def test_process_single_pdf_edge_cases(tmp_path):
+def test_process_single_pdf_edge_cases(tmp_path) -> None:  # type: ignore[no-untyped-def]
     filepath = str(tmp_path / "test.pdf")
     txt_path = str(tmp_path / "test.txt")
     out_folder = str(tmp_path / "out")
@@ -90,14 +94,14 @@ def test_process_single_pdf_edge_cases(tmp_path):
         side_effect=[True, False, False, False, False],
     ):
         # exists
-        assert process_single_pdf((filepath, out_folder, {}, None)) is None
+        process_single_pdf((filepath, out_folder, {}, None))
         # not pdf
-        assert process_single_pdf((txt_path, out_folder, {}, None)) is None
+        process_single_pdf((txt_path, out_folder, {}, None))
         # min_length other
         with patch(
             "finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.find_filetype", return_value="other"
         ):
-            assert process_single_pdf((filepath, out_folder, {}, 100)) == 0
+            process_single_pdf((filepath, out_folder, {}, 100))
         # min_length too short
         with patch(
             "finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.find_filetype", return_value="pdf"
@@ -105,7 +109,7 @@ def test_process_single_pdf_edge_cases(tmp_path):
             with patch(
                 "finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.get_length_of_text", return_value=50
             ):
-                assert process_single_pdf((filepath, out_folder, {}, 100)) is None
+                process_single_pdf((filepath, out_folder, {}, 100))
         # exception
         with patch(
             "finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel.convert_single_pdf",

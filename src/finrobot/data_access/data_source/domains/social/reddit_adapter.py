@@ -1,19 +1,19 @@
-"""Reddit Adapter - Social Repository Implementation."""
-
 import os
+import typing as T
 from datetime import datetime, timezone
 from functools import wraps
-from typing import Annotated, List
 
 import pandas as pd
 import praw
 from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
 
+reddit_client: T.Any = None
 
-def init_reddit_client(func):
+
+def init_reddit_client(func: T.Callable[..., T.Any]) -> T.Callable[..., T.Any]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: T.Any, **kwargs: T.Any) -> T.Any:
         global reddit_client
         if not all([os.environ.get("REDDIT_CLIENT_ID"), os.environ.get("REDDIT_CLIENT_SECRET")]):
             print("Please set the environment variables for Reddit API credentials.")
@@ -35,14 +35,11 @@ class RedditAdapter:
     """Reddit implementation of SocialRepository."""
 
     def get_reddit_posts(
-        query: Annotated[str, "Search query, e.g. 'AAPL OR Apple Inc OR #AAPL OR (Apple AND stock)'"],
-        start_date: Annotated[str, "Start date in yyyy-mm-dd format"],
-        end_date: Annotated[str, "End date in yyyy-mm-dd format"],
-        limit: Annotated[int, "Maximum number of posts to fetch, default to 1000"] = 1000,
-        selected_columns: Annotated[
-            List[str],
-            "Columns to contain in the result, should be chosen from 'created_utc', 'id', 'title', 'selftext', 'score', 'num_comments', 'url', default to ['created_utc', 'title', 'score', 'num_comments']",
-        ] = ["created_utc", "title", "score", "num_comments"],
+        query: str,
+        start_date: str,
+        end_date: str,
+        limit: int = 1000,
+        selected_columns: T.List[str] = ["created_utc", "title", "score", "num_comments"],
         save_path: SavePathType = None,
     ) -> pd.DataFrame:
         """

@@ -1,18 +1,20 @@
+from typing import Any, Generator
 from unittest.mock import MagicMock, patch
-import pytest
+
 import numpy as np
+import pytest
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
     SECDocument,
     SECSection,
-    get_narrative_texts,
     cluster_num_to_indices,
+    get_narrative_texts,
     to_sklearn_format,
 )
-from unstructured.documents.elements import Title, NarrativeText, ListItem, Text
+from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
 
 
 # Helper to avoid MagicMock in regex
-def mock_clean(text, **kwargs):
+def mock_clean(text: Any, **kwargs: Any) -> str:
     t = str(text).strip()
     if kwargs.get("lowercase"):
         t = t.lower()
@@ -20,7 +22,7 @@ def mock_clean(text, **kwargs):
 
 
 @pytest.fixture(autouse=True)
-def patch_clean():
+def patch_clean() -> Generator[MagicMock, None, None]:
     with patch(
         "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.clean_sec_text",
         side_effect=mock_clean,
@@ -28,7 +30,7 @@ def patch_clean():
         yield m
 
 
-def test_sec_doc_misc_logic():
+def test_sec_doc_misc_logic() -> None:
     doc = SECDocument.from_elements([])
     doc.filing_type = "10-K"
     with patch("unstructured.documents.html.HTMLDocument.doc_after_cleaners") as mock_base:
@@ -59,7 +61,7 @@ def test_sec_doc_misc_logic():
         assert fmt.shape == (1, 1)
 
 
-def test_get_toc_sections_search():
+def test_get_toc_sections_search() -> None:
     doc = SECDocument.from_elements([])
     doc.filing_type = "10-K"
     toc_mock = MagicMock()
@@ -77,7 +79,7 @@ def test_get_toc_sections_search():
         assert end == e2
 
 
-def test_is_section_elem_patterns():
+def test_is_section_elem_patterns() -> None:
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import is_section_elem
 
     elem = Title(text="Item 1. Business")
@@ -87,20 +89,20 @@ def test_is_section_elem_patterns():
     assert is_section_elem(SECSection.PROSPECTUS_SUMMARY, elem, "S-1") is True
 
 
-def test_s1_titles():
+def test_s1_titles() -> None:
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
-        is_risk_title,
         is_item_title,
+        is_risk_title,
     )
 
     assert is_risk_title("Risk Factors", "S-1") is True
     assert is_item_title("PROSPECTUS", "S-1") is True
 
 
-def test_match_functions():
+def test_match_functions() -> None:
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
-        match_s1_toc_title_to_section,
         match_10k_toc_title_to_section,
+        match_s1_toc_title_to_section,
     )
 
     assert match_s1_toc_title_to_section("P", "P") is True
@@ -109,14 +111,14 @@ def test_match_functions():
     assert match_10k_toc_title_to_section("unknown", "other") is False
 
 
-def test_get_risk_narrative():
+def test_get_risk_narrative() -> None:
     doc = SECDocument.from_elements([])
     with patch.object(doc, "get_section_narrative") as mock_get:
         doc.get_risk_narrative()
         mock_get.assert_called_with(SECSection.RISK_FACTORS)
 
 
-def test_get_element_by_title():
+def test_get_element_by_title() -> None:
     from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import get_element_by_title
 
     e1 = Title(text="Item 1")
@@ -128,7 +130,7 @@ def test_get_element_by_title():
 
 
 # NEW TESTS FOR FINAL COVERAGE PUSH
-def test_sec_document_final_gaps():
+def test_sec_document_final_gaps() -> None:
     # Line 93: _filter_table_of_contents fallback []
     doc = SECDocument.from_elements([])
     doc.filing_type = "UNKNOWN"
@@ -143,12 +145,15 @@ def test_sec_document_final_gaps():
     # Line 118: get_table_of_contents fallback to elements
     doc = SECDocument.from_elements([Title(text="T")])
     doc.filing_type = "10-K"
-    with patch(
-        "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.to_sklearn_format",
-        return_value=np.array([[0.0]]),
-    ), patch(
-        "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.DBSCAN.fit_predict",
-        return_value=np.array([0]),
+    with (
+        patch(
+            "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.to_sklearn_format",
+            return_value=np.array([[0.0]]),
+        ),
+        patch(
+            "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.DBSCAN.fit_predict",
+            return_value=np.array([0]),
+        ),
     ):
         # No risk or toc title in cluster elements, triggers line 118
         toc = doc.get_table_of_contents()
@@ -195,11 +200,14 @@ def test_sec_document_final_gaps():
             assert doc.get_section_narrative(SECSection.BUSINESS) == []
 
     # Line 191: section_start_element is None
-    with patch.object(doc, "get_table_of_contents") as mock_toc_call, patch.object(
-        doc, "_get_toc_sections", return_value=(MagicMock(), MagicMock())
-    ), patch.object(doc, "after_element", return_value=MagicMock(elements=[])), patch(
-        "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_element_by_title",
-        return_value=None,
+    with (
+        patch.object(doc, "get_table_of_contents") as mock_toc_call,
+        patch.object(doc, "_get_toc_sections", return_value=(MagicMock(), MagicMock())),
+        patch.object(doc, "after_element", return_value=MagicMock(elements=[])),
+        patch(
+            "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_element_by_title",
+            return_value=None,
+        ),
     ):
         mock_toc = MagicMock()
         mock_toc.pages = [1]
@@ -207,14 +215,18 @@ def test_sec_document_final_gaps():
         assert doc.get_section_narrative(SECSection.BUSINESS) == []
 
     # Line 200: _is_last_section_in_report or next_section_toc is None
-    with patch.object(doc, "get_table_of_contents") as mock_toc_call, patch.object(
-        doc, "_get_toc_sections", return_value=(MagicMock(), None)
-    ), patch.object(doc, "after_element", return_value=MagicMock(elements=[])), patch(
-        "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_element_by_title",
-        return_value=MagicMock(),
-    ), patch(
-        "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_narrative_texts",
-        return_value=["OK"],
+    with (
+        patch.object(doc, "get_table_of_contents") as mock_toc_call,
+        patch.object(doc, "_get_toc_sections", return_value=(MagicMock(), None)),
+        patch.object(doc, "after_element", return_value=MagicMock(elements=[])),
+        patch(
+            "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_element_by_title",
+            return_value=MagicMock(),
+        ),
+        patch(
+            "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_narrative_texts",
+            return_value=["OK"],
+        ),
     ):
         mock_toc = MagicMock()
         mock_toc.pages = [1]
@@ -222,14 +234,18 @@ def test_sec_document_final_gaps():
         assert doc.get_section_narrative(SECSection.BUSINESS) == ["OK"]
 
     # Line 211: section_end_element is None
-    with patch.object(doc, "get_table_of_contents") as mock_toc_call, patch.object(
-        doc, "_get_toc_sections", return_value=(MagicMock(), MagicMock())
-    ), patch.object(doc, "after_element", return_value=MagicMock(elements=[])), patch(
-        "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_element_by_title",
-        side_effect=[MagicMock(), None],
-    ), patch(
-        "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_narrative_texts",
-        return_value=["OK_END"],
+    with (
+        patch.object(doc, "get_table_of_contents") as mock_toc_call,
+        patch.object(doc, "_get_toc_sections", return_value=(MagicMock(), MagicMock())),
+        patch.object(doc, "after_element", return_value=MagicMock(elements=[])),
+        patch(
+            "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_element_by_title",
+            side_effect=[MagicMock(), None],
+        ),
+        patch(
+            "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.get_narrative_texts",
+            return_value=["OK_END"],
+        ),
     ):
         mock_toc = MagicMock()
         mock_toc.pages = [1]

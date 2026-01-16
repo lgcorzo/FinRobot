@@ -1,25 +1,27 @@
 import asyncio
 import os
+from typing import Any
 from unittest.mock import MagicMock, patch
+
 import pytest
-from finrobot.models.agents.services.workflow_service import FinRobot, SingleAssistant, SingleAssistantRAG
 from agent_framework import ChatMessage
+from finrobot.models.agents.services.workflow_service import FinRobot, SingleAssistant, SingleAssistantRAG
 
 
 @pytest.fixture
-def mock_openai_client():
+def mock_openai_client() -> None:
     with patch("finrobot.models.agents.services.workflow_service.OpenAIChatClient") as mock_client_cls:
         yield mock_client_cls
 
 
 @pytest.fixture
-def mock_toolkits():
+def mock_toolkits() -> None:
     with patch("finrobot.models.agents.services.workflow_service.get_toolkits") as mock_get:
         mock_get.return_value = []
         yield mock_get
 
 
-def test_finrobot_init_complex(mock_openai_client, mock_toolkits):
+def test_finrobot_init_complex(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {
         "name": "TestAgent",
         "description": "desc",
@@ -33,10 +35,11 @@ def test_finrobot_init_complex(mock_openai_client, mock_toolkits):
         instr = getattr(agent, "_instructions", getattr(agent, "instructions", ""))
         assert "Agent Title" in instr
         assert "Leader of Group" in instr
+        assert agent.description is not None
         assert "Task 1" in agent.description
 
 
-def test_single_assistant_chat_loops(mock_openai_client, mock_toolkits):
+def test_single_assistant_chat_loops(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistant("TestAgent")
@@ -67,7 +70,7 @@ def test_single_assistant_chat_loops(mock_openai_client, mock_toolkits):
                 mock_sync.assert_called_once()
 
 
-def test_single_assistant_reset(mock_openai_client, mock_toolkits):
+def test_single_assistant_reset(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistant("TestAgent")
@@ -75,13 +78,13 @@ def test_single_assistant_reset(mock_openai_client, mock_toolkits):
 
 
 @pytest.mark.asyncio
-async def test_chat_async_internals(mock_openai_client, mock_toolkits):
+async def test_chat_async_internals(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistant("TestAgent")
 
         # Simulating the async run
-        async def mock_run(*args, **kwargs):
+        async def mock_run(*args: Any, **kwargs: Any) -> None:
             return None
 
         with patch.object(assistant.assistant, "run", side_effect=mock_run) as mock_run_patch:
@@ -89,7 +92,7 @@ async def test_chat_async_internals(mock_openai_client, mock_toolkits):
             mock_run_patch.assert_called_once()
 
 
-def test_run_chat_sync(mock_openai_client, mock_toolkits):
+def test_run_chat_sync(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistant("TestAgent")
@@ -98,7 +101,7 @@ def test_run_chat_sync(mock_openai_client, mock_toolkits):
             mock_run_async.assert_called_once()
 
 
-def test_single_assistant_rag_init(mock_openai_client, mock_toolkits):
+def test_single_assistant_rag_init(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistantRAG("TestAgent")

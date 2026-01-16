@@ -1,3 +1,5 @@
+import typing as T
+from typing import Any, Generator, List, Tuple
 from unittest.mock import MagicMock, call, patch
 
 import pytest
@@ -19,10 +21,10 @@ from finrobot.data_access.data_source.earnings_calls_src.main_earningsData impor
 
 # Mock Document to have attributes
 @pytest.fixture
-def mock_document():
+def mock_document() -> Generator[MagicMock, None, None]:
     with patch("finrobot.data_access.data_source.earnings_calls_src.main_earningsData.Document") as mock:
 
-        def side_effect(page_content, metadata):
+        def side_effect(page_content: str, metadata: T.Dict[str, T.Any]) -> MagicMock:
             m = MagicMock()
             m.page_content = page_content
             m.metadata = metadata
@@ -33,7 +35,7 @@ def mock_document():
 
 
 @patch("finrobot.data_access.data_source.earnings_calls_src.main_earningsData.get_earnings_transcript")
-def test_get_earnings_all_quarters_data(mock_get_transcript, mock_document):
+def test_get_earnings_all_quarters_data(mock_get_transcript: MagicMock, mock_document: MagicMock) -> None:
     # Setup mock return from transcript
     # Content pattern: \nSpeaker Name: Speech content
     content = "Intro text.\nSpeaker 1: Hello world.\nSpeaker 2: Hi there."
@@ -52,11 +54,11 @@ def test_get_earnings_all_quarters_data(mock_get_transcript, mock_document):
 
 
 @patch("finrobot.data_access.data_source.earnings_calls_src.main_earningsData.get_earnings_all_quarters_data")
-def test_get_earnings_all_docs(mock_get_quarters):
+def test_get_earnings_all_docs(mock_get_quarters: MagicMock) -> None:
     # Mock successful returns for Q1, Q2
     # Mock RetryError for Q3, Q4
 
-    def side_effect(quarter, ticker, year):
+    def side_effect(quarter: str, ticker: str, year: int) -> Tuple[List[Any], List[str]]:
         if quarter in ["Q1", "Q2"]:
             # Returns docs, speakers_list
             doc = MagicMock()
@@ -77,7 +79,7 @@ def test_get_earnings_all_docs(mock_get_quarters):
     assert s4 == []
 
 
-def test_clean_speakers():
+def test_clean_speakers() -> None:
     raw = "\nSpeaker Name:"
     cleaned = clean_speakers(raw)
     assert cleaned == "Speaker Name"

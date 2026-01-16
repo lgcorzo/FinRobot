@@ -1,18 +1,30 @@
 import os
+import typing as T
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_chroma import Chroma
-from langchain_community.embeddings.sentence_transformer import (
-    SentenceTransformerEmbeddings,
-)
-from langchain_text_splitters import MarkdownHeaderTextSplitter
+try:
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    from langchain_chroma import Chroma
+    from langchain_community.embeddings.sentence_transformer import (
+        SentenceTransformerEmbeddings,
+    )
+    from langchain_text_splitters import MarkdownHeaderTextSplitter
+except ImportError:
+    RecursiveCharacterTextSplitter = None
+    Chroma = None
+    SentenceTransformerEmbeddings = None
+    MarkdownHeaderTextSplitter = None
 
 from finrobot.data_access.data_source.finance_data import get_data
 
 SAVE_DIR = "output/SEC_EDGAR_FILINGS_MD"
 
 
-def rag_database_earnings_call(ticker: str, year: str) -> str:
+def rag_database_earnings_call(
+    ticker: str, year: str
+) -> Tuple[T.Callable[[str, str], str], List[str], Dict[str, List[str]]]:
+    if Chroma is None:
+        raise ImportError("LangChain/Chroma dependencies not installed. Install with 'gpu' group.")
     # assert quarter in earnings_call_quarter_vals, "The quarter should be from Q1, Q2, Q3, Q4"
     (
         earnings_docs,
@@ -103,7 +115,14 @@ def rag_database_earnings_call(ticker: str, year: str) -> str:
     )
 
 
-def rag_database_sec(ticker: str, year: str, FROM_MARKDOWN=False, filing_types=["10-K", "10-Q"]) -> str:
+def rag_database_sec(
+    ticker: str,
+    year: str,
+    FROM_MARKDOWN: bool = False,
+    filing_types: List[str] = ["10-K", "10-Q"],
+) -> Tuple[T.Callable[[str, str], str], List[str]]:
+    if Chroma is None:
+        raise ImportError("LangChain/Chroma dependencies not installed. Install with 'gpu' group.")
     emb_fn = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
     if not FROM_MARKDOWN:
         sec_data, sec_form_names = get_data(

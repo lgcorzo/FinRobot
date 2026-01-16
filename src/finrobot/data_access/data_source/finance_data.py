@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional
+import typing as T
 
 from finrobot.data_access.data_source.earnings_calls_src import get_earnings_all_docs
 from finrobot.data_access.data_source.filings_src import (
@@ -21,16 +21,16 @@ SAVE_DIR = "output/SEC_EDGAR_FILINGS_MD"
 def get_data(
     ticker: str,
     year: str,
-    filing_types: List[str] = ["10-K", "10-Q"],
+    filing_types: T.List[str] = ["10-K", "10-Q"],
     data_source: str = "unstructured",
-    include_amends=True,
+    include_amends: bool = True,
     batch_processing: bool = False,
-    batch_multiplier: Optional[int] = None,
-    workers: Optional[int] = None,
-    inference_ram: Optional[int] = None,
-    vram_per_task: Optional[int] = None,
+    batch_multiplier: T.Optional[int] = None,
+    workers: T.Optional[int] = None,
+    inference_ram: T.Optional[int] = None,
+    vram_per_task: T.Optional[int] = None,
     num_chunks: int = 1,
-):
+) -> T.Any:
     assert data_source in [
         "unstructured",
         "earnings_calls",
@@ -59,7 +59,7 @@ def get_data(
                 out_folder=output_ticker_year_path,
                 metadata_file=metadata_file_path,
                 inference_ram=inference_ram,
-                workers=workers,
+                workers=workers if workers is not None else 5,
                 num_chunks=num_chunks,
                 vram_per_task=vram_per_task,
             )
@@ -75,7 +75,7 @@ def get_data(
             speakers_list_2,
             speakers_list_3,
             speakers_list_4,
-        ) = get_earnings_all_docs(ticker, year)
+        ) = get_earnings_all_docs(ticker, int(year))
         return (
             earnings_docs,
             earnings_call_quarter_vals,

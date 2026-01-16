@@ -1,7 +1,7 @@
 import asyncio
 import os
+import typing as T
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, List
 
 # agent_framework imports
 from agent_framework import ChatAgent, ChatMessage
@@ -10,18 +10,18 @@ from finrobot.tools import get_toolkits
 
 from ..agent_library import library
 from ..prompts import leader_system_message, role_system_message
-from ..utils import *
+from ..utils import instruction_message, instruction_trigger, order_message, order_trigger
 
 
 class FinRobot(ChatAgent):
     def __init__(
         self,
-        agent_config: str | Dict[str, Any],
-        system_message: str | None = None,  # overwrites previous config
-        toolkits: List[Callable | dict | type] = [],  # overwrites previous config
-        llm_config: Dict[str, Any] = {},
-        **kwargs,
-    ):
+        agent_config: T.Union[str, T.Dict[str, T.Any]],
+        system_message: T.Optional[str] = None,  # overwrites previous config
+        toolkits: T.List[T.Union[T.Callable[..., T.Any], T.Dict[str, T.Any], T.Any]] = [],  # overwrites previous config
+        llm_config: T.Dict[str, T.Any] = {},
+        **kwargs: T.Any,
+    ) -> None:
         orig_name = ""
         if isinstance(agent_config, str):
             orig_name = agent_config
@@ -58,7 +58,7 @@ class FinRobot(ChatAgent):
         client = OpenAIChatClient(model_id=model, api_key=api_key, base_url=base_url)
 
         super().__init__(
-            chat_client=client,
+            chat_client=client,  # type: ignore[arg-type]
             name=name,
             instructions=system_message,
             description=agent_config["description"],
@@ -66,7 +66,7 @@ class FinRobot(ChatAgent):
             **kwargs,
         )
 
-    def _preprocess_config(self, config):
+    def _preprocess_config(self, config: T.Dict[str, T.Any]) -> T.Dict[str, T.Any]:
         role_prompt, leader_prompt, responsibilities = "", "", ""
 
         if "responsibilities" in config:
@@ -98,7 +98,7 @@ class FinRobot(ChatAgent):
 
         return config
 
-    def register_proxy(self, proxy):
+    def register_proxy(self, proxy: T.Any) -> None:
         # In agent_framework, we don't register proxy explicitly for tools usually.
         # But if needed, we might handle it here. For now, pass.
         pass
@@ -107,34 +107,34 @@ class FinRobot(ChatAgent):
 class SingleAssistantBase(ABC):
     def __init__(
         self,
-        agent_config: str | Dict[str, Any],
-        llm_config: Dict[str, Any] = {},
-    ):
+        agent_config: T.Union[str, T.Dict[str, T.Any]],
+        llm_config: T.Dict[str, T.Any] = {},
+    ) -> None:
         self.assistant = FinRobot(
             agent_config=agent_config,
             llm_config=llm_config,
         )
 
     @abstractmethod
-    def chat(self):
+    def chat(self, message: str, **kwargs: T.Any) -> T.Any:
         pass
 
     @abstractmethod
-    def reset(self):
+    def reset(self) -> None:
         pass
 
 
 class SingleAssistant(SingleAssistantBase):
     def __init__(
         self,
-        agent_config: str | Dict[str, Any],
-        llm_config: Dict[str, Any] = {},
-        **kwargs,
-    ):
+        agent_config: T.Union[str, T.Dict[str, T.Any]],
+        llm_config: T.Dict[str, T.Any] = {},
+        **kwargs: T.Any,
+    ) -> None:
         super().__init__(agent_config, llm_config=llm_config)
         # No UserProxyAgent in this style, assuming simple chat loop or direct interaction
 
-    def chat(self, message: str, use_cache=False, **kwargs):
+    def chat(self, message: str, use_cache: bool = False, **kwargs: T.Any) -> T.Any:
         # We need to run async implementation synchronously if called from sync code
         try:
             loop = asyncio.get_event_loop()
@@ -148,10 +148,9 @@ class SingleAssistant(SingleAssistantBase):
             response = self._run_chat_sync(message)
         else:
             response = loop.run_until_complete(self._chat_async(message))
+        return response
 
-        # print("Response:", response)
-
-    async def _chat_async(self, message: str):
+    async def _chat_async(self, message: str) -> T.Any:
         # Create a user message
         user_msg = ChatMessage(text=message, role="user")
         # Run the agent
@@ -160,10 +159,10 @@ class SingleAssistant(SingleAssistantBase):
         # Accessing last message? ChatAgent usually updates its state/memory.
         # We might want to print the output.
 
-    def _run_chat_sync(self, message: str):
+    def _run_chat_sync(self, message: str) -> T.Any:
         return asyncio.run(self._chat_async(message))
 
-    def reset(self):
+    def reset(self) -> None:
         # agent_framework agents might not have reset?
         pass
 
@@ -173,11 +172,11 @@ class SingleAssistantRAG(SingleAssistant):
     # For now, placeholder or adapting logic
     def __init__(
         self,
-        agent_config: str | Dict[str, Any],
-        retrieve_config={},
-        rag_description="",
-        **kwargs,
-    ):
+        agent_config: T.Union[str, T.Dict[str, T.Any]],
+        retrieve_config: T.Dict[str, T.Any] = {},
+        rag_description: str = "",
+        **kwargs: T.Any,
+    ) -> None:
         super().__init__(
             agent_config,
             **kwargs,

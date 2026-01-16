@@ -7,7 +7,7 @@ from finrobot.functional.quantitative import BackTraderUtils, DeployedCapitalAna
 
 @patch("finrobot.functional.quantitative.yf.download")
 @patch("finrobot.functional.quantitative.bt.Cerebro")
-def test_back_test_sma_crossover(mock_cerebro_cls, mock_yf_download):
+def test_back_test_sma_crossover(mock_cerebro_cls, mock_yf_download) -> None:  # type: ignore[no-untyped-def]
     # Mock yfinance data
     data = pd.DataFrame(
         {"Open": [100, 101], "High": [102, 103], "Low": [98, 99], "Close": [101, 102], "Volume": [1000, 1100]},
@@ -47,7 +47,7 @@ def test_back_test_sma_crossover(mock_cerebro_cls, mock_yf_download):
 @patch("finrobot.functional.quantitative.importlib.import_module")
 @patch("finrobot.functional.quantitative.yf.download")
 @patch("finrobot.functional.quantitative.bt.Cerebro")
-def test_back_test_custom_components(mock_cerebro_cls, mock_yf_download, mock_import):
+def test_back_test_custom_components(mock_cerebro_cls, mock_yf_download, mock_import) -> None:  # type: ignore[no-untyped-def]
     # Mock custom module
     mock_module = MagicMock()
     mock_import.return_value = mock_module
@@ -81,7 +81,7 @@ def test_back_test_custom_components(mock_cerebro_cls, mock_yf_download, mock_im
     mock_cerebro.addindicator.assert_called()
 
 
-def test_deployed_capital_analyzer():
+def test_deployed_capital_analyzer() -> None:
     analyzer = DeployedCapitalAnalyzer()
     analyzer.strategy = MagicMock()
     analyzer.strategy.broker.get_cash.return_value = 10000.0
@@ -116,7 +116,7 @@ def test_deployed_capital_analyzer():
     assert analysis["return_on_deployed_capital"] == pytest.approx(500 / 2100)
 
 
-def test_deployed_capital_analyzer_no_deployment():
+def test_deployed_capital_analyzer_no_deployment() -> None:
     analyzer = DeployedCapitalAnalyzer()
     analyzer.strategy = MagicMock()
     analyzer.strategy.broker.get_cash.return_value = 10000.0

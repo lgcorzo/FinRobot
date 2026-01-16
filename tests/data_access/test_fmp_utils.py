@@ -8,14 +8,14 @@ from finrobot.data_access.data_source.fmp_utils import FMPUtils
 
 
 @pytest.fixture
-def fmp_api_key():
+def fmp_api_key() -> None:
     with patch.dict(os.environ, {"FMP_API_KEY": "test_key"}):
         yield "test_key"
 
 
 class TestFMPUtils:
     @patch("finrobot.data_access.data_source.fmp_utils.requests.get")
-    def test_get_target_price(self, mock_get, fmp_api_key):
+    def test_get_target_price(self, mock_get, fmp_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = [
@@ -28,7 +28,7 @@ class TestFMPUtils:
         assert "150.0 - 160.0" in result
 
     @patch("finrobot.data_access.data_source.fmp_utils.requests.get")
-    def test_get_sec_report(self, mock_get, fmp_api_key):
+    def test_get_sec_report(self, mock_get, fmp_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = [
@@ -45,7 +45,7 @@ class TestFMPUtils:
 
     @patch("finrobot.data_access.data_source.fmp_utils.get_next_weekday")
     @patch("finrobot.data_access.data_source.fmp_utils.requests.get")
-    def test_get_historical_market_cap(self, mock_get, mock_get_next, fmp_api_key):
+    def test_get_historical_market_cap(self, mock_get, mock_get_next, fmp_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_get_next.return_value = MagicMock(strftime=lambda x: "2023-01-03")
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -56,7 +56,7 @@ class TestFMPUtils:
         assert result == 2000000000000
 
     @patch("finrobot.data_access.data_source.fmp_utils.requests.get")
-    def test_get_historical_bvps(self, mock_get, fmp_api_key):
+    def test_get_historical_bvps(self, mock_get, fmp_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = [
@@ -69,7 +69,7 @@ class TestFMPUtils:
         assert result == 25.0
 
     @patch("finrobot.data_access.data_source.fmp_utils.requests.get")
-    def test_get_financial_metrics(self, mock_get, fmp_api_key):
+    def test_get_financial_metrics(self, mock_get, fmp_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_response = MagicMock()
         mock_response.status_code = 200
         # Need to handle multiple calls to requests.get
@@ -127,7 +127,7 @@ class TestFMPUtils:
         assert df.loc["Revenue", "2023"] == 100
 
     @patch("finrobot.data_access.data_source.fmp_utils.requests.get")
-    def test_get_competitor_financial_metrics(self, mock_get, fmp_api_key):
+    def test_get_competitor_financial_metrics(self, mock_get, fmp_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_response = MagicMock()
         mock_response.status_code = 200
         # Mock responses for AAPL (income, ratios, key-metrics) and MSFT (income, ratios, key-metrics)
@@ -171,7 +171,7 @@ class TestFMPUtils:
         # get_competitor_financial_metrics returns DF with Index=year_offset (0,1..) and Columns=Metrics
         assert result["AAPL"].loc[0, "Revenue"] == 100
 
-    def test_init_fmp_api_no_key(self):
+    def test_init_fmp_api_no_key(self) -> None:
         # Unpatch environment for this test specifically if possible, or patch with None
         with patch.dict(os.environ, {}, clear=True):
             # FMPUtils methods are decorated. calling one should trigger the check.

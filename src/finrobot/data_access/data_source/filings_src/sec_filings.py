@@ -1,9 +1,9 @@
 import os
 import re
 import signal
+import typing as T
 from datetime import date
 from enum import Enum
-from typing import List, Optional
 
 import requests
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
@@ -28,21 +28,21 @@ DEFAULT_AFTER_DATE = date(2000, 1, 1).strftime(DATE_FORMAT_TOKENS)
 
 
 class timeout:
-    def __init__(self, seconds=1, error_message="Timeout"):
+    def __init__(self, seconds: int = 1, error_message: str = "Timeout"):
         self.seconds = seconds
         self.error_message = error_message
 
-    def handle_timeout(self, signum, frame):
+    def handle_timeout(self, signum: int, frame: T.Any) -> None:
         raise TimeoutError(self.error_message)
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         try:
             signal.signal(signal.SIGALRM, self.handle_timeout)
             signal.alarm(self.seconds)
         except ValueError:
             pass
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, type: T.Any, value: T.Any, traceback: T.Any) -> None:
         try:
             signal.alarm(0)
         except ValueError:
@@ -50,7 +50,7 @@ class timeout:
 
 
 # pipeline-api
-def get_regex_enum(section_regex):
+def get_regex_enum(section_regex: str) -> T.Any:
     """Get sections using regular expression
 
     Args:
@@ -64,14 +64,19 @@ def get_regex_enum(section_regex):
         CUSTOM = re.compile(section_regex)
 
         @property
-        def pattern(self):
+        def pattern(self) -> T.Any:
             return self.value
 
     return CustomSECSection.CUSTOM
 
 
 class SECExtractor:
-    def __init__(self, ticker: str, sections: List[str] = ["_ALL"]):
+    def __init__(
+        self,
+        ticker: str,
+        sections: T.List[str] = ["_ALL"],
+        filing_type: T.Optional[str] = None,
+    ) -> None:
         """_summary_
 
         Args:
@@ -85,8 +90,9 @@ class SECExtractor:
 
         self.ticker = ticker
         self.sections = sections
+        self.filing_type = filing_type
 
-    def get_year(self, filing_details: str) -> str:
+    def get_year(self, filing_details: str) -> T.Optional[str]:
         """Get the year for 10-K and year,month for 10-Q
 
         Args:
@@ -102,11 +108,11 @@ class SECExtractor:
             matches = re.findall(r"20\d{4}", details)
 
         if matches:
-            return matches[-1]  # Return the first match
+            return T.cast(str, matches[-1])  # Return the first match
         else:
             return None  # In case no match is found
 
-    def get_all_text(self, section, all_narratives):
+    def get_all_text(self, section: str, all_narratives: T.Dict[str, T.List[T.Dict[str, T.Any]]]) -> str:
         """Join all the text from a section
 
         Args:
@@ -114,7 +120,7 @@ class SECExtractor:
             all_narratives (dict): dictionary of section names and text
 
         Returns:
-            _type_: _description_
+            str: joined text
         """
         all_texts = []
         for text_dict in all_narratives[section]:
@@ -123,14 +129,14 @@ class SECExtractor:
                     all_texts.append(val)
         return " ".join(all_texts)
 
-    def get_section_texts_from_text(self, text):
+    def get_section_texts_from_text(self, text: str) -> T.Dict[str, str]:
         """Get the text from filing document URL
 
         Args:
-            url (str): url link
+            text (str): filing text content
 
         Returns:
-            _type_: all texts of sections and filing type of the document
+            Dict[str, str]: all texts of sections
         """
         all_narratives, filing_type = self.pipeline_api(text, m_section=self.sections)
         all_narrative_dict = dict.fromkeys(all_narratives.keys())
@@ -138,10 +144,14 @@ class SECExtractor:
         for section in all_narratives:
             all_narrative_dict[section] = self.get_all_text(section, all_narratives)
 
-        # return all_narrative_dict, filing_type
-        return all_narrative_dict
+        return T.cast(T.Dict[str, str], all_narrative_dict)
 
-    def pipeline_api(self, text, m_section=[], m_section_regex=[]):
+    def pipeline_api(
+        self,
+        text: str,
+        m_section: T.List[str] = [],
+        m_section_regex: T.List[str] = [],
+    ) -> T.Tuple[T.Dict[str, T.Any], str]:
         """Unsturcured API to get the text
 
         Args:
@@ -154,7 +164,7 @@ class SECExtractor:
             ValueError: Invalid section names
 
         Returns:
-                section and correspoding texts
+                Tuple[Dict[str, Any], str]: section and correspoding texts, and filing type
         """
         validate_section_names(m_section)
 
@@ -189,8 +199,8 @@ class SECExtractor:
             section: convert_to_isd(section_narrative) for section, section_narrative in results.items()
         }, sec_document.filing_type
 
-    @sleep_and_retry
-    @limits(calls=10, period=1)
+    @sleep_and_retry  # type: ignore[untyped-decorator]
+    @limits(calls=10, period=1)  # type: ignore[untyped-decorator]
     def get_filing(self, url: str, company: str, email: str) -> str:
         """Fetches the specified filing from the SEC EDGAR Archives. Conforms to the rate
         limits specified on the SEC website.
@@ -203,7 +213,7 @@ class SECExtractor:
         response.raise_for_status()
         return response.text
 
-    def _get_session(self, company: Optional[str] = None, email: Optional[str] = None) -> requests.Session:
+    def _get_session(self, company: T.Optional[str] = None, email: T.Optional[str] = None) -> requests.Session:
         """Creates a requests sessions with the appropriate headers set. If these headers are not
         set, SEC will reject your request.
         ref: https://www.sec.gov/os/accessing-edgar-data"""
