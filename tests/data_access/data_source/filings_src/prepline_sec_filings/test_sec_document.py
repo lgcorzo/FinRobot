@@ -1,12 +1,13 @@
 import importlib
 import sys
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 
 # Helpers
-def mock_clean_sec_text(text, lowercase=False) -> None:
+def mock_clean_sec_text(text: Any, lowercase: bool = False) -> str:
     t = str(text).strip()
     if lowercase:
         t = t.lower()

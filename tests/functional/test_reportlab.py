@@ -25,7 +25,7 @@ def dummy_image() -> None:
 @patch("finrobot.functional.reportlab.YFinanceUtils")
 @patch("finrobot.functional.reportlab.FMPUtils")
 @patch("finrobot.functional.reportlab.ReportAnalysisUtils")
-def test_build_annual_report_success(mock_analyzer, mock_fmp, mock_yf, dummy_image) -> None:
+def test_build_annual_report_success(mock_analyzer, mock_fmp, mock_yf, dummy_image) -> None:  # type: ignore[no-untyped-def]
     mock_yf.get_stock_info.return_value = {"shortName": "Apple Inc.", "currency": "USD"}
     mock_fmp.get_financial_metrics.return_value = pd.DataFrame(
         {"Metric": ["Revenue", "Net Income"], "2023": [1000, 200], "2022": [900, 180]}
@@ -51,7 +51,7 @@ def test_build_annual_report_success(mock_analyzer, mock_fmp, mock_yf, dummy_ima
 
 
 @patch("finrobot.functional.reportlab.YFinanceUtils")
-def test_build_annual_report_failure(mock_yf) -> None:
+def test_build_annual_report_failure(mock_yf) -> None:  # type: ignore[no-untyped-def]
     mock_yf.get_stock_info.side_effect = Exception("API Error")
 
     result = ReportLabUtils.build_annual_report(

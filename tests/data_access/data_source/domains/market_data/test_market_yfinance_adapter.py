@@ -8,7 +8,7 @@ from finrobot.data_access.data_source.domains.market_data.yfinance_adapter impor
 
 class TestYFinanceAdapter:
     @patch("finrobot.data_access.data_source.domains.market_data.yfinance_adapter.yf.Ticker")
-    def test_get_stock_data(self, mock_ticker_cls) -> None:
+    def test_get_stock_data(self, mock_ticker_cls) -> None:  # type: ignore[no-untyped-def]
         mock_ticker = MagicMock()
         mock_ticker_cls.return_value = mock_ticker
         mock_ticker.history.return_value = pd.DataFrame({"Close": [150.0]})
@@ -19,7 +19,7 @@ class TestYFinanceAdapter:
         assert result.iloc[0]["Close"] == 150.0
 
     @patch("finrobot.data_access.data_source.domains.market_data.yfinance_adapter.yf.Ticker")
-    def test_get_stock_info(self, mock_ticker_cls) -> None:
+    def test_get_stock_info(self, mock_ticker_cls) -> None:  # type: ignore[no-untyped-def]
         mock_ticker = MagicMock()
         mock_ticker_cls.return_value = mock_ticker
         mock_ticker.info = {"shortName": "Apple"}
@@ -28,7 +28,7 @@ class TestYFinanceAdapter:
         assert result["shortName"] == "Apple"
 
     @patch("finrobot.data_access.data_source.domains.market_data.yfinance_adapter.yf.Ticker")
-    def test_get_income_stmt(self, mock_ticker_cls) -> None:
+    def test_get_income_stmt(self, mock_ticker_cls) -> None:  # type: ignore[no-untyped-def]
         mock_ticker = MagicMock()
         mock_ticker_cls.return_value = mock_ticker
         mock_ticker.financials = pd.DataFrame({"2023": [1000000]})
@@ -37,7 +37,7 @@ class TestYFinanceAdapter:
         assert not result.empty
 
     @patch("finrobot.data_access.data_source.domains.market_data.yfinance_adapter.yf.Ticker")
-    def test_get_analyst_recommendations(self, mock_ticker_cls) -> None:
+    def test_get_analyst_recommendations(self, mock_ticker_cls) -> None:  # type: ignore[no-untyped-def]
         mock_ticker = MagicMock()
         mock_ticker_cls.return_value = mock_ticker
         df = pd.DataFrame({"period": ["0m"], "Strong Buy": [10]})
@@ -48,7 +48,7 @@ class TestYFinanceAdapter:
         assert count == 10
 
     @patch("finrobot.data_access.data_source.domains.market_data.yfinance_adapter.yf.Ticker")
-    def test_get_analyst_recommendations_empty(self, mock_ticker_cls) -> None:
+    def test_get_analyst_recommendations_empty(self, mock_ticker_cls) -> None:  # type: ignore[no-untyped-def]
         mock_ticker = MagicMock()
         mock_ticker_cls.return_value = mock_ticker
         mock_ticker.recommendations = pd.DataFrame()
@@ -58,7 +58,7 @@ class TestYFinanceAdapter:
         assert count == 0
 
     @patch("finrobot.data_access.data_source.domains.market_data.yfinance_adapter.yf.Ticker")
-    def test_get_company_info(self, mock_ticker_cls) -> None:
+    def test_get_company_info(self, mock_ticker_cls) -> None:  # type: ignore[no-untyped-def]
         mock_ticker = MagicMock()
         mock_ticker_cls.return_value = mock_ticker
         mock_ticker.info = {
@@ -79,7 +79,7 @@ class TestYFinanceAdapter:
             mock_to_csv.assert_called_with("path.csv")
 
     @patch("finrobot.data_access.data_source.domains.market_data.yfinance_adapter.yf.Ticker")
-    def test_get_stock_dividends(self, mock_ticker_cls) -> None:
+    def test_get_stock_dividends(self, mock_ticker_cls) -> None:  # type: ignore[no-untyped-def]
         mock_ticker = MagicMock()
         mock_ticker_cls.return_value = mock_ticker
         mock_ticker.dividends = pd.Series([0.23], index=pd.to_datetime(["2023-01-01"]))
@@ -94,7 +94,7 @@ class TestYFinanceAdapter:
             mock_to_csv.assert_called_with("path.csv")
 
     @patch("finrobot.data_access.data_source.domains.market_data.yfinance_adapter.yf.Ticker")
-    def test_get_balance_sheet(self, mock_ticker_cls) -> None:
+    def test_get_balance_sheet(self, mock_ticker_cls) -> None:  # type: ignore[no-untyped-def]
         mock_ticker = MagicMock()
         mock_ticker_cls.return_value = mock_ticker
         mock_ticker.balance_sheet = pd.DataFrame({"2023": [1]})
@@ -102,7 +102,7 @@ class TestYFinanceAdapter:
         assert not res.empty
 
     @patch("finrobot.data_access.data_source.domains.market_data.yfinance_adapter.yf.Ticker")
-    def test_get_cash_flow(self, mock_ticker_cls) -> None:
+    def test_get_cash_flow(self, mock_ticker_cls) -> None:  # type: ignore[no-untyped-def]
         mock_ticker = MagicMock()
         mock_ticker_cls.return_value = mock_ticker
         mock_ticker.cashflow = pd.DataFrame({"2023": [1]})

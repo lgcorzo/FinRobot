@@ -1,3 +1,4 @@
+from typing import Any, Generator
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -14,7 +15,7 @@ from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_docum
 
 
 # Helper to avoid MagicMock in regex
-def mock_clean(text, **kwargs) -> None:
+def mock_clean(text: Any, **kwargs: Any) -> str:
     t = str(text).strip()
     if kwargs.get("lowercase"):
         t = t.lower()
@@ -22,7 +23,7 @@ def mock_clean(text, **kwargs) -> None:
 
 
 @pytest.fixture(autouse=True)
-def patch_clean() -> None:
+def patch_clean() -> Generator[MagicMock, None, None]:
     with patch(
         "finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document.clean_sec_text",
         side_effect=mock_clean,

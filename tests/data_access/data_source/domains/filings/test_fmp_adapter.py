@@ -14,7 +14,7 @@ def fmp_api_key() -> None:
 
 class TestFMPFilingsAdapter:
     @patch("finrobot.data_access.data_source.domains.filings.fmp_adapter.requests.get")
-    def test_get_sec_report_latest(self, mock_get, fmp_api_key) -> None:
+    def test_get_sec_report_latest(self, mock_get, fmp_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = [
@@ -28,7 +28,7 @@ class TestFMPFilingsAdapter:
         assert "2023-03-15" in result
 
     @patch("finrobot.data_access.data_source.domains.filings.fmp_adapter.requests.get")
-    def test_get_sec_report_year(self, mock_get, fmp_api_key) -> None:
+    def test_get_sec_report_year(self, mock_get, fmp_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = [

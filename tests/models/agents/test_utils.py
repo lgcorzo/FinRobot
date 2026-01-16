@@ -16,7 +16,7 @@ def test_instruction_trigger() -> None:
     assert instruction_trigger(sender) is False
 
 
-def test_instruction_message(tmp_path) -> None:
+def test_instruction_message(tmp_path) -> None:  # type: ignore[no-untyped-def]
     sender = MagicMock()
     recipient = MagicMock()
 

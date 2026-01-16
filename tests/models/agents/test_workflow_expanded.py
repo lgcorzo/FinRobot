@@ -22,7 +22,7 @@ def mock_agent_config() -> Dict[str, Any]:
 class TestFinRobotExpanded:
     @patch("finrobot.models.agents.workflow.get_toolkits")
     @patch("finrobot.models.agents.workflow.OpenAIChatClient")
-    def test_preprocess_config(self, mock_client_cls, mock_get_toolkits, mock_agent_config) -> None:
+    def test_preprocess_config(self, mock_client_cls, mock_get_toolkits, mock_agent_config) -> None:  # type: ignore[no-untyped-def]
         mock_get_toolkits.return_value = []
         agent = FinRobot(agent_config=mock_agent_config)
 
@@ -36,7 +36,7 @@ class TestFinRobotExpanded:
 
     @patch("finrobot.models.agents.workflow.get_toolkits")
     @patch("finrobot.models.agents.workflow.OpenAIChatClient")
-    def test_preprocess_config_title_no_name(self, mock_client_cls, mock_get_toolkits) -> None:
+    def test_preprocess_config_title_no_name(self, mock_client_cls, mock_get_toolkits) -> None:  # type: ignore[no-untyped-def]
         # Line 75 coverage
         mock_get_toolkits.return_value = []
         config = {"title": "Manager", "description": "test", "responsibilities": ["manage"]}
@@ -51,7 +51,7 @@ class TestFinRobotExpanded:
 
 class TestSingleAssistantExpanded:
     @patch("finrobot.models.agents.workflow.FinRobot")
-    def test_chat_loop_logic(self, mock_finrobot_cls) -> None:
+    def test_chat_loop_logic(self, mock_finrobot_cls) -> None:  # type: ignore[no-untyped-def]
         mock_assistant = MagicMock()
         mock_finrobot_cls.return_value = mock_assistant
 

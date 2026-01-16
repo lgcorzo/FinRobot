@@ -8,7 +8,7 @@ from finrobot.functional.quantitative import BackTraderUtils, DeployedCapitalAna
 
 @patch("finrobot.functional.quantitative.yf.download")
 @patch("finrobot.functional.quantitative.bt.Cerebro")
-def test_back_test_sma_crossover(mock_cerebro_cls, mock_yf_download) -> None:
+def test_back_test_sma_crossover(mock_cerebro_cls, mock_yf_download) -> None:  # type: ignore[no-untyped-def]
     # Mock yfinance data
     data = pd.DataFrame(
         {"Open": [100, 101], "High": [102, 103], "Low": [98, 99], "Close": [101, 102], "Volume": [1000, 1100]},
@@ -48,7 +48,7 @@ def test_back_test_sma_crossover(mock_cerebro_cls, mock_yf_download) -> None:
 @patch("finrobot.functional.quantitative.importlib.import_module")
 @patch("finrobot.functional.quantitative.yf.download")
 @patch("finrobot.functional.quantitative.bt.Cerebro")
-def test_back_test_custom_components(mock_cerebro_cls, mock_yf_download, mock_import) -> None:
+def test_back_test_custom_components(mock_cerebro_cls, mock_yf_download, mock_import) -> None:  # type: ignore[no-untyped-def]
     # Mock custom module
     mock_module = MagicMock()
     mock_import.return_value = mock_module

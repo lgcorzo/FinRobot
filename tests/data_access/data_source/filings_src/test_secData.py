@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any, Dict, Generator, Tuple
 from unittest.mock import MagicMock, call, patch
 
 import pandas as pd
@@ -10,7 +11,7 @@ from finrobot.data_access.data_source.filings_src.secData import sec_main
 
 # Mock the ThreadPoolExecutor and ProcessPoolExecutor to run synchronously or mock results
 @pytest.fixture
-def mock_executors() -> None:
+def mock_executors() -> Generator[Tuple[MagicMock, MagicMock], None, None]:
     with (
         patch("concurrent.futures.ThreadPoolExecutor") as mock_thread_pool,
         patch("concurrent.futures.ProcessPoolExecutor") as mock_process_pool,
@@ -34,13 +35,18 @@ def mock_executors() -> None:
 @patch("finrobot.data_access.data_source.filings_src.secData.get_filing")
 @patch("finrobot.data_access.data_source.filings_src.secData.SECExtractor")
 def test_sec_main(
-    mock_extractor_cls, mock_get_filing, mock_get_cik, mock_requests_get, mock_document, mock_executors
+    mock_extractor_cls: MagicMock,
+    mock_get_filing: MagicMock,
+    mock_get_cik: MagicMock,
+    mock_requests_get: MagicMock,
+    mock_document: MagicMock,
+    mock_executors: Tuple[MagicMock, MagicMock],
 ) -> None:
     # Setup Mocks
     mock_get_cik.return_value = "0000320193"
 
     # Make Document mock return an object with page_content attribute set
-    def mock_document_side_effect(page_content, metadata) -> None:
+    def mock_document_side_effect(page_content: str, metadata: Dict[str, Any]) -> MagicMock:
         m = MagicMock()
         m.page_content = page_content
         m.metadata = metadata
@@ -89,7 +95,7 @@ def test_sec_main(
 
 @patch("finrobot.data_access.data_source.filings_src.secData.requests.get")
 @patch("finrobot.data_access.data_source.filings_src.secData.get_cik_by_ticker")
-def test_sec_main_api_error(mock_get_cik, mock_requests_get) -> None:
+def test_sec_main_api_error(mock_get_cik: MagicMock, mock_requests_get: MagicMock) -> None:
     mock_get_cik.return_value = "0000320193"
     mock_response = MagicMock()
     mock_response.status_code = 404

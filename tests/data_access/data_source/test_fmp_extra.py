@@ -1,4 +1,5 @@
 import os
+from typing import Any, Generator
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -8,7 +9,7 @@ from finrobot.data_access.data_source.fmp_utils import FMPUtils
 
 
 @pytest.fixture(autouse=True)
-def setup_fmp_env() -> None:
+def setup_fmp_env() -> Generator[None, None, None]:
     with patch.dict(os.environ, {"FMP_API_KEY": "test"}):
         yield
 
@@ -46,7 +47,7 @@ def test_fmp_utils_financial_metrics_logic() -> None:
         mock_income_prev = [{"revenue": 80000000}]
 
         # We need to return them in sequence
-        def side_effect(*args, **kwargs) -> None:
+        def side_effect(*args: Any, **kwargs: Any) -> MagicMock:
             m = MagicMock()
             if "income-statement" in args[0]:
                 m.json.return_value = mock_income + mock_income_prev
@@ -73,7 +74,7 @@ def test_fmp_utils_financial_metrics_logic() -> None:
 def test_fmp_utils_competitors() -> None:
     with patch("requests.get") as mock_get:
 
-        def side_effect(*args, **kwargs) -> None:
+        def side_effect(*args: Any, **kwargs: Any) -> MagicMock:
             m = MagicMock()
             m.json.return_value = [
                 {

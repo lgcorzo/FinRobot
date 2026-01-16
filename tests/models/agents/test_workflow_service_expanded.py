@@ -1,5 +1,6 @@
 import asyncio
 import os
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -21,7 +22,7 @@ def mock_toolkits() -> None:
         yield mock_get
 
 
-def test_finrobot_init_complex(mock_openai_client, mock_toolkits) -> None:
+def test_finrobot_init_complex(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {
         "name": "TestAgent",
         "description": "desc",
@@ -38,7 +39,7 @@ def test_finrobot_init_complex(mock_openai_client, mock_toolkits) -> None:
         assert "Task 1" in agent.description
 
 
-def test_single_assistant_chat_loops(mock_openai_client, mock_toolkits) -> None:
+def test_single_assistant_chat_loops(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistant("TestAgent")
@@ -69,7 +70,7 @@ def test_single_assistant_chat_loops(mock_openai_client, mock_toolkits) -> None:
                 mock_sync.assert_called_once()
 
 
-def test_single_assistant_reset(mock_openai_client, mock_toolkits) -> None:
+def test_single_assistant_reset(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistant("TestAgent")
@@ -77,13 +78,13 @@ def test_single_assistant_reset(mock_openai_client, mock_toolkits) -> None:
 
 
 @pytest.mark.asyncio
-async def test_chat_async_internals(mock_openai_client, mock_toolkits) -> None:
+async def test_chat_async_internals(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistant("TestAgent")
 
         # Simulating the async run
-        async def mock_run(*args, **kwargs) -> None:
+        async def mock_run(*args: Any, **kwargs: Any) -> None:
             return None
 
         with patch.object(assistant.assistant, "run", side_effect=mock_run) as mock_run_patch:
@@ -91,7 +92,7 @@ async def test_chat_async_internals(mock_openai_client, mock_toolkits) -> None:
             mock_run_patch.assert_called_once()
 
 
-def test_run_chat_sync(mock_openai_client, mock_toolkits) -> None:
+def test_run_chat_sync(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistant("TestAgent")
@@ -100,7 +101,7 @@ def test_run_chat_sync(mock_openai_client, mock_toolkits) -> None:
             mock_run_async.assert_called_once()
 
 
-def test_single_assistant_rag_init(mock_openai_client, mock_toolkits) -> None:
+def test_single_assistant_rag_init(mock_openai_client, mock_toolkits) -> None:  # type: ignore[no-untyped-def]
     agent_config = {"name": "TestAgent", "description": "desc"}
     with patch("finrobot.models.agents.services.workflow_service.library", {"TestAgent": agent_config}):
         assistant = SingleAssistantRAG("TestAgent")

@@ -7,7 +7,7 @@ from finrobot.functional.coding import CodingUtils, IPythonUtils
 
 class TestIPythonUtils:
     @patch("finrobot.functional.coding.get_ipython")
-    def test_exec_python(self, mock_get_ipython) -> None:
+    def test_exec_python(self, mock_get_ipython) -> None:  # type: ignore[no-untyped-def]
         mock_shell = MagicMock()
         mock_get_ipython.return_value = mock_shell
 
@@ -29,7 +29,7 @@ class TestIPythonUtils:
         assert "ErrorIn" in log
 
     @patch("finrobot.functional.coding.IPythonUtils.exec_python")
-    def test_display_image(self, mock_exec) -> None:
+    def test_display_image(self, mock_exec) -> None:  # type: ignore[no-untyped-def]
         mock_exec.return_value = ""  # No error
         res = IPythonUtils.display_image("test.png")
         assert "successfully" in res
@@ -41,20 +41,20 @@ class TestIPythonUtils:
 
 class TestCodingUtils:
     @patch("finrobot.functional.coding.os.listdir")
-    def test_list_dir(self, mock_listdir) -> None:
+    def test_list_dir(self, mock_listdir) -> None:  # type: ignore[no-untyped-def]
         mock_listdir.return_value = ["file1", "file2"]
         res = CodingUtils.list_dir("folder")
         assert "file1" in res
         # Check defaults if needed or just return str
 
     @patch("builtins.open", new_callable=mock_open, read_data="line1\nline2")
-    def test_see_file(self, mock_file) -> None:
+    def test_see_file(self, mock_file) -> None:  # type: ignore[no-untyped-def]
         res = CodingUtils.see_file("file.txt")
         assert "1:line1" in res
         assert "2:line2" in res
 
     @patch("builtins.open", new_callable=mock_open, read_data="line1\nline2\nline3")
-    def test_modify_code(self, mock_file) -> None:
+    def test_modify_code(self, mock_file) -> None:  # type: ignore[no-untyped-def]
         # Read happens first
         # Then write
         # This is tricky with mock_open because read_data is consumed?
@@ -72,7 +72,7 @@ class TestCodingUtils:
 
     @patch("builtins.open", new_callable=mock_open)
     @patch("finrobot.functional.coding.os.makedirs")
-    def test_create_file_with_code(self, mock_makedirs, mock_file) -> None:
+    def test_create_file_with_code(self, mock_makedirs, mock_file) -> None:  # type: ignore[no-untyped-def]
         res = CodingUtils.create_file_with_code("dir/file.py", "print('hello')")
         assert "successfully" in res
         mock_makedirs.assert_called()

@@ -6,7 +6,7 @@ from finrobot.functional.rag import PROMPT_RAG_FUNC, get_rag_function
 
 
 @patch("finrobot.functional.rag.RetrieveUserProxyAgent")
-def test_get_rag_function(mock_agent_cls) -> None:
+def test_get_rag_function(mock_agent_cls) -> None:  # type: ignore[no-untyped-def]
     # Mock instance
     mock_agent = MagicMock()
     mock_agent_cls.return_value = mock_agent
@@ -39,7 +39,7 @@ def test_get_rag_function(mock_agent_cls) -> None:
 
 
 @patch("finrobot.functional.rag.RetrieveUserProxyAgent")
-def test_get_rag_function_docstring(mock_agent_cls) -> None:
+def test_get_rag_function_docstring(mock_agent_cls) -> None:  # type: ignore[no-untyped-def]
     retrieve_config = {"docs_path": ["doc1", "doc2"]}
     retrieve_content, _ = get_rag_function(retrieve_config)
     assert "Availale Documents" in retrieve_content.__doc__

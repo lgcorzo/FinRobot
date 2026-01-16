@@ -4,6 +4,8 @@ from unittest.mock import MagicMock, call, patch
 
 import pytest
 
+pytest.importorskip("torch")
+
 from finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf import (
     _convert_html_to_pdfs,
     get_cik_by_ticker,
@@ -18,7 +20,7 @@ def mock_requests() -> None:
 
 
 @patch("finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf.requests.get")
-def test_get_cik_by_ticker(mock_get) -> None:
+def test_get_cik_by_ticker(mock_get) -> None:  # type: ignore[no-untyped-def]
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.text = "<html>... CIK=0000320193 ...</html>"
@@ -31,7 +33,7 @@ def test_get_cik_by_ticker(mock_get) -> None:
 @patch("finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf.pdfkit.from_url")
 @patch("finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf.get_cik_by_ticker")
 @patch("finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf.requests.get")
-def test_sec_save_pdfs(mock_get, mock_get_cik, mock_pdfkit, tmp_path) -> None:
+def test_sec_save_pdfs(mock_get, mock_get_cik, mock_pdfkit, tmp_path) -> None:  # type: ignore[no-untyped-def]
     # Mock CIK
     mock_get_cik.return_value = "0000320193"
 

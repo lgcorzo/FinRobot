@@ -23,7 +23,7 @@ class TestMlflowService:
         assert service.experiment_name == "custom_experiment"
 
     @patch("finrobot.infrastructure.services.mlflow_service.mlflow")
-    def test_mlflow_service_start_calls_mlflow(self, mock_mlflow) -> None:
+    def test_mlflow_service_start_calls_mlflow(self, mock_mlflow) -> None:  # type: ignore[no-untyped-def]
         """Test that start() calls MLflow methods."""
         service = MlflowService(
             tracking_uri="http://test:5000",
@@ -38,7 +38,7 @@ class TestMlflowService:
         mock_mlflow.autolog.assert_called_once()
 
     @patch("finrobot.infrastructure.services.mlflow_service.mlflow")
-    def test_mlflow_service_run_context(self, mock_mlflow) -> None:
+    def test_mlflow_service_run_context(self, mock_mlflow) -> None:  # type: ignore[no-untyped-def]
         """Test that run_context() creates an MLflow run."""
         mock_run = MagicMock()
         mock_mlflow.start_run.return_value.__enter__ = MagicMock(return_value=mock_run)

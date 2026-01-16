@@ -21,7 +21,7 @@ class TestLoggerService:
 
     @patch("finrobot.infrastructure.services.logger_service.TracerProvider")
     @patch("finrobot.infrastructure.services.logger_service.LoggerProvider")
-    def test_logger_service_start(self, mock_logger_provider, mock_tracer_provider) -> None:
+    def test_logger_service_start(self, mock_logger_provider, mock_tracer_provider) -> None:  # type: ignore[no-untyped-def]
         """Test that start() initializes OpenTelemetry providers."""
         service = LoggerService()
         service.start()

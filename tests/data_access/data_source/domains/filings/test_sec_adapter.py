@@ -14,7 +14,7 @@ def sec_api_key() -> None:
 
 class TestSECAdapter:
     @patch("finrobot.data_access.data_source.domains.filings.sec_adapter.QueryApi")
-    def test_get_10k_metadata(self, mock_query_cls, sec_api_key) -> None:
+    def test_get_10k_metadata(self, mock_query_cls, sec_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_query = MagicMock()
         mock_query_cls.return_value = mock_query
         mock_query.get_filings.return_value = {"filings": [{"ticker": "AAPL", "filedAt": "2023-01-01"}]}
@@ -24,7 +24,7 @@ class TestSECAdapter:
 
     @patch("finrobot.data_access.data_source.domains.filings.sec_adapter.RenderApi")
     @patch("finrobot.data_access.data_source.domains.filings.sec_adapter.SECAdapter.get_10k_metadata")
-    def test_download_10k_filing(self, mock_get_metadata, mock_render_cls, sec_api_key, tmp_path) -> None:
+    def test_download_10k_filing(self, mock_get_metadata, mock_render_cls, sec_api_key, tmp_path) -> None:  # type: ignore[no-untyped-def]
         mock_render = MagicMock()
         mock_render_cls.return_value = mock_render
         mock_render.get_filing.return_value = "<html>Content</html>"
@@ -43,7 +43,7 @@ class TestSECAdapter:
 
     @patch("finrobot.data_access.data_source.domains.filings.sec_adapter.SECAdapter.get_10k_metadata")
     @patch("finrobot.data_access.data_source.domains.filings.sec_adapter.requests.get")
-    def test_download_10k_pdf(self, mock_get, mock_get_metadata, sec_api_key) -> None:
+    def test_download_10k_pdf(self, mock_get, mock_get_metadata, sec_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_get_metadata.return_value = {
             "ticker": "AAPL",
             "formType": "10-K",
@@ -66,7 +66,7 @@ class TestSECAdapter:
 
     @patch("finrobot.data_access.data_source.domains.filings.sec_adapter.FMPUtils.get_sec_report")
     @patch("finrobot.data_access.data_source.domains.filings.sec_adapter.ExtractorApi")
-    def test_get_10k_section(self, mock_extractor_cls, mock_get_report, sec_api_key) -> None:
+    def test_get_10k_section(self, mock_extractor_cls, mock_get_report, sec_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_extractor = MagicMock()
         mock_extractor_cls.return_value = mock_extractor
         mock_extractor.get_section.return_value = "Section Content"

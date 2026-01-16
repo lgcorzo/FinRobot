@@ -15,7 +15,7 @@ def finnhub_api_key() -> None:
 
 class TestFinnHubNewsAdapter:
     @patch("finrobot.data_access.data_source.domains.news.finnhub_adapter.finnhub.Client")
-    def test_get_company_news(self, mock_client_cls, finnhub_api_key) -> None:
+    def test_get_company_news(self, mock_client_cls, finnhub_api_key) -> None:  # type: ignore[no-untyped-def]
         mock_client = MagicMock()
         mock_client_cls.return_value = mock_client
         mock_client.company_news.return_value = [

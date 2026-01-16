@@ -4,6 +4,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+import pytest
+
+pytest.importorskip("torch")
+
 from finrobot.data_access.data_source.marker_sec_src.pdf_to_md import run_marker
 from finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel import (
     process_single_pdf,
@@ -22,7 +26,7 @@ def mock_settings() -> None:
         yield mock
 
 
-def test_run_marker(tmp_path) -> None:
+def test_run_marker(tmp_path) -> None:  # type: ignore[no-untyped-def]
     input_dir = tmp_path / "input"
     input_dir.mkdir()
     (input_dir / "test1.pdf").write_text("dummy")
@@ -38,7 +42,7 @@ def test_run_marker(tmp_path) -> None:
                 mock_convert.assert_called_once()
 
 
-def test_run_marker_mp_complex(mock_settings, tmp_path) -> None:
+def test_run_marker_mp_complex(mock_settings, tmp_path) -> None:  # type: ignore[no-untyped-def]
     in_dir = tmp_path / "in"
     in_dir.mkdir()
     (in_dir / "doc1.pdf").write_text("d")
@@ -67,7 +71,7 @@ def test_run_marker_mp_complex(mock_settings, tmp_path) -> None:
             mock_load.assert_called_once()
 
 
-def test_run_marker_mp_cuda(mock_settings, tmp_path) -> None:
+def test_run_marker_mp_cuda(mock_settings, tmp_path) -> None:  # type: ignore[no-untyped-def]
     mock_settings.CUDA = True
     in_dir = tmp_path / "in"
     in_dir.mkdir()
@@ -82,7 +86,7 @@ def test_run_marker_mp_cuda(mock_settings, tmp_path) -> None:
                 model.share_memory.assert_called_once()
 
 
-def test_process_single_pdf_edge_cases(tmp_path) -> None:
+def test_process_single_pdf_edge_cases(tmp_path) -> None:  # type: ignore[no-untyped-def]
     filepath = str(tmp_path / "test.pdf")
     txt_path = str(tmp_path / "test.txt")
     out_folder = str(tmp_path / "out")

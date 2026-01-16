@@ -37,7 +37,7 @@ def test_sec_adapter_download_errors() -> None:
         assert "No 2023 10-K filing found" in res
 
 
-def test_sec_adapter_section_logic(tmp_path) -> None:
+def test_sec_adapter_section_logic(tmp_path) -> None:  # type: ignore[no-untyped-def]
     import finrobot.data_access.data_source.domains.filings.sec_adapter as sa
 
     with patch.object(sa, "ExtractorApi") as mock_e_class:

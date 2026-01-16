@@ -26,7 +26,7 @@ class TestAlertsService:
         assert service.app_name == "custom_app"
 
     @patch("finrobot.infrastructure.services.alert_service.notification")
-    def test_notify_sends_notification(self, mock_notification) -> None:
+    def test_notify_sends_notification(self, mock_notification) -> None:  # type: ignore[no-untyped-def]
         """Test that notify() calls plyer notification."""
         service = AlertsService()
         service.notify(title="Test Title", message="Test Message")
@@ -39,7 +39,7 @@ class TestAlertsService:
         )
 
     @patch("finrobot.infrastructure.services.alert_service.notification")
-    def test_notify_disabled_prints_instead(self, mock_notification, capsys) -> None:
+    def test_notify_disabled_prints_instead(self, mock_notification, capsys) -> None:  # type: ignore[no-untyped-def]
         """Test that notify() prints when disabled."""
         service = AlertsService(enable=False)
         service.notify(title="Test Title", message="Test Message")
@@ -50,7 +50,7 @@ class TestAlertsService:
         assert "Test Message" in captured.out
 
     @patch("finrobot.infrastructure.services.alert_service.notification")
-    def test_notify_handles_exception(self, mock_notification, capsys) -> None:
+    def test_notify_handles_exception(self, mock_notification, capsys) -> None:  # type: ignore[no-untyped-def]
         """Test that notify() handles plyer exceptions gracefully."""
         mock_notification.notify.side_effect = Exception("No notification implementation")
 
