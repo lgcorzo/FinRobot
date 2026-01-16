@@ -403,6 +403,38 @@ year={2024}
 
 https://www.reddit.com/prefs/apps
 
-
 rm -rf .venv && poetry lock && poetry install --with checks
 
+## Kafka Integration
+
+FinRobot includes a Kafka-based messaging application for asynchronous prediction processing.
+
+### Configuration
+
+The application is configured using environment variables:
+
+| Variable               | Description              | Default              |
+| :--------------------- | :----------------------- | :------------------- |
+| `DEFAULT_KAFKA_SERVER` | Kafka broker address     | `localhost:9092`     |
+| `DEFAULT_GROUP_ID`     | Consumer group ID        | `finrobot-group`     |
+| `DEFAULT_INPUT_TOPIC`  | Input topic for requests | `prediction_input`   |
+| `DEFAULT_OUTPUT_TOPIC` | Output topic for results | `prediction_output`  |
+| `MLFLOW_MODEL_URI`     | URI of the MLflow model  | `models:/my_model/1` |
+
+### Running with Docker
+
+To build and run the Kafka application using Docker:
+
+```bash
+# Build the image
+docker build -t finrobot-kafka .
+
+# Run the container
+docker run --env-file .env finrobot-kafka
+```
+
+### Running Locally
+
+```bash
+poetry run python -m finrobot.infrastructure.messaging.kafka_app
+```
