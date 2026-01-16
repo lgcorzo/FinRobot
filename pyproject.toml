@@ -42,6 +42,7 @@ ratelimit = "^2.2.1"
 pdfkit = "^1.0.0"
 pandera = "^0.28.1"
 backtrader = "^1.9.78.123"
+ipython = "^8.30.0"
 
 [tool.poetry.group.checks]
 optional = true
