@@ -3,7 +3,6 @@
 import os
 import typing as T
 from functools import wraps
-from typing import Annotated
 
 import requests
 
@@ -12,7 +11,9 @@ from finrobot.infrastructure.utils import decorate_all_methods
 fmp_api_key: str = ""
 
 
-def init_fmp_api(func: T.Callable) -> T.Callable:
+def init_fmp_api(
+    func: T.Callable[..., T.Any],
+) -> T.Callable[..., T.Any]:
     @wraps(func)
     def wrapper(*args: T.Any, **kwargs: T.Any) -> T.Any:
         global fmp_api_key
@@ -33,8 +34,8 @@ class FMPFilingsAdapter:
 
     @staticmethod
     def get_sec_report(
-        ticker_symbol: Annotated[str, "ticker symbol"],
-        fyear: Annotated[str, "year of the 10-K report, 'yyyy' or 'latest'"] = "latest",
+        ticker_symbol: str,
+        fyear: str = "latest",
     ) -> str:
         """Get the url and filing date of the 10-K report for a given stock and year."""
 

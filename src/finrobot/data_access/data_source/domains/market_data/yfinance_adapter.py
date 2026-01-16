@@ -1,7 +1,5 @@
-"""YFinance Adapter - Market Data Repository Implementation."""
-
+import typing as T
 from functools import wraps
-from typing import Annotated, Any, Callable, Optional
 
 import yfinance as yf
 from pandas import DataFrame
@@ -10,11 +8,11 @@ from finrobot.infrastructure.io.files import SavePathType, save_output
 from finrobot.infrastructure.utils import decorate_all_methods
 
 
-def init_ticker(func: Callable) -> Callable:
+def init_ticker(func: T.Callable[..., T.Any]) -> T.Callable[..., T.Any]:
     """Decorator to initialize yf.Ticker and pass it to the function."""
 
     @wraps(func)
-    def wrapper(symbol: Annotated[str, "ticker symbol"], *args, **kwargs) -> Any:
+    def wrapper(symbol: str, *args: T.Any, **kwargs: T.Any) -> T.Any:
         ticker = yf.Ticker(symbol)
         return func(ticker, *args, **kwargs)
 
@@ -26,28 +24,28 @@ class YFinanceAdapter:
     """YFinance implementation of MarketDataRepository."""
 
     def get_stock_data(
-        symbol: Annotated[str, "ticker symbol"],
-        start_date: Annotated[str, "start date for retrieving stock price data, YYYY-mm-dd"],
-        end_date: Annotated[str, "end date for retrieving stock price data, YYYY-mm-dd"],
+        symbol: T.Any,
+        start_date: str,
+        end_date: str,
         save_path: SavePathType = None,
     ) -> DataFrame:
         """retrieve stock price data for designated ticker symbol"""
-        ticker = symbol
+        ticker = symbol  # symbol is actually the ticker object due to decorator
         stock_data = ticker.history(start=start_date, end=end_date)
         save_output(stock_data, f"Stock data for {ticker.ticker}", save_path)
         return stock_data
 
     def get_stock_info(
-        symbol: Annotated[str, "ticker symbol"],
-    ) -> dict:
+        symbol: T.Any,
+    ) -> T.Dict[str, T.Any]:
         """Fetches and returns latest stock information."""
         ticker = symbol
-        stock_info = ticker.info
+        stock_info = T.cast(T.Dict[str, T.Any], ticker.info)
         return stock_info
 
     def get_company_info(
-        symbol: Annotated[str, "ticker symbol"],
-        save_path: Optional[str] = None,
+        symbol: T.Any,
+        save_path: T.Optional[str] = None,
     ) -> DataFrame:
         """Fetches and returns company information as a DataFrame."""
         ticker = symbol
@@ -66,8 +64,8 @@ class YFinanceAdapter:
         return company_info_df
 
     def get_stock_dividends(
-        symbol: Annotated[str, "ticker symbol"],
-        save_path: Optional[str] = None,
+        symbol: T.Any,
+        save_path: T.Optional[str] = None,
     ) -> DataFrame:
         """Fetches and returns the latest dividends data as a DataFrame."""
         ticker = symbol
@@ -77,25 +75,27 @@ class YFinanceAdapter:
             print(f"Dividends for {ticker.ticker} saved to {save_path}")
         return dividends
 
-    def get_income_stmt(symbol: Annotated[str, "ticker symbol"]) -> DataFrame:
+    def get_income_stmt(symbol: T.Any) -> DataFrame:
         """Fetches and returns the latest income statement of the company as a DataFrame."""
         ticker = symbol
         income_stmt = ticker.financials
         return income_stmt
 
-    def get_balance_sheet(symbol: Annotated[str, "ticker symbol"]) -> DataFrame:
+    def get_balance_sheet(symbol: T.Any) -> DataFrame:
         """Fetches and returns the latest balance sheet of the company as a DataFrame."""
         ticker = symbol
         balance_sheet = ticker.balance_sheet
         return balance_sheet
 
-    def get_cash_flow(symbol: Annotated[str, "ticker symbol"]) -> DataFrame:
+    def get_cash_flow(symbol: T.Any) -> DataFrame:
         """Fetches and returns the latest cash flow statement of the company as a DataFrame."""
         ticker = symbol
         cash_flow = ticker.cashflow
         return cash_flow
 
-    def get_analyst_recommendations(symbol: Annotated[str, "ticker symbol"]) -> tuple:
+    def get_analyst_recommendations(
+        symbol: T.Any,
+    ) -> T.Tuple[T.Optional[str], T.Optional[float]]:
         """Fetches the latest analyst recommendations and returns the most common recommendation and its count."""
         ticker = symbol
         recommendations = ticker.recommendations

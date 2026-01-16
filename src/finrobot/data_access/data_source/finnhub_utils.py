@@ -1,11 +1,11 @@
 import json
 import os
 import random
+import typing as T
 from collections import defaultdict
 from datetime import datetime
 from functools import wraps
 from typing import Annotated, Any, Dict, List, Optional, Union
-import typing as T
 
 import finnhub
 import pandas as pd
@@ -116,7 +116,7 @@ class FinnHubUtils:
         if not basic_financials["series"]:
             return f"Failed to find basic financials for symbol {symbol} from finnhub! Try a different symbol."
 
-        output_dict = defaultdict(dict)
+        output_dict: T.Dict[str, T.Dict[str, T.Any]] = defaultdict(dict)
         for metric, value_list in basic_financials["series"][freq].items():
             if selected_columns and metric not in selected_columns:
                 continue
