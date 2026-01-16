@@ -1,5 +1,5 @@
-from unittest.mock import patch
 import typing as T
+from unittest.mock import patch
 
 import pandas as pd
 

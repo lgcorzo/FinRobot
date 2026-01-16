@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pandas as pd
 import pytest
+
 from finrobot.functional.analyzer import ReportAnalysisUtils, combine_prompt, save_to_file
 
 

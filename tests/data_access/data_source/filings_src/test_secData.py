@@ -3,8 +3,9 @@ from unittest.mock import MagicMock, call, patch
 
 import pandas as pd
 import pytest
-from finrobot.data_access.data_source.filings_src.secData import sec_main
 from langchain.schema import Document
+
+from finrobot.data_access.data_source.filings_src.secData import sec_main
 
 
 # Mock the ThreadPoolExecutor and ProcessPoolExecutor to run synchronously or mock results

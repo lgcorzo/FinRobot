@@ -1,7 +1,9 @@
-import pytest
-import requests
 import typing as T
 from unittest.mock import MagicMock, patch
+
+import pytest
+import requests
+
 from finrobot.data_access.data_source.filings_src.sec_filings import (
     REPORT_TYPES,
     SECTIONS_10K,

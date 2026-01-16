@@ -2,6 +2,8 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
+from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
+
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import (
     SECDocument,
     SECSection,
@@ -9,7 +11,6 @@ from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_docum
     get_narrative_texts,
     to_sklearn_format,
 )
-from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
 
 
 # Helper to avoid MagicMock in regex

@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
+
 from finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf import (
     _convert_html_to_pdfs,
     _search_url,

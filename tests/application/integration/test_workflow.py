@@ -1,9 +1,10 @@
 """Integration tests for agent workflow."""
 
+import typing as T
 from unittest.mock import patch
 
-import typing as T
 import pytest
+
 from finrobot.models.agents.workflow import SingleAssistant
 from finrobot.settings import FinRobotSettings
 

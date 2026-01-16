@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import requests
+
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings.fetch import (
     archive_url,
     get_cik_by_ticker,

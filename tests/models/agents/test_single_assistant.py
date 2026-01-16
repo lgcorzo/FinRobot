@@ -1,5 +1,5 @@
-from unittest.mock import MagicMock, patch
 import typing as T
+from unittest.mock import MagicMock, patch
 
 
 class TestSingleAssistant:

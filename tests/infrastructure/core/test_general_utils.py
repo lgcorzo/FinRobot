@@ -5,6 +5,7 @@ import os
 from datetime import datetime
 
 import pandas as pd
+
 from finrobot.infrastructure.io.files import register_keys_from_json, save_output
 from finrobot.infrastructure.utils import get_current_date, get_next_weekday
 

@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
+
 from finrobot.data_access.data_source.domains.market_data.yfinance_adapter import YFinanceAdapter
 
 

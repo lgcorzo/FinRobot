@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from agent_framework import ChatMessage
+
 from finrobot.models.agents.services.workflow_service import FinRobot, SingleAssistant, SingleAssistantRAG
 
 

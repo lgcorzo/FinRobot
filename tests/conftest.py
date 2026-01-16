@@ -2,8 +2,8 @@ import importlib.machinery
 import sys
 import types
 import typing as T
+from typing import Any, Callable, Dict, List, Optional, Union
 from unittest.mock import MagicMock
-from typing import Any, List, Optional, Union, Dict, Callable
 
 
 class MockModule(types.ModuleType):

@@ -15,10 +15,11 @@ def mock_clean_sec_text(text, lowercase=False):
 
 # Import module under test
 # Since conftest mocks unstructured, we can just import.
-import finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document as sec_doc_module
-from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import SECDocument, SECSection
 from unstructured.documents.elements import ListItem, NarrativeText, Text, Title
 from unstructured.documents.html import HTMLDocument
+
+import finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document as sec_doc_module
+from finrobot.data_access.data_source.filings_src.prepline_sec_filings.sec_document import SECDocument, SECSection
 
 
 class TestSECDocument:

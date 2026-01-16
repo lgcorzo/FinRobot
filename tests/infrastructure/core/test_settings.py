@@ -1,7 +1,9 @@
 """Test settings configuration."""
 
 import typing as T
+
 import pytest
+
 from finrobot.settings import FinRobotSettings
 
 

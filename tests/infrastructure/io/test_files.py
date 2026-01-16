@@ -4,6 +4,7 @@ from unittest.mock import mock_open, patch
 
 import pandas as pd
 import pytest
+
 from finrobot.infrastructure.io.files import register_keys_from_json, save_output
 
 

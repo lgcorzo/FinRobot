@@ -3,6 +3,7 @@ import os
 from unittest.mock import MagicMock, call, patch
 
 import pytest
+
 from finrobot.data_access.data_source.marker_sec_src.sec_filings_to_pdf import (
     _convert_html_to_pdfs,
     get_cik_by_ticker,

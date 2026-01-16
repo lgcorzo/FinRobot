@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from finrobot.data_access.data_source.earnings_calls_src.main_earningsData import get_earnings_all_docs
 
 

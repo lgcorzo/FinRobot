@@ -2,6 +2,7 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from finrobot.data_access.data_source.domains.filings.sec_adapter import SECAdapter
 from finrobot.data_access.data_source.filings_src.prepline_sec_filings import fetch
 

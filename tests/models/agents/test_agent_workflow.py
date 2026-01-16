@@ -2,6 +2,7 @@ import asyncio
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from finrobot.models.agents.workflow import FinRobot, SingleAssistant
 
 

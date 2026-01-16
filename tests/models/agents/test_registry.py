@@ -1,11 +1,12 @@
 """Tests for tool registry."""
 
+import typing as T
+
 from finrobot.models.agents.tools.registry import (
     get_coding_tools,
     get_toolkits,
     get_toolkits_from_cls,
 )
-import typing as T
 
 
 class TestToolRegistry:

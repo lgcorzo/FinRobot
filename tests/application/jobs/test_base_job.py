@@ -4,6 +4,7 @@ import typing as T
 from unittest.mock import patch
 
 import pytest
+
 from finrobot.application.jobs.base import Job
 
 

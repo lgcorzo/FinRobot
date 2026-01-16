@@ -2,6 +2,7 @@ import os
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
+
 from finrobot.functional.ragquery import rag_database_earnings_call, rag_database_sec
 
 

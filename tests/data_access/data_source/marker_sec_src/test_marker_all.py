@@ -3,6 +3,7 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from finrobot.data_access.data_source.marker_sec_src.pdf_to_md import run_marker
 from finrobot.data_access.data_source.marker_sec_src.pdf_to_md_parallel import (
     process_single_pdf,

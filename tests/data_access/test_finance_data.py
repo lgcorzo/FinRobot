@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from finrobot.data_access.data_source.finance_data import get_data
 
 

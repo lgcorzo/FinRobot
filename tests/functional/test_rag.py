@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from finrobot.functional.rag import PROMPT_RAG_FUNC, get_rag_function
 
 
